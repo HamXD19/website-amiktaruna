@@ -1,272 +1,254 @@
-# Website Profil & Sistem Manajemen Konten (CMS) AMIK Taruna Probolinggo
+# Website Profil & Sistem Informasi Kampus (CMS) AMIK Taruna Probolinggo
 
-Aplikasi Web Resmi Profil Institusi dan Sistem Informasi Kampus **AMIK Taruna Probolinggo** berbasis Laravel 11, Tailwind CSS, dan Bootstrap 5 dengan arsitektur **Emerald Dark Glassmorphism**, sistem hirarki akun **Super Admin**, manajemen hak akses menu dinamis (Role-Based Access Control), dan sistem pencatatan riwayat audit (**Activity Log**).
+Sistem Informasi Profil Institusi Resmi dan Content Management System (CMS) **AMIK Taruna Probolinggo** berbasis Laravel 11, Tailwind CSS, Bootstrap 5, dan Vite. Dilengkapi arsitektur antarmuka **Emerald Dark Glassmorphism**, sistem hirarki **Super Admin**, manajemen hak akses menu dinamis (*Role-Based Access Control*), modul PMB dinamis, layanan pelaporan PPKS, serta pencatatan audit (*Activity Log*).
 
 ---
 
 ## 📋 Daftar Isi
 1. [Spesifikasi Server & Kebutuhan Sistem](#-spesifikasi-server--kebutuhan-sistem)
-2. [Arsitektur Akun & Keamanan](#-arsitektur-akun--keamanan)
-3. [Panduan Deploy / Hosting Cepat](#-panduan-deploy--hosting-cepat)
-   - [Opsi 1: Shared Hosting / cPanel](#opsi-1-shared-hosting--cpanel-rekomendasi-hosting-kampus)
-   - [Opsi 2: VPS (Ubuntu / Debian / Nginx / Apache)](#opsi-2-vps-linux-ubuntu--debian)
-4. [Pengaturan PHP & Batas Upload Dokumen](#-pengaturan-php--batas-upload-dokumen)
-5. [Daftar Fitur Sistem](#-daftar-fitur-sistem)
-6. [Troubleshooting & Solusi Kendala Hosting](#-troubleshooting--solusi-kendala-hosting)
+2. [Panduan Deploy ke Hostinger (hPanel)](#-panduan-deploy-ke-hostinger-hpanel)
+   - [Langkah 1: Pengaturan PHP Version & Ekstensi](#langkah-1-pengaturan-php-version--ekstensi-di-hpanel)
+   - [Langkah 2: Pengaturan Batas Upload Dokumen 30MB](#langkah-2-pengaturan-batas-upload-dokumen-30mb-di-hpanel)
+   - [Langkah 3: Pembuatan Database MySQL di hPanel](#langkah-3-pembuatan-database-mysql-di-hpanel)
+   - [Langkah 4: Upload File Proyek (Pilih Salah Satu Metode)](#langkah-4-upload-file-proyek-ke-hpanel)
+   - [Langkah 5: Konfigurasi File .env](#langkah-5-konfigurasi-file-env)
+   - [Langkah 6: Import Data / Migrasi Database](#langkah-6-import-data--migrasi-database)
+   - [Langkah 7: Hak Akses Folder & Storage Link](#langkah-7-hak-akses-folder--storage-link)
+3. [Panduan Deploy Alternatif (cPanel & VPS)](#-panduan-deploy-alternatif-cpanel--vps)
+4. [Arsitektur Akun & Hak Akses (Super Admin & Admin Staf)](#-arsitektur-akun--hak-akses)
+5. [Daftar Fitur & Modul Utama](#-daftar-fitur--modul-utama)
+6. [Troubleshooting Kendala Hosting di Hostinger](#-troubleshooting-kendala-hosting-di-hostinger)
 
 ---
 
 ## ⚙️ Spesifikasi Server & Kebutuhan Sistem
 
-Sebelum melakukan hosting, pastikan server memenuhi spesifikasi berikut:
-
-- **PHP Version**: `PHP >= 8.2` (Direkomendasikan PHP 8.2 atau 8.3)
+- **PHP Version**: `PHP >= 8.2` (Direkomendasikan **PHP 8.2** atau **PHP 8.3**)
 - **Database**: MySQL `>= 8.0` atau MariaDB `>= 10.4`
-- **Web Server**: Apache (dengan modul `mod_rewrite` aktif) atau Nginx
+- **Web Server**: Apache / LiteSpeed (dengan modul `mod_rewrite` aktif) atau Nginx
 - **Ekstensi PHP Wajib**:
-  - `BCMath`
-  - `Ctype`
-  - `cURL`
-  - `DOM`
-  - `Fileinfo` (Wajib untuk validasi dokumen & gambar)
-  - `JSON`
-  - `Mbstring`
-  - `OpenSSL`
-  - `PCRE`
-  - `PDO` & `pdo_mysql`
-  - `Tokenizer`
-  - `XML`
-- **Composer**: Composer 2.x
-- **Node.js**: *(Opsional saat hosting)* Karena seluruh aset frontend (CSS, JS, Vue, Vite) **sudah dikompilasi secara siap pakai** di direktori `public/build/`.
+  - `pdo_mysql`, `fileinfo`, `gd`, `mbstring`, `curl`, `openssl`, `tokenizer`, `xml`, `bcmath`, `ctype`, `json`
+- **Node.js**: **TIDAK DIBUTUHKAN DI SERVER**. Seluruh aset frontend (CSS, JS, Vue) **sudah dikompilasi siap pakai** di folder `public/build/`.
+- **Gelar Resmi Lulusan**: Telah diseragamkan pada seluruh sistem menjadi **A.Md.** (Ahli Madya D3).
 
 ---
 
-## 🔐 Arsitektur Akun & Keamanan
+## 🚀 Panduan Deploy ke Hostinger (hPanel)
 
-Sistem memiliki 2 tingkatan peran (role) akun:
+Berikut adalah panduan langkah demi langkah untuk mempublikasikan website ini ke hosting **Hostinger (hPanel)**:
 
-### 1. Super Admin (Hirarki Tertinggi)
-- Memiliki otoritas penuh tanpa batas (*unrestricted access*) ke seluruh fitur, modul, dan konfigurasi.
-- **Eksklusif Super Admin**:
-  - **Kelola Pengguna (`/admin/users`)**: Membuat akun baru, mengedit profil, mengatur password, dan menentukan checklist menu apa saja yang boleh diakses oleh tiap akun staf.
-  - **Log Aktivitas (`/admin/activity-logs`)**: Memantau audit trail lengkap (riwayat login/logout, waktu, jenis aksi CREATE/UPDATE/DELETE, modul, alamat IP, dan user-agent).
-- Dilengkapi proteksi keamanan: Super Admin tidak dapat menghapus akunnya sendiri yang sedang login dan tidak dapat menghapus Super Admin terakhir di sistem.
-
-### 2. Admin Staf (Terbatas Dinamis)
-- Akun operator/staf yang dibuat oleh Super Admin.
-- Sidebar navigasi secara otomatis menyembunyikan menu-menu yang tidak diizinkan.
-- Akses URL langsung ke menu terlarang otomatis dicegat oleh middleware keamanan (`403 Forbidden`) dan dicatat sebagai insiden keamanan pada Activity Log.
-
-> **Informasi Akun Bawaan (Default):**
-> - **Email Super Admin**: `m.irhamauliaq@gmail.com` atau `humas.amiktarunaprobolinggo@gmail.com`
-> - **Halaman Login**: Akses melalui `/login` (Registrasi mandiri `/register` sengaja dialihkan ke login demi keamanan institusi).
+### Langkah 1: Pengaturan PHP Version & Ekstensi di hPanel
+1. Login ke akun Hostinger dan buka **hPanel**.
+2. Masuk ke menu **Websites** -> klik **Manage** pada domain Anda.
+3. Di bilah menu kiri, cari dan buka **PHP Configuration** (Konfigurasi PHP).
+4. Pada tab **PHP Version**:
+   - Pilih **PHP 8.2** atau **PHP 8.3**.
+   - Klik **Update / Simpan**.
+5. Pada tab **PHP Extensions**:
+   - Pastikan ekstensi `pdo_mysql`, `fileinfo`, `gd`, `mbstring`, `curl`, `openssl`, `tokenizer`, dan `xml` dalam status tercentang (aktif).
 
 ---
 
-## 🚀 Panduan Deploy / Hosting Cepat
+### Langkah 2: Pengaturan Batas Upload Dokumen 30MB di hPanel
+Aplikasi mendukung pengunggahan brosur PMB dan dokumen akademik (Kurikulum, RPS, SK Akreditasi) hingga ukuran **30 MB**.
+1. Masih di menu **PHP Configuration**, klik tab **PHP Options**.
+2. Sesuaikan parameter berikut:
+   - `upload_max_filesize` = **32M** (atau 64M)
+   - `post_max_size` = **36M** (atau 64M, harus lebih besar dari upload_max_filesize)
+   - `memory_limit` = **256M** (atau 512M)
+   - `max_execution_time` = **300**
+3. Klik **Save / Simpan**.
 
-### Opsi 1: Shared Hosting / cPanel (Rekomendasi Hosting Kampus)
+---
 
-Struktur aman untuk Laravel di cPanel adalah memisahkan folder core aplikasi dari folder `public_html`.
+### Langkah 3: Pembuatan Database MySQL di hPanel
+1. Di hPanel, buka menu **Databases** -> **Management** (Manajemen Database).
+2. Di bagian **Create a New MySQL Database and Database User**:
+   - **Database Name**: Masukkan nama database (misal: `amik_profil` -> hasil: `u123456789_amik_profil`).
+   - **Username**: Masukkan username (misal: `amik_user` -> hasil: `u123456789_amik_user`).
+   - **Password**: Buat password yang kuat dan catat baik-baik.
+3. Klik **Create / Buat**.
+4. Catat ketiga data tersebut untuk dimasukkan ke file `.env`. Di Hostinger, `DB_HOST` adalah `localhost` atau `127.0.0.1`.
 
-#### Langkah 1: Persiapan File
-1. Zip seluruh file proyek ini, **kecuali** folder `node_modules` dan file `.env` lokal. Pastikan folder `public/build`, `public/uploads`, dan `vendor` sudah ikut ter-archive.
+---
 
-#### Langkah 2: Upload ke cPanel
-1. Buka **cPanel File Manager**.
-2. Buat folder baru di direktori root user (sejajar dengan `public_html`), misalnya folder `laravel_core`.
-3. Upload dan ekstrak file zip ke dalam folder `laravel_core/`.
-4. Pindahkan seluruh isi dari `laravel_core/public/` ke dalam folder `public_html/`.
+### Langkah 4: Upload File Proyek ke hPanel
 
-#### Langkah 3: Sesuaikan Path `index.php` di `public_html`
-Buka file `public_html/index.php` menggunakan code editor cPanel, ubah baris require menjadi:
-```php
-// Sesuaikan nama folder jika menggunakan nama selain laravel_core
-require __DIR__.'/../laravel_core/vendor/autoload.php';
+Anda dapat memilih salah satu dari 2 metode upload berikut:
 
-$app = require_once __DIR__.'/../laravel_core/bootstrap/app.php';
+#### Opsi 4A: Menggunakan Fitur Git Deployment hPanel (Paling Disarankan)
+1. Di menu hPanel, cari menu **Git** (di bawah menu *Advanced*).
+2. Masukkan konfigurasi berikut:
+   - **Repository**: `https://github.com/HamXD19/website-amiktaruna.git`
+   - **Branch**: `main`
+   - **Install directory**: `public_html` (atau kosongkan untuk root `public_html`).
+3. Klik **Create / Buat**. Hostinger akan otomatis meng-clone seluruh file proyek.
+4. Setiap ada pembaruan di GitHub ke depan, Anda cukup menekan tombol **Deploy** di halaman Git tersebut.
+
+#### Opsi 4B: Menggunakan File Manager / ZIP Manual
+1. Di komputer lokal, compress folder proyek menjadi file `.zip` (*kecuali folder `node_modules`*). Folder `vendor`, `public/build`, dan `public/uploads` wajib disertakan.
+2. Buka **File Manager** di hPanel.
+3. Masuk ke direktori `public_html/`.
+4. Upload file `.zip` tersebut lalu klik kanan -> **Extract**.
+5. Karena proyek ini sudah dilengkapi file `.htaccess` di root, seluruh request ke domain Anda akan otomatis diarahkan ke folder `public/` dengan aman tanpa perlu memindahkan file manual.
+
+> **Tips Keamanan Struktur (Opsional)**:
+> Jika ingin memisahkan core Laravel di luar `public_html`:
+> 1. Ekstrak file zip ke folder sejajar `public_html` (misal: `/home/u123456/laravel_core`).
+> 2. Pindahkan seluruh isi dari `laravel_core/public/` ke dalam `public_html/`.
+> 3. Buka `public_html/index.php`, sesuaikan 2 baris path:
+>    ```php
+>    require __DIR__.'/../laravel_core/vendor/autoload.php';
+>    $app = require_once __DIR__.'/../laravel_core/bootstrap/app.php';
+>    ```
+
+---
+
+### Langkah 5: Konfigurasi File .env
+1. Di **File Manager** hPanel, cari file `.env.example` lalu ubah namanya (**Rename**) menjadi `.env` (atau buat file baru bernama `.env`).
+2. Buka dan edit file `.env`, lalu sesuaikan baris-baris berikut:
+
+```env
+APP_NAME="AMIK Taruna Probolinggo"
+APP_ENV=production
+APP_KEY=base64:LerE6P8PCElVrIb7q+QfwcqI+UwxXSdu4Tse/efiwOA=
+APP_DEBUG=false
+APP_URL=https://nama-domain-anda.ac.id
+
+DB_CONNECTION=mysql
+DB_HOST=localhost
+DB_PORT=3306
+DB_DATABASE=u123456789_nama_database_hpanel
+DB_USERNAME=u123456789_nama_user_hpanel
+DB_PASSWORD=password_database_anda
+
+SESSION_DRIVER=file
+CACHE_STORE=file
+FILESYSTEM_DISK=public
 ```
-
-#### Langkah 4: Konfigurasi Database & File `.env`
-1. Di cPanel, buat Database MySQL baru (misal: `amik_profil`) dan buat Pengguna MySQL beserta password-nya.
-2. Berikan hak akses penuh (*ALL PRIVILEGES*) pengguna ke database tersebut.
-3. Buka file `.env` di dalam `laravel_core/` (jika belum ada, salin dari `.env.example`).
-4. Isi parameter berikut:
-   ```env
-   APP_NAME="AMIK Taruna Probolinggo"
-   APP_ENV=production
-   APP_KEY=base64:PASTE_APP_KEY_ANDA_DISINI
-   APP_DEBUG=false
-   APP_URL=https://nama-domain-kampus.ac.id
-
-   DB_CONNECTION=mysql
-   DB_HOST=127.0.0.1
-   DB_PORT=3306
-   DB_DATABASE=nama_cpanel_database
-   DB_USERNAME=nama_cpanel_user
-   DB_PASSWORD=password_database_anda
-
-   FILESYSTEM_DISK=public
-   SESSION_DRIVER=file
-   CACHE_STORE=file
-   ```
-
-#### Langkah 5: Import Database / Menjalankan Migrasi
-- **Jika memiliki akses SSH / Terminal di cPanel**:
-  ```bash
-  cd ~/laravel_core
-  php artisan migrate --force
-  ```
-- **Jika tanpa akses Terminal**:
-  Export database lokal `amikprofil2` via phpMyAdmin lokal (.sql), lalu buka **phpMyAdmin** di cPanel dan lakukan **Import** file `.sql` ke database yang telah dibuat.
-
-#### Langkah 6: Storage Link & Hak Akses Folder (Permissions)
-1. Berikan hak akses tulis (*Writable*):
-   - Folder `storage/` -> `chmod 775` (atau `755`)
-   - Folder `bootstrap/cache/` -> `chmod 775`
-   - Folder `public_html/uploads/` -> `chmod 775`
-2. **Storage Link**:
-   - Jika ada Terminal cPanel: jalankan `php artisan storage:link`.
-   - Atau pastikan folder `uploads` berada di `public_html/uploads` agar gambar berita, logo, brosur PMB, dan dokumen prodi dapat diakses langsung oleh browser.
+3. Klik **Save & Close**.
 
 ---
 
-### Opsi 2: VPS Linux (Ubuntu / Debian)
+### Langkah 6: Import Data / Migrasi Database
 
-#### 1. Masuk ke Server & Clone / Upload
+- **Cara 1 (Via phpMyAdmin hPanel - Paling Mudah)**:
+  1. Di hPanel, buka menu **Databases** -> klik tombol **Enter phpMyAdmin** pada database yang baru dibuat.
+  2. Buka tab **Import**.
+  3. Upload file backup database `.sql` lokal Anda, lalu klik **Go / Kirim**.
+
+- **Cara 2 (Via SSH / Terminal hPanel)**:
+  1. Buka menu **SSH Access** di hPanel, aktifkan dan buka terminal SSH.
+  2. Masuk ke direktori proyek dan jalankan migrasi:
+     ```bash
+     cd ~/public_html
+     php artisan migrate --force
+     ```
+
+---
+
+### Langkah 7: Hak Akses Folder & Storage Link
+1. **Hak Akses Folder (Permissions)**:
+   Di File Manager hPanel, pastikan folder-folder berikut memiliki izin **775** atau **755**:
+   - `storage/` beserta seluruh subfoldernya.
+   - `bootstrap/cache/`
+   - `public/uploads/`
+2. **Storage Link**:
+   - Jika memiliki akses SSH hPanel, jalankan:
+     ```bash
+     php artisan storage:link
+     ```
+   - Seluruh file gambar berita, logo, foto dosen terkompresi, dan brosur PMB telah tersimpan di direktori `public/uploads/` sehingga dapat langsung diakses publik secara aman.
+
+---
+
+## 🌐 Panduan Deploy Alternatif (cPanel & VPS)
+
+### Shared Hosting / cPanel
+1. Upload zip proyek ke direktori `laravel_core` di root home user (sejajar dengan `public_html`).
+2. Pindahkan seluruh isi `laravel_core/public/` ke dalam `public_html/`.
+3. Buka `public_html/index.php`, sesuaikan path:
+   ```php
+   require __DIR__.'/../laravel_core/vendor/autoload.php';
+   $app = require_once __DIR__.'/../laravel_core/bootstrap/app.php';
+   ```
+4. Buat database di **MySQL Databases** cPanel dan sesuaikan file `.env`.
+5. Import database melalui **phpMyAdmin** cPanel.
+
+### VPS Linux (Ubuntu / Nginx)
 ```bash
 cd /var/www/
-git clone <url-repo> profil_amik
+git clone https://github.com/HamXD19/website-amiktaruna.git profil_amik
 cd profil_amik
-```
-
-#### 2. Install Dependency & Setup Environtment
-```bash
 composer install --optimize-autoloader --no-dev
-cp .env.example .env
-nano .env # Sesuaikan DB, APP_URL, dan APP_KEY
-php artisan key:generate
+cp .env.example .env # Sesuaikan DB_* dan APP_KEY
 php artisan migrate --force
 php artisan storage:link
-```
-
-#### 3. Permission Direktori
-```bash
-sudo chown -R www-data:www-data /var/www/profil_amik/storage /var/www/profil_amik/bootstrap/cache /var/www/profil_amik/public/uploads
-sudo chmod -R 775 /var/www/profil_amik/storage /var/www/profil_amik/bootstrap/cache /var/www/profil_amik/public/uploads
-```
-
-#### 4. Konfigurasi Nginx VirtualHost
-```nginx
-server {
-    listen 80;
-    server_name amiktaruna.ac.id www.amiktaruna.ac.id;
-    root /var/www/profil_amik/public;
-
-    add_header X-Frame-Options "SAMEORIGIN";
-    add_header X-Content-Type-Options "nosniff";
-
-    index index.php;
-
-    charset utf-8;
-
-    client_max_body_size 35M;
-
-    location / {
-        try_files $uri $uri/ /index.php?$query_string;
-    }
-
-    location = /favicon.ico { access_log off; log_not_found off; }
-    location = /robots.txt  { access_log off; log_not_found off; }
-
-    error_page 404 /index.php;
-
-    location ~ \.php$ {
-        fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
-        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
-        include fastcgi_params;
-    }
-
-    location ~ /\.(?!well-known).* {
-        deny all;
-    }
-}
-```
-
-#### 5. Optimasi Cache Produksi
-```bash
+sudo chown -R www-data:www-data storage bootstrap/cache public/uploads
+sudo chmod -R 775 storage bootstrap/cache public/uploads
 php artisan optimize
 ```
 
 ---
 
-## 📁 Pengaturan PHP & Batas Upload Dokumen
+## 🔐 Arsitektur Akun & Hak Akses
 
-Aplikasi mendukung pengunggahan brosur PMB dan dokumen akademik (Kurikulum, RPS, SK Akreditasi) berupa `.pdf, .doc, .docx` hingga ukuran **30 MB**.
+Sistem menggunakan pembagian peran (*Role-Based Access Control*):
 
-Pastikan konfigurasi `php.ini` pada hosting disesuaikan:
-```ini
-upload_max_filesize = 32M
-post_max_size = 36M
-memory_limit = 256M
-max_execution_time = 300
-```
-*(Di cPanel, pengaturan ini dapat diubah melalui menu **Select PHP Version** -> **Options**).*
+### 1. Super Admin (Tingkat Tertinggi)
+- Akses penuh ke seluruh modul sistem.
+- **Menu Eksklusif**:
+  - **Kelola Pengguna (`/admin/users`)**: Menambahkan akun baru, mengganti kata sandi, dan memilih menu apa saja yang diizinkan untuk setiap akun staf.
+  - **Log Aktivitas (`/admin/activity-logs`)**: Memantau audit trail lengkap (login, logout, waktu, aksi CREATE/UPDATE/DELETE, modul, IP address, dan browser user-agent).
+
+> **Akun Bawaan (Default):**
+> - **Email**: `humas.amiktarunaprobolinggo@gmail.com` atau `m.irhamauliaq@gmail.com`
+> - **Halaman Login**: `/login` (Pendaftaran publik `/register` dinonaktifkan demi keamanan).
+
+### 2. Admin Staf (Dinamis Berdasarkan Izin)
+- Dibuat dan dikonfigurasi langsung oleh Super Admin.
+- Menu pada sidebar yang tidak diizinkan akan disembunyikan secara otomatis.
+- Akses URL langsung ke menu tanpa izin otomatis diblokir (`403 Forbidden`) dan dicatat pada Activity Log.
 
 ---
 
-## 🌟 Daftar Fitur Sistem
+## 🌟 Daftar Fitur & Modul Utama
 
-1. **Penerimaan Mahasiswa Baru (PMB) - 100% Full Dinamis**:
+1. **PMB (Penerimaan Mahasiswa Baru) - 100% Full Dinamis**:
    - Status live gelombang pendaftaran (buka/tutup, tanggal, kuota beasiswa).
    - Pengaturan Jalur Masuk (Reguler, Prestasi, KIP-K, Pindahan).
-   - Tahapan alur 4 langkah pendaftaran mahasiswa baru.
-   - Checklist berkas persyaratan calon mahasiswa baru.
-   - Dynamic FAQ PMB (Accordion interaktif).
-   - Upload & download berkas brosur PMB (maksimal 30MB).
-   - Integrasi tombol WhatsApp Helpdesk PMB langsung ke nomor admin.
+   - 4 Tahapan alur pendaftaran dan checklist berkas persyaratan.
+   - Accordion FAQ interaktif & upload brosur PMB (hingga 30MB).
+   - Tombol live WhatsApp Helpdesk panitia PMB.
 2. **Akademik & Program Studi**:
-   - Manajemen Program Studi dengan gelar resmi lulusan: **A.Md.** (Ahli Madya D3).
+   - Profil Program Studi dengan gelar resmi **A.Md.**
    - Profil Lulusan, Fasilitas Prodi, dan Dokumen Pedoman/Kurikulum/RPS.
    - Sertifikat dan data Akreditasi Institusi & Prodi.
-3. **Layanan PPKS (Pencegahan & Penanganan Kekerasan Seksual)**:
-   - Form pelaporan online anonim & rahasia bagi korban/saksi kekerasan seksual.
-   - Sistem auto-generate **Kode Tiket Pelaporan** (misal: `PPKS-202609-XXXX`).
-   - Manajemen pelaporan di panel admin dengan status investigasi & catatan penanganan petugas.
-4. **Lembaga Mutu Kampus**:
+3. **Layanan Satgas PPKS (Pencegahan & Penanganan Kekerasan Seksual)**:
+   - Formulir pengaduan online anonim & aman dengan nomor tiket otomatis (`PPKS-YYYYMM-XXXX`).
+   - Panel monitoring kasus dan catatan investigasi petugas.
+4. **Lembaga & Dokumen Mutu**:
    - Pusat Penjaminan Mutu (PPM / SPMI) & Dokumen Mutu.
    - Lembaga Penelitian & Pengabdian Masyarakat (LPPM) & Portal Jurnal Riset.
-5. **Konten & Publikasi**:
+5. **Publikasi & Optimasi Media**:
    - Portal Berita Kampus & Berita PMB dengan Master Kategori Universal.
-   - Direktori Layanan Mahasiswa & Fasilitas Kampus.
-   - Direktori Dosen & Profil Tenaga Pengajar.
+   - Direktori Dosen & Profil Tenaga Pengajar (dilengkapi auto-kompresi gambar cerdas WebP/JPEG, menghemat beban server hingga 95%).
    - Tracer Study Alumni & Buku Kritik Saran Publik.
-6. **Sistem Keamanan & Log Aktivitas (Audit Trail)**:
-   - Manajemen Pengguna oleh Super Admin.
-   - Pembagian hak akses per menu secara granular.
-   - Pencatatan otomatis waktu, aksi, modul, nama user, alamat IP, dan perangkat.
 
 ---
 
-## 🛠️ Troubleshooting & Solusi Kendala Hosting
+## 🛠️ Troubleshooting Kendala Hosting di Hostinger
 
-1. **Error `500 Server Error` saat pertama kali dibuka**:
-   - Jalankan `php artisan key:generate` jika `APP_KEY` di `.env` masih kosong.
-   - Periksa izin folder `storage/` dan `bootstrap/cache/` (harus `775` atau writable).
-   - Buka file `storage/logs/laravel.log` untuk melihat pesan error spesifik.
-2. **Error `403 Forbidden` saat mengakses menu admin tertentu**:
-   - Akun Anda memiliki peran *Admin Staf* dan belum diberikan izin oleh Super Admin untuk menu tersebut. Hubungi Super Admin untuk mencentang hak akses menu Anda di `/admin/users`.
-3. **Gambar / File upload tidak tampil (404 Not Found)**:
-   - Pastikan folder `public/uploads` telah di-upload ke server dan memiliki hak akses baca/tulis (`755` atau `775`).
-   - Pastikan path `APP_URL` di `.env` sudah sesuai dengan domain atau subdomain hosting Anda (misal `https://amiktaruna.ac.id`).
-4. **Perubahan data tidak muncul / Cache usang**:
-   - Jalankan perintah berikut di terminal:
-     ```bash
-     php artisan optimize:clear
-     ```
-   - Atau hapus file cache manual di folder `bootstrap/cache/` (kecuali `.gitignore`).
+| Kendala | Penyebab | Solusi |
+|---|---|---|
+| **500 Server Error** | `APP_KEY` kosong atau permission `storage/` terkunci | Buka `.env`, pastikan `APP_KEY` sudah terisi string base64. Pastikan folder `storage/` dan `bootstrap/cache/` berstatus writable (`chmod 775` atau `755`). |
+| **Error Database Connection (2002)** | Kredensial database di `.env` salah | Di Hostinger, `DB_HOST` harus diisi `localhost` atau `127.0.0.1`. Pastikan nama database dan username menyertakan prefix akun Hostinger Anda (misal `u123456_amik`). |
+| **Halaman sub-menu 404 Not Found** | Modul Apache Rewrite belum berjalan | Pastikan file `.htaccess` di root dan di dalam folder `public/` sudah ter-upload dengan benar. |
+| **Gambar Berita / Dosen Tidak Muncul** | Folder upload belum berada di webroot | Pastikan folder `public/uploads` ada dan memiliki hak akses baca `755`. Pastikan `APP_URL` di `.env` sesuai dengan domain utama hosting Anda. |
+| **Gagal Upload Berkas Brosur / Dokumen** | Batas ukuran upload PHP di hosting terlalu kecil | Naikkan `upload_max_filesize = 32M` dan `post_max_size = 36M` pada menu **PHP Configuration** -> tab **PHP Options** di hPanel. |
+| **Akses Ditolak (403 Forbidden) di Panel Admin** | Akun staf belum diberi izin menu terkait | Login sebagai Super Admin, buka menu **Kelola Pengguna (`/admin/users`)**, lalu centang checklist izin menu untuk akun staf tersebut. |
 
 ---
 
-**Dikembangkan untuk**: AMIK Taruna Probolinggo  
-**Lisensi**: Hak Cipta Dilindungi & Terlisensi untuk AMIK Taruna Probolinggo.
+**Hak Cipta © 2026 AMIK Taruna Probolinggo**  
+*Dikembangkan untuk kemajuan digitalisasi informasi akademik dan pelayanan kampus.*

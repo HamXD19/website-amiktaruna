@@ -1,6 +1,8 @@
 *.log
 *.rar
 *.zip
+*.bak
+*.tmp
 .DS_Store
 .env
 .env.backup
@@ -24,3 +26,5 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+design.md
+PANDUAN_HOSTING_DOSEN.md
