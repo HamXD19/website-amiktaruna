@@ -1,0 +1,369 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        --color-brand-50: #f0fdf4;
+        --color-brand-100: #dcfce7;
+        --color-brand-600: #16a34a;
+        --color-brand-700: #14532d;
+        --color-brand-800: #0f3d24;
+        --color-brand-900: #0a2e1e;
+        --color-brand-950: #051f14;
+        --color-accent-gold: #f59e0b;
+        --color-accent-amber: #d97706;
+    }
+
+    html {
+        scroll-behavior: smooth;
+        font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+        background: radial-gradient(circle at 50% 15%, #0e4b2d 0%, #07351f 45%, #031d11 100%) fixed !important;
+        background-color: #031d11 !important;
+        color: #f1f5f9;
+        overflow-x: hidden;
+        position: relative;
+        min-height: 100vh;
+    }
+}
+
+/* ============================================================
+   CAMPUS INTERACTIVE NETWORK CONSTELLATION (PLEXUS) BACKGROUND
+   AMIK Taruna Probolinggo
+   GPU 60 FPS HTML5 Canvas Engine
+   ============================================================ */
+
+#campus-plexus-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 0;
+}
+
+#navbar-app {
+    position: relative;
+    z-index: 100 !important;
+}
+
+#app,
+main,
+.page-content-wrapper {
+    position: relative;
+    z-index: 1;
+}
+
+/* 
+   Transparent section background wrappers for seamless canvas blending
+*/
+.min-h-screen,
+section.bg-\[\#fbfcfb\],
+section.bg-slate-50,
+section.bg-white,
+section[class*="bg-white"],
+section[class*="bg-slate-"],
+section[class*="bg-emerald-"] {
+    background-color: transparent !important;
+}
+
+/* 
+   ============================================================
+   OPSI 1: MODERN TECH DARK / EMERALD GLASS SURFACE DESIGN
+   Unified across all pages: Vue components & Blade views
+   ============================================================ 
+*/
+
+/* 1. Emerald Glass Surface Cards */
+.card:not(.journal-reading-sheet),
+.content-card:not(.journal-reading-sheet),
+.layanan-card,
+.lppm-card,
+.lppm-deskripsi-card,
+.card-kritiksaran,
+.dosen-profile-card,
+.pmb-show-card,
+.news-card-grid,
+main .bg-white:not(.absolute):not(.fixed):not(.journal-reading-sheet):not(.journal-sheet-inner):not(.layanan-logo):not(.lppm-logo):not(.alert-empty):not(.btn-portal),
+main .rounded-2xl.bg-white:not(.absolute):not(.fixed):not(.journal-reading-sheet):not(.journal-sheet-inner),
+main .rounded-3xl.bg-white:not(.absolute):not(.fixed):not(.journal-reading-sheet):not(.journal-sheet-inner),
+main [class*="bg-slate-50"]:not(.journal-reading-sheet):not(.journal-sheet-inner):not(span):not(i),
+main [class*="bg-slate-100"]:not(.journal-reading-sheet):not(.journal-sheet-inner):not(span):not(i),
+main [class*="bg-gray-50"]:not(.journal-reading-sheet):not(.journal-sheet-inner):not(span):not(i),
+main [class*="bg-gray-100"]:not(.journal-reading-sheet):not(.journal-sheet-inner):not(span):not(i),
+main [class*="bg-[#fbfcfb]"]:not(.journal-reading-sheet):not(.journal-sheet-inner),
+main [class*="bg-[#f4f7fb]"]:not(.journal-reading-sheet):not(.journal-sheet-inner),
+.berita-section,
+.kategori-header,
+.berita-card {
+    background: rgba(8, 38, 24, 0.78) !important;
+    backdrop-filter: blur(16px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
+    border: 1px solid rgba(74, 222, 128, 0.18) !important;
+    box-shadow: 0 12px 36px -4px rgba(2, 20, 12, 0.45), 0 4px 12px -2px rgba(0, 0, 0, 0.3) !important;
+    color: #f1f5f9 !important;
+}
+
+/* 1.1 Badges, Chips & Meta Pills (Fixes white pill bug and prevents light badges) */
+main span[class*="bg-slate-"]:not(.journal-reading-sheet *),
+main span[class*="bg-gray-"]:not(.journal-reading-sheet *),
+main span[class*="bg-brand-50"]:not(.journal-reading-sheet *),
+main span[class*="bg-brand-100"]:not(.journal-reading-sheet *),
+main span[class*="bg-emerald-50"]:not(.journal-reading-sheet *),
+main span[class*="bg-blue-50"]:not(.journal-reading-sheet *),
+main span[class*="bg-amber-50"]:not(.journal-reading-sheet *),
+main span[class*="bg-rose-50"]:not(.journal-reading-sheet *),
+main a[class*="bg-slate-"]:not(.journal-reading-sheet *),
+main a[class*="bg-gray-"]:not(.journal-reading-sheet *),
+main a[class*="bg-brand-50"]:not(.journal-reading-sheet *),
+main a[class*="bg-brand-100"]:not(.journal-reading-sheet *) {
+    background: rgba(4, 28, 17, 0.78) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    border: 1px solid rgba(74, 222, 128, 0.28) !important;
+    color: #86efac !important;
+}
+
+main span[class*="bg-slate-"]:not(.journal-reading-sheet *) i,
+main span[class*="bg-gray-"]:not(.journal-reading-sheet *) i,
+main span[class*="bg-brand-"]:not(.journal-reading-sheet *) i,
+main a[class*="bg-slate-"]:not(.journal-reading-sheet *) i,
+main a[class*="bg-gray-"]:not(.journal-reading-sheet *) i,
+main a[class*="bg-brand-"]:not(.journal-reading-sheet *) i,
+main a[class*="bg-slate-"]:not(.journal-reading-sheet *) span,
+main a[class*="bg-gray-"]:not(.journal-reading-sheet *) span {
+    color: #86efac !important;
+}
+
+main a[class*="bg-slate-"]:not(.journal-reading-sheet *):hover,
+main a[class*="bg-gray-"]:not(.journal-reading-sheet *):hover,
+main a[class*="bg-brand-50"]:not(.journal-reading-sheet *):hover,
+main a[class*="bg-brand-100"]:not(.journal-reading-sheet *):hover {
+    background: rgba(12, 48, 30, 0.92) !important;
+    border-color: rgba(74, 222, 128, 0.45) !important;
+    color: #ffffff !important;
+}
+
+/* 2. Glass Hover State */
+.berita-card:hover,
+.news-card-grid:hover,
+main .rounded-2xl.bg-white:not(.absolute):not(.fixed):not(.journal-reading-sheet):not(.journal-sheet-inner):hover,
+main .rounded-3xl.bg-white:not(.absolute):not(.fixed):not(.journal-reading-sheet):not(.journal-sheet-inner):hover,
+main [class*="bg-slate-50"]:not(.journal-reading-sheet):not(.journal-sheet-inner):not(span):not(i):hover {
+    background: rgba(12, 48, 30, 0.88) !important;
+    border-color: rgba(74, 222, 128, 0.35) !important;
+    box-shadow: 0 16px 40px -4px rgba(74, 222, 128, 0.15), 0 8px 20px -2px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* 3. High-Contrast Text Color Adjustments inside Glass Cards (excluding pure white journal reading sheets) */
+main .text-slate-900:not(.journal-reading-sheet *),
+main .text-\[\#0f172a\]:not(.journal-reading-sheet *),
+main .text-\[\#17201A\]:not(.journal-reading-sheet *),
+main .text-dark:not(.journal-reading-sheet *),
+main h1:not(.journal-reading-sheet *),
+main h2:not(.journal-reading-sheet *),
+main h3:not(.journal-reading-sheet *),
+main h4:not(.journal-reading-sheet *),
+main h5:not(.journal-reading-sheet *),
+main h6:not(.journal-reading-sheet *),
+.card:not(.journal-reading-sheet) h1,
+.card:not(.journal-reading-sheet) h2,
+.card:not(.journal-reading-sheet) h3,
+.card:not(.journal-reading-sheet) h4,
+.card:not(.journal-reading-sheet) h5,
+.card:not(.journal-reading-sheet) h6,
+.berita-heading,
+.kategori-title,
+.berita-title {
+    color: #ffffff !important;
+}
+
+main .text-slate-800:not(.journal-reading-sheet *),
+main .text-slate-700:not(.journal-reading-sheet *) {
+    color: #e2e8f0 !important;
+}
+
+main .text-slate-600:not(.journal-reading-sheet *),
+main .text-slate-500:not(.journal-reading-sheet *),
+main .text-\[\#647067\]:not(.journal-reading-sheet *),
+main .text-muted:not(.journal-reading-sheet *),
+.berita-subheading,
+.kategori-sub,
+.berita-desc {
+    color: #cbd5e1 !important;
+}
+
+main .text-slate-400:not(.journal-reading-sheet *) {
+    color: #94a3b8 !important;
+}
+
+/* 4. Brand Greens within Dark Mode */
+main .text-brand-700,
+main .text-brand-800,
+main .text-\[\#166534\],
+main .text-\[\#14532D\] {
+    color: #4ade80 !important;
+}
+
+main .bg-brand-50,
+main .bg-brand-100,
+main .bg-\[\#f0fdf4\],
+main .bg-\[\#dcfce7\] {
+    background-color: rgba(34, 197, 94, 0.15) !important;
+    border-color: rgba(74, 222, 128, 0.25) !important;
+    color: #86efac !important;
+}
+
+main .border-slate-200,
+main .border-slate-100,
+main .border-\[\#dcfce7\],
+main .border-\[\#bbf7d0\],
+main .border-light-subtle {
+    border-color: rgba(74, 222, 128, 0.14) !important;
+}
+
+/* Dark Glass Form Controls for Blade & Vue forms */
+.card .form-control,
+.card .form-select,
+.card-kritiksaran .form-control,
+main .form-control:not(.search-input-white) {
+    background: rgba(4, 24, 15, 0.85);
+    border: 1px solid rgba(74, 222, 128, 0.22);
+    color: #ffffff;
+}
+
+.card .form-control:focus,
+.card .form-select:focus,
+.card-kritiksaran .form-control:focus,
+main .form-control:not(.search-input-white):focus {
+    background: rgba(6, 32, 20, 0.95);
+    border-color: #4ade80;
+    color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.25);
+}
+
+/* 5. Glass Input / Search Box */
+.search-box {
+    background: rgba(8, 38, 24, 0.85) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border: 1px solid rgba(74, 222, 128, 0.25) !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
+}
+
+.search-box input {
+    background: transparent !important;
+    color: #ffffff !important;
+}
+
+.search-box input::placeholder {
+    color: #64748b !important;
+}
+
+/* 6. Navbar Glass & Priority */
+header {
+    position: fixed !important;
+    z-index: 9999 !important;
+}
+
+/* 
+   ============================================================
+   SOLUSI A: JOURNALISTIC WHITE EDITORIAL READING SHEET
+   Pure white reading canvas for long-form news reading comfort
+   over the animated emerald campus universe background.
+   ============================================================ 
+*/
+.journal-reading-sheet,
+.journal-reading-sheet.bg-white {
+    background-color: #ffffff !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid #e2e8f0 !important;
+}
+
+.journal-reading-sheet h1,
+.journal-reading-sheet h2,
+.journal-reading-sheet h3,
+.journal-reading-sheet h4,
+.journal-reading-sheet p,
+.journal-reading-sheet span,
+.journal-reading-sheet div,
+.journal-reading-sheet .text-slate-900,
+.journal-reading-sheet .text-slate-800,
+.journal-reading-sheet .text-slate-700 {
+    color: inherit;
+}
+
+.journal-reading-sheet p {
+    color: #1e293b !important;
+}
+
+.journal-reading-sheet .text-slate-900 {
+    color: #0f172a !important;
+}
+
+.journal-reading-sheet .text-slate-700 {
+    color: #334155 !important;
+}
+
+.journal-reading-sheet .text-slate-600,
+.journal-reading-sheet .text-slate-500 {
+    color: #64748b !important;
+}
+
+.journal-reading-sheet .text-slate-400 {
+    color: #94a3b8 !important;
+}
+
+.journal-reading-sheet .border-slate-100,
+.journal-reading-sheet .border-slate-200 {
+    border-color: #e2e8f0 !important;
+}
+
+.journal-reading-sheet .bg-slate-50 {
+    background-color: #f8fafc !important;
+}
+
+.journal-reading-sheet .bg-slate-100 {
+    background-color: #f1f5f9 !important;
+}
+
+/* 
+   ============================================================
+   MOBILE VIEW & BOTTOM NAVIGATION DOCK OPTIMIZATION (PLN SENGKANG STYLE)
+   ============================================================ 
+*/
+@media (max-width: 1023px) {
+    /* Prevent content from being hidden behind fixed bottom navigation dock */
+    body,
+    main {
+        padding-bottom: 5.5rem !important;
+    }
+
+    /* Polish mobile cards for comfortable touch interaction */
+    .card,
+    .layanan-card,
+    .lppm-card,
+    .lppm-deskripsi-card,
+    .card-kritiksaran,
+    .dosen-profile-card,
+    .pmb-show-card,
+    .news-card-grid {
+        border-radius: 1.25rem !important;
+    }
+
+    /* Prevent horizontal overflow on mobile screens */
+    html, body {
+        overflow-x: hidden !important;
+        max-width: 100vw !important;
+    }
+}
+

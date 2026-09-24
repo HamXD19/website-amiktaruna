@@ -1,0 +1,903 @@
+@extends('layouts.main')
+
+@section('content')
+
+<style>
+    /* ================================================
+       FONT FIX (JANGAN PAKAI *)
+    ================================================ */
+    body {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    /* ================================================
+       ANTI OVERFLOW (FIX SIDEBAR MOBILE SHIFT)
+    ================================================ */
+    html, body {
+        overflow-x: hidden;
+    }
+
+    /* ================================================
+       HERO SECTION
+    ================================================ */
+    .hero-section {
+        padding: 60px 0 40px;
+        text-align: center;
+    }
+
+    .hero-section .hero-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(25,135,84,0.10);
+        color: #198754;
+        font-size: 0.8rem;
+        font-weight: 700;
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+        padding: 6px 18px;
+        border-radius: 40px;
+        border: 1px solid rgba(25,135,84,0.20);
+        margin-bottom: 24px;
+    }
+
+    .hero-section h1 {
+        font-size: 3rem;
+        font-weight: 800;
+        line-height: 1.15;
+        letter-spacing: -1px;
+        color: #0f1f14;
+    }
+
+    .hero-section .hero-lead {
+        font-size: 1.1rem;
+        color: #6b7280;
+        max-width: 540px;
+        margin: 18px auto 0;
+        line-height: 1.75;
+    }
+
+    .hero-section .hero-actions {
+        margin-top: 36px;
+        display: flex;
+        justify-content: center;
+        gap: 14px;
+        flex-wrap: wrap;
+    }
+
+    .btn-hero-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #198754;
+        color: #fff;
+        font-size: 0.95rem;
+        font-weight: 700;
+        padding: 14px 30px;
+        border-radius: 50px;
+        border: none;
+        text-decoration: none;
+        box-shadow: 0 6px 20px rgba(25,135,84,0.28);
+        transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-hero-primary:hover {
+        background: #136940;
+        color: #fff;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 26px rgba(25,135,84,0.35);
+    }
+
+    .btn-hero-secondary {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #fff7ed;
+        color: #c27d00;
+        font-size: 0.95rem;
+        font-weight: 700;
+        padding: 14px 30px;
+        border-radius: 50px;
+        border: 2px solid #ff9f1c;
+        text-decoration: none;
+        transition: background 0.2s, color 0.2s, transform 0.2s;
+    }
+
+    .btn-hero-secondary:hover {
+        background: #ff9f1c;
+        color: #fff;
+        transform: translateY(-2px);
+    }
+
+    /* ================================================
+       SECTION LABEL
+    ================================================ */
+    .section-label {
+        display: inline-block;
+        font-size: 0.75rem;
+        font-weight: 800;
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
+        color: #198754;
+        background: rgba(25,135,84,0.08);
+        padding: 5px 14px;
+        border-radius: 40px;
+        margin-bottom: 12px;
+    }
+
+    .section-title {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #0f1f14;
+        letter-spacing: -0.5px;
+        margin-bottom: 6px;
+    }
+
+    .section-sub {
+        font-size: 0.95rem;
+        color: #6b7280;
+    }
+
+    /* ================================================
+       MAP
+    ================================================ */
+    .map-card {
+        border: none;
+        border-radius: 28px;
+        overflow: hidden;
+        box-shadow: 0 12px 40px rgba(0,0,0,0.09);
+    }
+
+    .map-header {
+        background: linear-gradient(135deg, #198754, #0f5132);
+        color: white;
+        padding: 28px 32px;
+    }
+
+    .map-header h3 {
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin-bottom: 6px;
+    }
+
+    .map-header p {
+        margin: 0;
+        font-size: 0.9rem;
+        opacity: 0.85;
+    }
+
+    .map-frame iframe {
+        width: 100%;
+        height: 420px;
+        border: 0;
+        display: block;
+        max-width: 100%;
+    }
+
+    /* ================================================
+       BERITA
+    ================================================ */
+    .berita-card {
+        border: none;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+        transition: transform 0.25s, box-shadow 0.25s;
+        height: 100%;
+        background: #fff;
+    }
+
+    .berita-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 36px rgba(0,0,0,0.12);
+        background: #fff;
+    }
+
+    .berita-card img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        display: block;
+    }
+
+    .berita-card .card-body {
+        padding: 22px;
+    }
+
+    .berita-card .berita-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #0f1f14;
+        line-height: 1.45;
+        margin-bottom: 8px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .berita-card .berita-date {
+        font-size: 0.8rem;
+        color: #9ca3af;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        margin-bottom: 16px;
+    }
+
+    .btn-baca {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #e6f5ec;
+        color: #198754;
+        font-size: 0.85rem;
+        font-weight: 700;
+        padding: 8px 20px;
+        border-radius: 50px;
+        text-decoration: none;
+        transition: background 0.2s, color 0.2s;
+    }
+
+    .btn-baca:hover {
+        background: #198754;
+        color: #fff;
+    }
+
+    /* ================================================
+       TENTANG
+    ================================================ */
+    .tentang-section {
+        background: linear-gradient(135deg, #0f5132, #198754);
+        color: white;
+        border-radius: 32px;
+        margin: 48px 0;
+        padding: 64px 0;
+        box-shadow: 0 20px 50px rgba(15,81,50,0.25);
+    }
+
+    .tentang-section .tentang-title {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #fff;
+        letter-spacing: -0.5px;
+    }
+
+    .tentang-section .tentang-desc {
+        font-size: 1rem;
+        line-height: 1.8;
+        opacity: 0.88;
+        max-width: 680px;
+        margin: 16px auto 0;
+    }
+
+    .visimisi-card {
+        background: #fff;
+        border-radius: 24px;
+        padding: 32px;
+        height: 100%;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    }
+
+    .visimisi-card .vm-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        background: #e6f5ec;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 18px;
+    }
+
+    .visimisi-card .vm-icon i {
+        font-size: 1.2rem;
+        color: #198754;
+    }
+
+    .visimisi-card h4 {
+        font-size: 1.2rem;
+        font-weight: 800;
+        color: #198754;
+        margin-bottom: 12px;
+    }
+
+    .visimisi-card p {
+        font-size: 0.95rem;
+        color: #374151;
+        line-height: 1.75;
+        margin: 0;
+    }
+/* ==============================
+DOSEN HOME MODERN
+============================== */
+
+.org-layer{
+
+display:flex;
+
+justify-content:center;
+
+flex-wrap:wrap;
+
+gap:28px;
+
+}
+
+.org-connector{
+
+width:4px;
+
+height:55px;
+
+background:linear-gradient(
+180deg,
+#16a34a,
+#86efac
+);
+
+margin:0 auto 40px;
+
+border-radius:50px;
+
+}
+
+.org-card{
+
+width:250px;
+
+background:#fff;
+
+border-radius:28px;
+
+padding:26px;
+
+text-align:center;
+
+box-shadow:
+0 12px 30px rgba(0,0,0,.07);
+
+transition:.3s ease;
+
+position:relative;
+
+overflow:hidden;
+
+}
+
+.org-card::before{
+
+content:'';
+
+position:absolute;
+
+top:0;
+
+left:0;
+
+right:0;
+
+height:6px;
+
+background:linear-gradient(
+90deg,
+#16a34a,
+#4ade80
+);
+
+}
+
+.org-card:hover{
+
+transform:translateY(-8px);
+
+box-shadow:
+0 18px 45px rgba(0,0,0,.12);
+
+}
+
+.org-photo{
+
+width:105px;
+
+height:105px;
+
+border-radius:50%;
+
+object-fit:cover;
+
+border:5px solid #dcfce7;
+
+padding:4px;
+
+margin-bottom:18px;
+
+box-shadow:
+0 8px 22px rgba(22,163,74,.18);
+
+}
+
+.org-card h5{
+
+font-size:1rem;
+
+font-weight:800;
+
+color:#111827;
+
+margin-bottom:12px;
+
+line-height:1.5;
+
+}
+
+.org-card span{
+
+display:inline-block;
+
+background:#ecfdf5;
+
+color:#15803d;
+
+font-size:.82rem;
+
+font-weight:700;
+
+padding:9px 18px;
+
+border-radius:40px;
+
+line-height:1.5;
+
+}
+
+@media(max-width:768px){
+
+.org-card{
+
+width:100%;
+
+}
+
+.org-connector{
+
+display:none;
+
+}
+
+}    /* ================================================
+       RESPONSIVE FIX SIDEBAR SAFE
+    ================================================ */
+    @media (max-width: 768px) {
+        .hero-section h1 { font-size: 2rem; }
+        .section-title { font-size: 1.6rem; }
+        .tentang-section { border-radius: 20px; margin: 32px 0; padding: 48px 0; }
+    }
+</style>
+
+{{-- ================================================
+     HERO
+================================================ --}}
+<div class="hero-section" data-aos="fade-up">
+    <div class="hero-eyebrow">
+        <i class="fas fa-university fa-xs"></i>
+        Kampus Teknologi Digital
+    </div>
+    <h1>AMIK Taruna</h1>
+    <p class="hero-lead">Kampus Teknologi &amp; Inovasi Digital Masa Depan — mencetak profesional siap kerja di era digital.</p>
+    <div class="hero-actions">
+        <a href="https://youtu.be/jX-3uNcwxr4?si=AaiTL_SDjhx-eM5Q"
+           target="_blank" rel="noopener"
+           class="btn-hero-primary">
+            <i class="fas fa-play-circle"></i>
+            Profil Kampus
+        </a>
+        <a href="/berita" class="btn-hero-secondary">
+            <i class="fas fa-newspaper"></i>
+            Baca Berita
+        </a>
+    </div>
+</div>
+
+{{-- ================================================
+     MAP
+================================================ --}}
+<section class="container mt-5" data-aos="fade-up">
+    <div class="text-center mb-4">
+        <span class="section-label">Lokasi</span>
+        <h2 class="section-title">Temukan Kami</h2>
+        <p class="section-sub">AMIK Taruna — mudah dijangkau dari berbagai penjuru kota</p>
+    </div>
+    <div class="map-card">
+        <div class="map-header">
+            <h3><i class="fas fa-map-marker-alt me-2"></i>Lokasi AMIK Taruna</h3>
+            <p>Klik peta untuk membuka di Google Maps</p>
+        </div>
+        <div class="map-frame">
+            <iframe
+                src="https://www.google.com/maps?q=AMIK%20Taruna%20Probolinggo&output=embed"
+                allowfullscreen=""
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
+        </div>
+    </div>
+</section>
+
+{{-- ================================================
+     BERITA
+================================================ --}}
+<section class="container mt-5 pt-2">
+
+    <div class="d-flex align-items-end justify-content-between mb-4 flex-wrap gap-2"
+         data-aos="fade-up">
+
+        <div>
+            <span class="section-label">Info Terkini</span>
+            <h2 class="section-title mb-0">Berita Terbaru</h2>
+        </div>
+
+        <a href="/berita" class="btn-baca" style="padding:10px 22px;">
+            Semua Berita
+            <i class="fas fa-arrow-right fa-sm"></i>
+        </a>
+
+    </div>
+
+    {{-- =========================================
+         FUNCTION CARD
+    ========================================== --}}
+
+@php
+function renderBeritaCard($items) {
+    foreach($items->take(3) as $b) {
+@endphp
+
+<div class="col-md-4">
+
+    <div class="berita-card h-100 overflow-hidden">
+
+        {{-- MEDIA --}}
+        <div class="berita-media">
+
+            @if($b->gambar)
+
+                <img src="{{ asset('uploads/berita/gambar/'.$b->gambar) }}"
+                     class="berita-img"
+                     alt="{{ $b->judul }}">
+
+            @elseif($b->video)
+
+                <video controls class="berita-video">
+
+                    <source
+                        src="{{ asset('uploads/berita/video/'.$b->video) }}"
+                        type="video/mp4">
+
+                </video>
+
+            @endif
+
+        </div>
+
+        {{-- BODY --}}
+        <div class="card-body">
+
+            <p class="berita-title">
+                {{ $b->judul }}
+            </p>
+
+            <div class="berita-date">
+                <i class="fas fa-calendar-alt"></i>
+
+                {{ $b->publish_at
+                    ? $b->publish_at->format('d M Y')
+                    : $b->created_at->format('d M Y') }}
+            </div>
+
+            <a href="{{ url('/berita/'.$b->slug) }}"
+               class="btn-baca">
+
+                Baca Selengkapnya
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+@php
+    }
+}
+@endphp
+
+
+
+    {{-- =========================
+         PENGUMUMAN
+    ========================== --}}
+    @if($pengumuman->count())
+
+    <div class="mb-5">
+
+        <h4 class="fw-bold mb-4 text-success">
+            <i class="fas fa-bullhorn me-2"></i>
+            Pengumuman
+        </h4>
+
+        <div class="row g-4">
+
+            @php renderBeritaCard($pengumuman); @endphp
+
+        </div>
+
+    </div>
+
+    @endif
+
+
+    {{-- =========================
+         PENGABDIAN
+    ========================== --}}
+    @if($pengabdian->count())
+
+    <div class="mb-5">
+
+        <h4 class="fw-bold mb-4 text-primary">
+            <i class="fas fa-hands-helping me-2"></i>
+            Pengabdian
+        </h4>
+
+        <div class="row g-4">
+
+            @php renderBeritaCard($pengabdian); @endphp
+
+        </div>
+
+    </div>
+
+    @endif
+
+
+    {{-- =========================
+         PENELITIAN
+    ========================== --}}
+    @if($penelitian->count())
+
+    <div class="mb-5">
+
+        <h4 class="fw-bold mb-4 text-warning">
+            <i class="fas fa-flask me-2"></i>
+            Penelitian
+        </h4>
+
+        <div class="row g-4">
+
+            @php renderBeritaCard($penelitian); @endphp
+
+        </div>
+
+    </div>
+
+    @endif
+
+
+    {{-- =========================
+         KEGIATAN KAMPUS
+    ========================== --}}
+    @if($kegiatan->count())
+
+    <div class="mb-5">
+
+        <h4 class="fw-bold mb-4 text-danger">
+            <i class="fas fa-university me-2"></i>
+            Kegiatan Kampus
+        </h4>
+
+        <div class="row g-4">
+
+            @php renderBeritaCard($kegiatan); @endphp
+
+        </div>
+
+    </div>
+
+    @endif
+
+</section>
+
+
+<style>
+
+.berita-card{
+    background:#fff;
+    border-radius:20px;
+    overflow:hidden;
+    box-shadow:0 10px 30px rgba(0,0,0,.06);
+    transition:.3s;
+}
+
+.berita-card:hover{
+    transform:translateY(-6px);
+    box-shadow:0 18px 40px rgba(0,0,0,.12);
+}
+
+.berita-media{
+    position:relative;
+}
+
+.berita-img{
+    width:100%;
+    height:220px;
+    object-fit:cover;
+    display:block;
+}
+
+.berita-video{
+    width:100%;
+    height:220px;
+    object-fit:cover;
+    display:block;
+    background:#000;
+}
+
+.berita-card .card-body{
+    padding:22px;
+}
+
+.berita-title{
+    font-weight:700;
+    font-size:1rem;
+    line-height:1.6;
+    margin-bottom:14px;
+    min-height:52px;
+}
+
+.berita-date{
+    color:#777;
+    font-size:.9rem;
+    margin-bottom:18px;
+}
+
+.btn-baca{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    text-decoration:none;
+    background:#16a34a;
+    color:#fff;
+    padding:10px 18px;
+    border-radius:12px;
+    font-weight:600;
+    transition:.3s;
+}
+
+.btn-baca:hover{
+    background:#15803d;
+    color:#fff;
+}
+
+@media(max-width:768px){
+
+    .berita-img,
+    .berita-video{
+        height:200px;
+    }
+
+}
+
+</style>
+</section>
+{{-- ================================================
+     TENTANG & VISI MISI
+================================================ --}}
+<div class="tentang-section" data-aos="fade-up">
+    <div class="container">
+
+        <div class="text-center mb-5">
+            <span class="section-label" style="background:rgba(255,255,255,0.15);color:#fff;">Tentang Kami</span>
+            <h2 class="tentang-title mt-2">Tentang AMIK Taruna</h2>
+            <p class="tentang-desc">
+                {{ $visimisi->deskripsi ?? 'Deskripsi belum diisi oleh admin' }}
+            </p>
+        </div>
+
+        <div class="row g-4">
+
+            <div class="col-md-6" data-aos="fade-right" data-aos-delay="100">
+                <div class="visimisi-card">
+                    <div class="vm-icon">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <h4>Visi</h4>
+                    <p>{{ $visimisi->visi ?? 'Visi belum diisi' }}</p>
+                </div>
+            </div>
+
+            <div class="col-md-6" data-aos="fade-left" data-aos-delay="100">
+                <div class="visimisi-card">
+                    <div class="vm-icon">
+                        <i class="fas fa-bullseye"></i>
+                    </div>
+                    <h4>Misi</h4>
+                    <p>{{ $visimisi->misi ?? 'Misi belum diisi' }}</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{{-- DOSEN / STRUKTUR ORGANISASI --}}
+
+<section class="container py-5">
+
+<div class="text-center mb-5">
+
+<span class="section-label">
+
+Tim Akademik
+
+</span>
+
+<h2 class="section-title">
+
+Struktur Organisasi AMIK Taruna
+
+</h2>
+
+<p class="section-sub">
+
+Pimpinan dan tenaga akademik profesional AMIK Taruna
+
+</p>
+
+</div>
+
+{{-- DIREKTUR --}}
+
+<div class="org-layer text-center mb-5">
+
+@foreach($dosen->filter(fn($d)=>str_contains($d->jabatan,'Direktur AMIK Taruna')) as $d)
+
+@include('partials.orgcard',['d'=>$d])
+
+@endforeach
+
+</div>
+
+<div class="org-connector"></div>
+
+{{-- WAKIL DIREKTUR --}}
+
+<div class="org-layer mb-5">
+
+@foreach($dosen->filter(fn($d)=>str_contains($d->jabatan,'Wakil Direktur')) as $d)
+
+@include('partials.orgcard',['d'=>$d])
+
+@endforeach
+
+</div>
+
+<div class="text-center mt-4">
+
+<a href="{{ route('tentang') }}"
+class="btn-hero-primary">
+
+<i class="fas fa-sitemap"></i>
+
+Lihat Struktur Lengkap
+
+</a>
+
+</div>
+
+</section>
+</div>
+</div>
+    </div>
+</div>
+
+@endsection
