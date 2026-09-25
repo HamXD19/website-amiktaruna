@@ -7,6 +7,7 @@ import AkademikPage from './pages/AkademikPage.vue';
 import ProgramStudiDetailPage from './pages/ProgramStudiDetailPage.vue';
 import BeritaDetailPage from './pages/BeritaDetailPage.vue';
 import AppNavbar from './components/layout/AppNavbar.vue';
+import AppFooter from './components/layout/AppFooter.vue';
 import Alpine from 'alpinejs';
 
 // Preserve Alpine for legacy or breeze components if needed
@@ -71,3 +72,23 @@ if (navbarElement) {
     });
     navApp.mount('#navbar-app');
 }
+
+// 3. Mount standalone AppFooter if #footer-app exists (on all internal pages)
+const footerElement = document.getElementById('footer-app');
+
+if (footerElement) {
+    let setting = {};
+    try {
+        if (footerElement.dataset.setting) {
+            setting = JSON.parse(footerElement.dataset.setting);
+        }
+    } catch (e) {
+        console.error('Gagal memproses setting footer:', e);
+    }
+
+    const footerApp = createApp(AppFooter, {
+        setting: setting
+    });
+    footerApp.mount('#footer-app');
+}
+
