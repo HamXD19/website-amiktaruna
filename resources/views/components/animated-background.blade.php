@@ -4,7 +4,7 @@
     High-Tech, Crisp, GPU 60 FPS HTML5 Canvas Engine
     Interactive to mouse cursor & Touch, Zero-click interference (pointer-events: none)
 --}}
-<canvas id="campus-plexus-canvas" class="pointer-events-none fixed inset-0 z-0" aria-hidden="true"></canvas>
+<canvas id="campus-plexus-canvas" class="pointer-events-none fixed inset-0 z-0" style="will-change: transform; transform: translateZ(0); contain: strict;" aria-hidden="true"></canvas>
 
 <script>
 (function() {
@@ -18,42 +18,35 @@
     const ctx = canvas.getContext('2d', { alpha: true });
     if (!ctx) return;
 
+    // Detect mobile device (Android / iOS / small screen)
+    const isMobile = window.innerWidth < 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
     let width = 0;
     let height = 0;
     let dpr = 1;
     let animationFrameId = null;
     let isVisible = true;
 
-    // Mouse tracking
+    // Mouse tracking (only on desktop/mouse devices)
     const mouse = {
         x: null,
         y: null,
-        radius: 180
+        radius: 160
     };
 
-    window.addEventListener('mousemove', function(e) {
-        mouse.x = e.clientX;
-        mouse.y = e.clientY;
-    }, { passive: true });
+    if (!isMobile) {
+        window.addEventListener('mousemove', function(e) {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+        }, { passive: true });
 
-    window.addEventListener('mouseleave', function() {
-        mouse.x = null;
-        mouse.y = null;
-    }, { passive: true });
+        window.addEventListener('mouseleave', function() {
+            mouse.x = null;
+            mouse.y = null;
+        }, { passive: true });
+    }
 
-    window.addEventListener('touchmove', function(e) {
-        if (e.touches.length > 0) {
-            mouse.x = e.touches[0].clientX;
-            mouse.y = e.touches[0].clientY;
-        }
-    }, { passive: true });
-
-    window.addEventListener('touchend', function() {
-        mouse.x = null;
-        mouse.y = null;
-    }, { passive: true });
-
-    // Particle class - bolder and more vibrant
+    // Particle class
     class Particle {
         constructor() {
             this.init();
@@ -63,16 +56,16 @@
             this.x = Math.random() * width;
             this.y = Math.random() * height;
             // Smooth natural drift velocity
-            const speed = 0.35 + Math.random() * 0.55;
+            const speed = isMobile ? (0.2 + Math.random() * 0.35) : (0.35 + Math.random() * 0.55);
             const angle = Math.random() * Math.PI * 2;
             this.vx = Math.cos(angle) * speed;
             this.vy = Math.sin(angle) * speed;
-            // Bolder, thicker node radius: 2.6px - 4.8px
-            this.radius = Math.random() * 2.2 + 2.6;
+            // Node radius
+            this.radius = isMobile ? (Math.random() * 1.5 + 2.0) : (Math.random() * 2.2 + 2.6);
             // 85% radiant campus emerald / green, 15% radiant gold accent
             const isGold = Math.random() < 0.15;
             this.color = isGold ? '#fbbf24' : (Math.random() < 0.5 ? '#4ade80' : '#22c55e');
-            this.baseAlpha = Math.random() * 0.15 + 0.85; // 0.85 - 1.0 (radiant & solid)
+            this.baseAlpha = isMobile ? (Math.random() * 0.2 + 0.65) : (Math.random() * 0.15 + 0.85);
         }
 
         update() {
@@ -96,8 +89,8 @@
                 this.vy = -this.vy;
             }
 
-            // Mouse proximity gentle reaction
-            if (mouse.x !== null && mouse.y !== null) {
+            // Mouse proximity reaction (desktop only)
+            if (!isMobile && mouse.x !== null && mouse.y !== null) {
                 const dx = mouse.x - this.x;
                 const dy = mouse.y - this.y;
                 const dist = Math.hypot(dx, dy);
@@ -114,8 +107,11 @@
             ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
             ctx.fillStyle = this.color;
             ctx.globalAlpha = this.baseAlpha;
-            ctx.shadowBlur = 12;
-            ctx.shadowColor = this.color;
+            // Turn off shadowBlur on mobile for massive GPU 60 FPS boost
+            if (!isMobile) {
+                ctx.shadowBlur = 12;
+                ctx.shadowColor = this.color;
+            }
             ctx.fill();
         }
     }
@@ -123,7 +119,8 @@
     let particles = [];
 
     function setupCanvas() {
-        dpr = window.devicePixelRatio || 1;
+        // Mobile uses DPR 1 to prevent rendering 4x redundant pixels on high-res AMOLED
+        dpr = isMobile ? 1 : Math.min(window.devicePixelRatio || 1, 2);
         width = window.innerWidth;
         height = window.innerHeight;
 
@@ -135,18 +132,21 @@
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.scale(dpr, dpr);
 
-        // Density scaled to screen dimensions
-        const count = Math.min(95, Math.max(40, Math.floor((width * height) / 14000)));
+        // Density scaled: 24 particles on mobile vs 75 on desktop
+        const count = isMobile
+            ? Math.min(26, Math.max(16, Math.floor((width * height) / 28000)))
+            : Math.min(85, Math.max(40, Math.floor((width * height) / 14000)));
+
         particles = [];
         for (let i = 0; i < count; i++) {
             particles.push(new Particle());
         }
     }
 
-    // Connect particles with bolder network constellation lines
+    // Connect particles with network constellation lines
     function drawConnections() {
-        const connectionDistance = width < 768 ? 105 : 140;
-        const mouseConnectionDist = 175;
+        const connectionDistance = isMobile ? 85 : (width < 1024 ? 110 : 140);
+        const mouseConnectionDist = 160;
 
         for (let i = 0; i < particles.length; i++) {
             const p1 = particles[i];
@@ -159,21 +159,23 @@
                 const dist = Math.hypot(dx, dy);
 
                 if (dist < connectionDistance) {
-                    const alpha = (1 - dist / connectionDistance) * 0.70;
+                    const alpha = (1 - dist / connectionDistance) * (isMobile ? 0.45 : 0.70);
                     ctx.beginPath();
                     ctx.moveTo(p1.x, p1.y);
                     ctx.lineTo(p2.x, p2.y);
                     ctx.strokeStyle = '#4ade80';
                     ctx.globalAlpha = alpha;
-                    ctx.lineWidth = 1.9;
-                    ctx.shadowBlur = 4;
-                    ctx.shadowColor = '#22c55e';
+                    ctx.lineWidth = isMobile ? 1.0 : 1.9;
+                    if (!isMobile) {
+                        ctx.shadowBlur = 4;
+                        ctx.shadowColor = '#22c55e';
+                    }
                     ctx.stroke();
                 }
             }
 
-            // Connect to mouse cursor if within range
-            if (mouse.x !== null && mouse.y !== null) {
+            // Connect to mouse cursor (desktop only)
+            if (!isMobile && mouse.x !== null && mouse.y !== null) {
                 const mdx = p1.x - mouse.x;
                 const mdy = p1.y - mouse.y;
                 const mdist = Math.hypot(mdx, mdy);
@@ -220,7 +222,7 @@
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(function() {
             setupCanvas();
-        }, 150);
+        }, 200);
     }, { passive: true });
 
     // Page visibility to pause when inactive (save battery / CPU)
@@ -237,7 +239,6 @@
     // Check prefers-reduced-motion
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     if (prefersReducedMotion.matches) {
-        // Render one static frame
         setupCanvas();
         for (let i = 0; i < particles.length; i++) particles[i].draw();
         drawConnections();
