@@ -27,12 +27,21 @@ const handleScroll = () => {
   isScrolled.value = window.scrollY > 24;
 };
 
+const currentHash = ref(typeof window !== 'undefined' ? window.location.hash : '');
+const updateHash = () => {
+  if (typeof window !== 'undefined') {
+    currentHash.value = window.location.hash;
+  }
+};
+
 onMounted(() => {
   window.addEventListener('scroll', handleScroll, { passive: true });
+  window.addEventListener('hashchange', updateHash);
 });
 
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll);
+  window.removeEventListener('hashchange', updateHash);
 });
 
 const toggleDropdown = (name) => {
@@ -52,8 +61,33 @@ const isGroupActive = (group) => {
   return group.items.some(item => {
     const cleanItemHref = item.href.split('#')[0];
     const cleanCurrent = props.currentPath.split('#')[0];
-    return cleanCurrent === cleanItemHref || (cleanItemHref !== '/' && cleanCurrent.startsWith(cleanItemHref));
+    return cleanCurrent === cleanItemHref || (cleanItemHref !== '/' && cleanCurrent.startsWith(cleanItemHref + '/'));
   });
+};
+
+const isItemActive = (item) => {
+  if (!item || !item.href) return false;
+  const cleanCurrent = props.currentPath.split('#')[0].split('?')[0];
+  const hash = currentHash.value;
+
+  // 1. If item has an anchor hash (e.g. /tentang#visi-misi)
+  if (item.href.includes('#')) {
+    const [itemBase, itemHash] = item.href.split('#');
+    return cleanCurrent === itemBase && hash === '#' + itemHash;
+  }
+
+  // 2. If item is exact base page path (e.g. /tentang)
+  if (cleanCurrent === item.href) {
+    // Only active if no hash is currently present in URL
+    return !hash;
+  }
+
+  // 3. Subpath route match (e.g. /berita/xyz matches /berita)
+  if (item.href !== '/' && cleanCurrent.startsWith(item.href + '/')) {
+    return true;
+  }
+
+  return false;
 };
 
 const navGroups = [
@@ -192,11 +226,14 @@ const navGroups = [
                   :key="item.href"
                   :href="item.href"
                   class="block px-3.5 py-2.5 rounded-lg transition-colors group"
-                  :class="currentPath === item.href || (item.href !== '/' && currentPath.startsWith(item.href.split('#')[0])) ? 'bg-emerald-900/60 text-emerald-300 font-bold border border-emerald-500/30' : 'hover:bg-emerald-950/60'"
+                  :class="isItemActive(item) ? 'bg-emerald-900/50 text-emerald-300 font-semibold border border-emerald-500/30' : 'hover:bg-emerald-950/60 border border-transparent'"
                 >
-                  <p class="text-sm font-semibold transition-colors" :class="currentPath === item.href || (item.href !== '/' && currentPath.startsWith(item.href.split('#')[0])) ? 'text-emerald-300' : 'text-slate-200 group-hover:text-emerald-300'">
-                    {{ item.label }}
-                  </p>
+                  <div class="flex items-center justify-between">
+                    <p class="text-sm font-semibold transition-colors" :class="isItemActive(item) ? 'text-emerald-300' : 'text-slate-200 group-hover:text-emerald-300'">
+                      {{ item.label }}
+                    </p>
+                    <span v-if="isItemActive(item)" class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                  </div>
                   <p class="text-xs text-slate-400 mt-0.5 leading-snug">
                     {{ item.desc }}
                   </p>
@@ -415,12 +452,15 @@ const navGroups = [
                     :key="'mob-item-' + item.href"
                     :href="item.href"
                     class="flex items-start gap-2.5 px-3 py-2 rounded-lg text-xs transition"
-                    :class="currentPath === item.href || (item.href !== '/' && currentPath.startsWith(item.href.split('#')[0])) ? 'bg-emerald-900/50 text-emerald-300 font-bold border border-emerald-500/30' : 'text-slate-300 hover:text-emerald-300 hover:bg-emerald-950/50'"
+                    :class="isItemActive(item) ? 'bg-emerald-900/50 text-emerald-300 font-semibold border border-emerald-500/30' : 'text-slate-300 hover:text-emerald-300 hover:bg-emerald-950/50 border border-transparent'"
                     @click="mobileMenuOpen = false"
                   >
                     <i :class="item.icon" class="text-emerald-400 mt-0.5 text-xs w-3.5 text-center shrink-0"></i>
-                    <div>
-                      <span class="block font-medium">{{ item.label }}</span>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center justify-between">
+                        <span class="block font-medium" :class="isItemActive(item) ? 'text-emerald-300' : 'text-slate-200'">{{ item.label }}</span>
+                        <span v-if="isItemActive(item)" class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                      </div>
                       <span class="block text-[10px] text-slate-400 leading-snug">{{ item.desc }}</span>
                     </div>
                   </a>
