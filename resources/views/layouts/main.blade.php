@@ -57,61 +57,6 @@
 
   
        
-        /* ========== FOOTER BIKIN SENDIRI, TAMBAH BACKGROUND SOLID ========== */
-        .footer-modern {
-            background: #0d2318 !important;
-            color: var(--footer-text);
-            padding: 60px 0 0;
-            border-radius: 36px 36px 0 0;
-            margin-top: 80px;
-            position: relative;
-            z-index: 2;
-        }
-
-        /* Force semua isi footer pake background gelap */
-        .footer-modern,
-        .footer-modern .container,
-        .footer-modern .row,
-        .footer-modern [class*="col"],
-        .footer-modern .d-flex,
-        .footer-modern .kontak-row,
-        .footer-modern .social-icons,
-        .footer-modern .footer-bottom,
-        .footer-modern .icon-wrap,
-        .footer-modern p,
-        .footer-modern ul,
-        .footer-modern li,
-        .footer-modern a,
-        .footer-modern div {
-            background: #0d2318 !important;
-            background-color: #0d2318 !important;
-        }
-
-        /* Tapi link dan teks tetep keliatan */
-        .footer-modern a,
-        .footer-modern p,
-        .footer-modern li,
-        .footer-modern .footer-heading,
-        .footer-modern .kontak-text,
-        .footer-modern .footer-brand-name,
-        .footer-modern .footer-copy {
-            background: transparent !important;
-        }
-
-        /* Social media icon background */
-        .footer-modern .social-icons a {
-            background: rgba(255,255,255,0.07) !important;
-        }
-
-        .footer-modern .social-icons a:hover {
-            background: var(--green) !important;
-        }
-
-        /* Icon wrap */
-        .footer-modern .icon-wrap {
-            background: rgba(255,255,255,0.07) !important;
-        }
-
         /* NAVBAR */
         .navbar {
             background: transparent !important;

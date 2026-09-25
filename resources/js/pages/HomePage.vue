@@ -70,10 +70,8 @@ defineProps({
 
     </main>
 
-    <!-- 10. Footer (Desktop only, mobile uses app bottom dock) -->
-    <div class="hidden lg:block">
-      <AppFooter :setting="setting" />
-    </div>
+    <!-- 10. Footer -->
+    <AppFooter :setting="setting" />
 
   </div>
 </template>

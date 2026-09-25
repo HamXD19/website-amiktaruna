@@ -8,7 +8,7 @@ defineProps({
 </script>
 
 <template>
-  <footer class="bg-brand-950 text-slate-300 pt-16 pb-12 border-t border-brand-900">
+  <footer class="relative z-10 bg-[#031d11] text-slate-300 pt-16 pb-24 lg:pb-12 border-t border-emerald-500/20 shadow-2xl" style="background-color: #031d11 !important;">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8 pb-12 border-b border-white/10">
         
