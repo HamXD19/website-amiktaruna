@@ -234,6 +234,10 @@ const whatsappUrl = computed(() => {
               :src="'/uploads/' + setting.logo"
               alt="Logo Kampus"
               class="w-11 h-11 object-contain rounded-xl p-1 bg-emerald-950 border border-emerald-500/40 shadow-sm"
+              width="44"
+              height="44"
+              loading="eager"
+              fetchpriority="high"
               @error="(e) => e.target.style.display = 'none'"
             />
             <div>

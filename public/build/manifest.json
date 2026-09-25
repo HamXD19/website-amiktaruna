@@ -1,6 +1,27 @@
 {
+  "_CtaSection-B1U1Isgs.js": {
+    "file": "assets/CtaSection-B1U1Isgs.js",
+    "name": "CtaSection",
+    "imports": [
+      "_vue.esm-bundler-ayri1lCT.js"
+    ]
+  },
+  "__plugin-vue_export-helper-B67ILkmu.js": {
+    "file": "assets/_plugin-vue_export-helper-B67ILkmu.js",
+    "name": "_plugin-vue_export-helper"
+  },
+  "_vue.esm-bundler-ayri1lCT.js": {
+    "file": "assets/vue.esm-bundler-ayri1lCT.js",
+    "name": "vue.esm-bundler"
+  },
+  "node_modules/alpinejs/dist/module.esm.js": {
+    "file": "assets/module.esm-jx4aHGjL.js",
+    "name": "module.esm",
+    "src": "node_modules/alpinejs/dist/module.esm.js",
+    "isDynamicEntry": true
+  },
   "resources/css/app.css": {
-    "file": "assets/app-B0GQXxCp.css",
+    "file": "assets/app-BKaDyyXN.css",
     "name": "app",
     "names": [
       "app.css"
@@ -9,12 +30,119 @@
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-D30nSr1A.js",
+    "file": "assets/app-8WDTrk4t.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
+    "imports": [
+      "_vue.esm-bundler-ayri1lCT.js"
+    ],
+    "dynamicImports": [
+      "resources/js/pages/HomePage.vue",
+      "resources/js/pages/TentangPage.vue",
+      "resources/js/pages/AlumniPage.vue",
+      "resources/js/pages/AkademikPage.vue",
+      "resources/js/pages/ProgramStudiDetailPage.vue",
+      "resources/js/pages/BeritaDetailPage.vue",
+      "resources/js/components/layout/AppNavbar.vue",
+      "resources/js/components/layout/AppFooter.vue",
+      "node_modules/alpinejs/dist/module.esm.js"
+    ]
+  },
+  "resources/js/components/layout/AppFooter.vue": {
+    "file": "assets/AppFooter-BFvNb6O_.js",
+    "name": "AppFooter",
+    "src": "resources/js/components/layout/AppFooter.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vue.esm-bundler-ayri1lCT.js"
+    ]
+  },
+  "resources/js/components/layout/AppNavbar.vue": {
+    "file": "assets/AppNavbar-Co3pOcTh.js",
+    "name": "AppNavbar",
+    "src": "resources/js/components/layout/AppNavbar.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vue.esm-bundler-ayri1lCT.js"
+    ]
+  },
+  "resources/js/pages/AkademikPage.vue": {
+    "file": "assets/AkademikPage-n7JcF_j1.js",
+    "name": "AkademikPage",
+    "src": "resources/js/pages/AkademikPage.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "__plugin-vue_export-helper-B67ILkmu.js",
+      "_vue.esm-bundler-ayri1lCT.js",
+      "_CtaSection-B1U1Isgs.js",
+      "resources/js/components/layout/AppFooter.vue",
+      "resources/js/components/layout/AppNavbar.vue"
+    ]
+  },
+  "resources/js/pages/AlumniPage.vue": {
+    "file": "assets/AlumniPage-DjAx4Nx-.js",
+    "name": "AlumniPage",
+    "src": "resources/js/pages/AlumniPage.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "__plugin-vue_export-helper-B67ILkmu.js",
+      "_vue.esm-bundler-ayri1lCT.js",
+      "_CtaSection-B1U1Isgs.js",
+      "resources/js/components/layout/AppFooter.vue",
+      "resources/js/components/layout/AppNavbar.vue"
+    ]
+  },
+  "resources/js/pages/BeritaDetailPage.vue": {
+    "file": "assets/BeritaDetailPage-BQlFROkC.js",
+    "name": "BeritaDetailPage",
+    "src": "resources/js/pages/BeritaDetailPage.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vue.esm-bundler-ayri1lCT.js",
+      "_CtaSection-B1U1Isgs.js",
+      "resources/js/components/layout/AppFooter.vue",
+      "resources/js/components/layout/AppNavbar.vue"
+    ]
+  },
+  "resources/js/pages/HomePage.vue": {
+    "file": "assets/HomePage-BrQmn2rQ.js",
+    "name": "HomePage",
+    "src": "resources/js/pages/HomePage.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "__plugin-vue_export-helper-B67ILkmu.js",
+      "_vue.esm-bundler-ayri1lCT.js",
+      "_CtaSection-B1U1Isgs.js",
+      "resources/js/components/layout/AppFooter.vue",
+      "resources/js/components/layout/AppNavbar.vue"
+    ],
     "css": [
-      "assets/app-COojSbkK.css"
+      "assets/HomePage-BooJJefA.css"
+    ]
+  },
+  "resources/js/pages/ProgramStudiDetailPage.vue": {
+    "file": "assets/ProgramStudiDetailPage-Bj26QYLJ.js",
+    "name": "ProgramStudiDetailPage",
+    "src": "resources/js/pages/ProgramStudiDetailPage.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vue.esm-bundler-ayri1lCT.js",
+      "_CtaSection-B1U1Isgs.js",
+      "resources/js/components/layout/AppFooter.vue",
+      "resources/js/components/layout/AppNavbar.vue"
+    ]
+  },
+  "resources/js/pages/TentangPage.vue": {
+    "file": "assets/TentangPage-BZ6phwpv.js",
+    "name": "TentangPage",
+    "src": "resources/js/pages/TentangPage.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vue.esm-bundler-ayri1lCT.js",
+      "_CtaSection-B1U1Isgs.js",
+      "resources/js/components/layout/AppFooter.vue",
+      "resources/js/components/layout/AppNavbar.vue"
     ]
   }
 }

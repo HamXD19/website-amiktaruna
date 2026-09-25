@@ -245,7 +245,15 @@
         return;
     }
 
-    setupCanvas();
-    animationFrameId = requestAnimationFrame(animate);
+    function startCanvas() {
+        setupCanvas();
+        animationFrameId = requestAnimationFrame(animate);
+    }
+
+    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+        window.requestIdleCallback(startCanvas, { timeout: 800 });
+    } else {
+        setTimeout(startCanvas, 150);
+    }
 })();
 </script>

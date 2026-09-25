@@ -168,7 +168,10 @@ const ctaSecondaryLink = computed(() => props.setting?.hero_button_2_link || '/a
                     :src="slide"
                     alt="Gedung dan Kampus AMIK Taruna"
                     class="w-full h-full object-cover object-center"
-                    loading="eager"
+                    :loading="i === 0 ? 'eager' : 'lazy'"
+                    :fetchpriority="i === 0 ? 'high' : 'low'"
+                    width="640"
+                    height="440"
                   />
                   <!-- Subtle vignette at bottom for editorial grounding -->
                   <div class="absolute inset-0 bg-gradient-to-t from-slate-950/40 via-transparent to-transparent pointer-events-none"></div>

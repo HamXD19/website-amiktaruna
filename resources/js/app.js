@@ -1,18 +1,5 @@
 import './bootstrap';
 import { createApp } from 'vue';
-import HomePage from './pages/HomePage.vue';
-import TentangPage from './pages/TentangPage.vue';
-import AlumniPage from './pages/AlumniPage.vue';
-import AkademikPage from './pages/AkademikPage.vue';
-import ProgramStudiDetailPage from './pages/ProgramStudiDetailPage.vue';
-import BeritaDetailPage from './pages/BeritaDetailPage.vue';
-import AppNavbar from './components/layout/AppNavbar.vue';
-import AppFooter from './components/layout/AppFooter.vue';
-import Alpine from 'alpinejs';
-
-// Preserve Alpine for legacy or breeze components if needed
-window.Alpine = Alpine;
-Alpine.start();
 
 // 1. Mount full page if #app exists (e.g. on homepage, tentang, alumni, or akademik)
 const appElement = document.getElementById('app');
@@ -29,25 +16,22 @@ if (appElement) {
         console.error('Gagal memproses data props awal ke Vue:', e);
     }
 
-    let rootComponent = null;
+    const pageLoaders = {
+        'home': () => import('./pages/HomePage.vue'),
+        'tentang': () => import('./pages/TentangPage.vue'),
+        'alumni': () => import('./pages/AlumniPage.vue'),
+        'akademik': () => import('./pages/AkademikPage.vue'),
+        'akademik-detail': () => import('./pages/ProgramStudiDetailPage.vue'),
+        'berita-detail': () => import('./pages/BeritaDetailPage.vue'),
+    };
 
-    if (pageName === 'home') {
-        rootComponent = HomePage;
-    } else if (pageName === 'tentang') {
-        rootComponent = TentangPage;
-    } else if (pageName === 'alumni') {
-        rootComponent = AlumniPage;
-    } else if (pageName === 'akademik') {
-        rootComponent = AkademikPage;
-    } else if (pageName === 'akademik-detail') {
-        rootComponent = ProgramStudiDetailPage;
-    } else if (pageName === 'berita-detail') {
-        rootComponent = BeritaDetailPage;
-    }
+    const loader = pageLoaders[pageName];
 
-    if (rootComponent) {
-        const app = createApp(rootComponent, props);
-        app.mount('#app');
+    if (loader) {
+        loader().then((module) => {
+            const app = createApp(module.default, props);
+            app.mount('#app');
+        });
     }
 }
 
@@ -55,40 +39,52 @@ if (appElement) {
 const navbarElement = document.getElementById('navbar-app');
 
 if (navbarElement) {
-    let setting = {};
-    try {
-        if (navbarElement.dataset.setting) {
-            setting = JSON.parse(navbarElement.dataset.setting);
+    import('./components/layout/AppNavbar.vue').then(({ default: AppNavbar }) => {
+        let setting = {};
+        try {
+            if (navbarElement.dataset.setting) {
+                setting = JSON.parse(navbarElement.dataset.setting);
+            }
+        } catch (e) {
+            console.error('Gagal memproses setting navbar:', e);
         }
-    } catch (e) {
-        console.error('Gagal memproses setting navbar:', e);
-    }
 
-    const currentPath = navbarElement.dataset.path || window.location.pathname;
+        const currentPath = navbarElement.dataset.path || window.location.pathname;
 
-    const navApp = createApp(AppNavbar, {
-        setting: setting,
-        currentPath: currentPath === '' ? '/' : (currentPath.startsWith('/') ? currentPath : '/' + currentPath)
+        const navApp = createApp(AppNavbar, {
+            setting: setting,
+            currentPath: currentPath === '' ? '/' : (currentPath.startsWith('/') ? currentPath : '/' + currentPath)
+        });
+        navApp.mount('#navbar-app');
     });
-    navApp.mount('#navbar-app');
 }
 
 // 3. Mount standalone AppFooter if #footer-app exists (on all internal pages)
 const footerElement = document.getElementById('footer-app');
 
 if (footerElement) {
-    let setting = {};
-    try {
-        if (footerElement.dataset.setting) {
-            setting = JSON.parse(footerElement.dataset.setting);
+    import('./components/layout/AppFooter.vue').then(({ default: AppFooter }) => {
+        let setting = {};
+        try {
+            if (footerElement.dataset.setting) {
+                setting = JSON.parse(footerElement.dataset.setting);
+            }
+        } catch (e) {
+            console.error('Gagal memproses setting footer:', e);
         }
-    } catch (e) {
-        console.error('Gagal memproses setting footer:', e);
-    }
 
-    const footerApp = createApp(AppFooter, {
-        setting: setting
+        const footerApp = createApp(AppFooter, {
+            setting: setting
+        });
+        footerApp.mount('#footer-app');
     });
-    footerApp.mount('#footer-app');
+}
+
+// 4. Conditional Alpine.js only if [x-data] elements exist on the page
+if (document.querySelector('[x-data]')) {
+    import('alpinejs').then(({ default: Alpine }) => {
+        window.Alpine = Alpine;
+        Alpine.start();
+    });
 }
 

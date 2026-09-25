@@ -156,6 +156,10 @@ const navGroups = [
             :src="'/uploads/' + setting.logo"
             :alt="setting?.nama_website || 'AMIK Taruna'"
             class="w-10 h-10 sm:w-11 sm:h-11 object-contain rounded-lg border border-emerald-500/30 p-1 bg-[#062a19]/80 shadow-sm"
+            width="44"
+            height="44"
+            loading="eager"
+            fetchpriority="high"
             @error="(e) => e.target.style.display = 'none'"
           />
           <div class="flex flex-col">
