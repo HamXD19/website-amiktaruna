@@ -82,8 +82,8 @@ section[class*="bg-emerald-"] {
 */
 
 /* 1. Emerald Glass Surface Cards */
-.card:not(.journal-reading-sheet),
-.content-card:not(.journal-reading-sheet),
+.card,
+.content-card,
 .layanan-card,
 .lppm-card,
 .lppm-deskripsi-card,
@@ -91,15 +91,15 @@ section[class*="bg-emerald-"] {
 .dosen-profile-card,
 .pmb-show-card,
 .news-card-grid,
-main .bg-white:not(.absolute):not(.fixed):not(.journal-reading-sheet):not(.journal-sheet-inner):not(.layanan-logo):not(.lppm-logo):not(.alert-empty):not(.btn-portal),
-main .rounded-2xl.bg-white:not(.absolute):not(.fixed):not(.journal-reading-sheet):not(.journal-sheet-inner),
-main .rounded-3xl.bg-white:not(.absolute):not(.fixed):not(.journal-reading-sheet):not(.journal-sheet-inner),
-main [class*="bg-slate-50"]:not(.journal-reading-sheet):not(.journal-sheet-inner):not(span):not(i),
-main [class*="bg-slate-100"]:not(.journal-reading-sheet):not(.journal-sheet-inner):not(span):not(i),
-main [class*="bg-gray-50"]:not(.journal-reading-sheet):not(.journal-sheet-inner):not(span):not(i),
-main [class*="bg-gray-100"]:not(.journal-reading-sheet):not(.journal-sheet-inner):not(span):not(i),
-main [class*="bg-[#fbfcfb]"]:not(.journal-reading-sheet):not(.journal-sheet-inner),
-main [class*="bg-[#f4f7fb]"]:not(.journal-reading-sheet):not(.journal-sheet-inner),
+main .bg-white:not(.absolute):not(.fixed):not(.layanan-logo):not(.lppm-logo):not(.alert-empty):not(.btn-portal),
+main .rounded-2xl.bg-white:not(.absolute):not(.fixed),
+main .rounded-3xl.bg-white:not(.absolute):not(.fixed),
+main [class*="bg-slate-50"]:not(span):not(i),
+main [class*="bg-slate-100"]:not(span):not(i),
+main [class*="bg-gray-50"]:not(span):not(i),
+main [class*="bg-gray-100"]:not(span):not(i),
+main [class*="bg-[#fbfcfb]"],
+main [class*="bg-[#f4f7fb]"],
 .berita-section,
 .kategori-header,
 .berita-card {
@@ -112,18 +112,18 @@ main [class*="bg-[#f4f7fb]"]:not(.journal-reading-sheet):not(.journal-sheet-inne
 }
 
 /* 1.1 Badges, Chips & Meta Pills (Fixes white pill bug and prevents light badges) */
-main span[class*="bg-slate-"]:not(.journal-reading-sheet *),
-main span[class*="bg-gray-"]:not(.journal-reading-sheet *),
-main span[class*="bg-brand-50"]:not(.journal-reading-sheet *),
-main span[class*="bg-brand-100"]:not(.journal-reading-sheet *),
-main span[class*="bg-emerald-50"]:not(.journal-reading-sheet *),
-main span[class*="bg-blue-50"]:not(.journal-reading-sheet *),
-main span[class*="bg-amber-50"]:not(.journal-reading-sheet *),
-main span[class*="bg-rose-50"]:not(.journal-reading-sheet *),
-main a[class*="bg-slate-"]:not(.journal-reading-sheet *),
-main a[class*="bg-gray-"]:not(.journal-reading-sheet *),
-main a[class*="bg-brand-50"]:not(.journal-reading-sheet *),
-main a[class*="bg-brand-100"]:not(.journal-reading-sheet *) {
+main span[class*="bg-slate-"],
+main span[class*="bg-gray-"],
+main span[class*="bg-brand-50"],
+main span[class*="bg-brand-100"],
+main span[class*="bg-emerald-50"],
+main span[class*="bg-blue-50"],
+main span[class*="bg-amber-50"],
+main span[class*="bg-rose-50"],
+main a[class*="bg-slate-"],
+main a[class*="bg-gray-"],
+main a[class*="bg-brand-50"],
+main a[class*="bg-brand-100"] {
     background: rgba(4, 28, 17, 0.78) !important;
     backdrop-filter: blur(8px) !important;
     -webkit-backdrop-filter: blur(8px) !important;
@@ -131,21 +131,21 @@ main a[class*="bg-brand-100"]:not(.journal-reading-sheet *) {
     color: #86efac !important;
 }
 
-main span[class*="bg-slate-"]:not(.journal-reading-sheet *) i,
-main span[class*="bg-gray-"]:not(.journal-reading-sheet *) i,
-main span[class*="bg-brand-"]:not(.journal-reading-sheet *) i,
-main a[class*="bg-slate-"]:not(.journal-reading-sheet *) i,
-main a[class*="bg-gray-"]:not(.journal-reading-sheet *) i,
-main a[class*="bg-brand-"]:not(.journal-reading-sheet *) i,
-main a[class*="bg-slate-"]:not(.journal-reading-sheet *) span,
-main a[class*="bg-gray-"]:not(.journal-reading-sheet *) span {
+main span[class*="bg-slate-"] i,
+main span[class*="bg-gray-"] i,
+main span[class*="bg-brand-"] i,
+main a[class*="bg-slate-"] i,
+main a[class*="bg-gray-"] i,
+main a[class*="bg-brand-"] i,
+main a[class*="bg-slate-"] span,
+main a[class*="bg-gray-"] span {
     color: #86efac !important;
 }
 
-main a[class*="bg-slate-"]:not(.journal-reading-sheet *):hover,
-main a[class*="bg-gray-"]:not(.journal-reading-sheet *):hover,
-main a[class*="bg-brand-50"]:not(.journal-reading-sheet *):hover,
-main a[class*="bg-brand-100"]:not(.journal-reading-sheet *):hover {
+main a[class*="bg-slate-"]:hover,
+main a[class*="bg-gray-"]:hover,
+main a[class*="bg-brand-50"]:hover,
+main a[class*="bg-brand-100"]:hover {
     background: rgba(12, 48, 30, 0.92) !important;
     border-color: rgba(74, 222, 128, 0.45) !important;
     color: #ffffff !important;
@@ -154,53 +154,53 @@ main a[class*="bg-brand-100"]:not(.journal-reading-sheet *):hover {
 /* 2. Glass Hover State */
 .berita-card:hover,
 .news-card-grid:hover,
-main .rounded-2xl.bg-white:not(.absolute):not(.fixed):not(.journal-reading-sheet):not(.journal-sheet-inner):hover,
-main .rounded-3xl.bg-white:not(.absolute):not(.fixed):not(.journal-reading-sheet):not(.journal-sheet-inner):hover,
-main [class*="bg-slate-50"]:not(.journal-reading-sheet):not(.journal-sheet-inner):not(span):not(i):hover {
+main .rounded-2xl.bg-white:not(.absolute):not(.fixed):hover,
+main .rounded-3xl.bg-white:not(.absolute):not(.fixed):hover,
+main [class*="bg-slate-50"]:not(span):not(i):hover {
     background: rgba(12, 48, 30, 0.88) !important;
     border-color: rgba(74, 222, 128, 0.35) !important;
     box-shadow: 0 16px 40px -4px rgba(74, 222, 128, 0.15), 0 8px 20px -2px rgba(0, 0, 0, 0.4) !important;
 }
 
-/* 3. High-Contrast Text Color Adjustments inside Glass Cards (excluding pure white journal reading sheets) */
-main .text-slate-900:not(.journal-reading-sheet *),
-main .text-\[\#0f172a\]:not(.journal-reading-sheet *),
-main .text-\[\#17201A\]:not(.journal-reading-sheet *),
-main .text-dark:not(.journal-reading-sheet *),
-main h1:not(.journal-reading-sheet *),
-main h2:not(.journal-reading-sheet *),
-main h3:not(.journal-reading-sheet *),
-main h4:not(.journal-reading-sheet *),
-main h5:not(.journal-reading-sheet *),
-main h6:not(.journal-reading-sheet *),
-.card:not(.journal-reading-sheet) h1,
-.card:not(.journal-reading-sheet) h2,
-.card:not(.journal-reading-sheet) h3,
-.card:not(.journal-reading-sheet) h4,
-.card:not(.journal-reading-sheet) h5,
-.card:not(.journal-reading-sheet) h6,
+/* 3. High-Contrast Text Color Adjustments inside Glass Cards */
+main .text-slate-900,
+main .text-\[\#0f172a\],
+main .text-\[\#17201A\],
+main .text-dark,
+main h1,
+main h2,
+main h3,
+main h4,
+main h5,
+main h6,
+.card h1,
+.card h2,
+.card h3,
+.card h4,
+.card h5,
+.card h6,
 .berita-heading,
 .kategori-title,
 .berita-title {
     color: #ffffff !important;
 }
 
-main .text-slate-800:not(.journal-reading-sheet *),
-main .text-slate-700:not(.journal-reading-sheet *) {
+main .text-slate-800,
+main .text-slate-700 {
     color: #e2e8f0 !important;
 }
 
-main .text-slate-600:not(.journal-reading-sheet *),
-main .text-slate-500:not(.journal-reading-sheet *),
-main .text-\[\#647067\]:not(.journal-reading-sheet *),
-main .text-muted:not(.journal-reading-sheet *),
+main .text-slate-600,
+main .text-slate-500,
+main .text-\[\#647067\],
+main .text-muted,
 .berita-subheading,
 .kategori-sub,
 .berita-desc {
     color: #cbd5e1 !important;
 }
 
-main .text-slate-400:not(.journal-reading-sheet *) {
+main .text-slate-400 {
     color: #94a3b8 !important;
 }
 
@@ -268,72 +268,11 @@ main .form-control:not(.search-input-white):focus {
 }
 
 /* 6. Navbar Glass & Priority */
-header {
+#navbar-app,
+header#navbar-app,
+.site-header {
     position: fixed !important;
     z-index: 9999 !important;
-}
-
-/* 
-   ============================================================
-   SOLUSI A: JOURNALISTIC WHITE EDITORIAL READING SHEET
-   Pure white reading canvas for long-form news reading comfort
-   over the animated emerald campus universe background.
-   ============================================================ 
-*/
-.journal-reading-sheet,
-.journal-reading-sheet.bg-white {
-    background-color: #ffffff !important;
-    background: #ffffff !important;
-    color: #0f172a !important;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1) !important;
-    border: 1px solid #e2e8f0 !important;
-}
-
-.journal-reading-sheet h1,
-.journal-reading-sheet h2,
-.journal-reading-sheet h3,
-.journal-reading-sheet h4,
-.journal-reading-sheet p,
-.journal-reading-sheet span,
-.journal-reading-sheet div,
-.journal-reading-sheet .text-slate-900,
-.journal-reading-sheet .text-slate-800,
-.journal-reading-sheet .text-slate-700 {
-    color: inherit;
-}
-
-.journal-reading-sheet p {
-    color: #1e293b !important;
-}
-
-.journal-reading-sheet .text-slate-900 {
-    color: #0f172a !important;
-}
-
-.journal-reading-sheet .text-slate-700 {
-    color: #334155 !important;
-}
-
-.journal-reading-sheet .text-slate-600,
-.journal-reading-sheet .text-slate-500 {
-    color: #64748b !important;
-}
-
-.journal-reading-sheet .text-slate-400 {
-    color: #94a3b8 !important;
-}
-
-.journal-reading-sheet .border-slate-100,
-.journal-reading-sheet .border-slate-200 {
-    border-color: #e2e8f0 !important;
-}
-
-.journal-reading-sheet .bg-slate-50 {
-    background-color: #f8fafc !important;
-}
-
-.journal-reading-sheet .bg-slate-100 {
-    background-color: #f1f5f9 !important;
 }
 
 /* 
