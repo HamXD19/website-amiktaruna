@@ -4,20 +4,43 @@ Sistem Informasi Profil Institusi Resmi dan Content Management System (CMS) **AM
 
 ---
 
+> ### 📌 PANDUAN RINGKAS DEPLOY HPANEL (KHUSUS DOSEN & TIM PENGUJI)
+> 
+> Website ini **100% siap hosting** di Hostinger Shared Hosting (hPanel). **Tidak perlu install Node.js / npm di server** karena seluruh file frontend sudah dikompilasi ke `public/build/`. File database lengkap juga sudah disediakan di dalam repo (`database/amik_database.sql`).
+>
+> **4 Langkah Cepat Deploy di hPanel:**
+> 1. **Buat Database MySQL di hPanel**:
+>    - Masuk ke **hPanel → Databases → Management**.
+>    - Buat database baru (misal: `amik_db`) dan user baru (misal: `amik_user`). Catat nama database, user, dan password-nya.
+>    - Klik tombol **Enter phpMyAdmin** pada database tersebut -> Masuk tab **Import** -> Upload file **`database/amik_database.sql`** yang ada di repository ini -> Klik **Go**.
+> 2. **Hubungkan Repository via Git Deployment hPanel**:
+>    - Masuk ke **hPanel → Git** (di menu Advanced).
+>    - Repository: `https://github.com/HamXD19/website-amiktaruna.git`
+>    - Branch: `main`
+>    - Install directory: `public_html`
+>    - Klik **Create / Deploy**. File otomatis masuk ke `public_html`.
+> 3. **Konfigurasi File `.env`**:
+>    - Buka **hPanel → File Manager** -> masuk ke folder `public_html/`.
+>    - Klik file `.env.example` -> ubah nama (*Rename*) menjadi `.env` (atau buat file baru `.env`).
+>    - Sesuaikan `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD` dengan data database yang dibuat pada langkah 1.
+>    - Pastikan `APP_KEY` terisi: `base64:LerE6P8PCElVrIb7q+QfwcqI+UwxXSdu4Tse/efiwOA=`
+>    - Set `APP_URL` ke domain/subdomain Anda (misal `https://namadomain.com`).
+> 4. **Pengaturan PHP**:
+>    - Masuk ke **hPanel → PHP Configuration**, pastikan versi PHP adalah **PHP 8.2** atau **PHP 8.3**.
+> 
+> *Selesai! Website langsung aktif dan dapat diakses.*
+> - **Login Admin**: Akses `/login` menggunakan email `humas.amiktarunaprobolinggo@gmail.com` atau `m.irhamauliaq@gmail.com`.
+
+---
+
 ## 📋 Daftar Isi
-1. [Spesifikasi Server & Kebutuhan Sistem](#-spesifikasi-server--kebutuhan-sistem)
-2. [Panduan Deploy ke Hostinger (hPanel)](#-panduan-deploy-ke-hostinger-hpanel)
-   - [Langkah 1: Pengaturan PHP Version & Ekstensi](#langkah-1-pengaturan-php-version--ekstensi-di-hpanel)
-   - [Langkah 2: Pengaturan Batas Upload Dokumen 30MB](#langkah-2-pengaturan-batas-upload-dokumen-30mb-di-hpanel)
-   - [Langkah 3: Pembuatan Database MySQL di hPanel](#langkah-3-pembuatan-database-mysql-di-hpanel)
-   - [Langkah 4: Upload File Proyek (Pilih Salah Satu Metode)](#langkah-4-upload-file-proyek-ke-hpanel)
-   - [Langkah 5: Konfigurasi File .env](#langkah-5-konfigurasi-file-env)
-   - [Langkah 6: Import Data / Migrasi Database](#langkah-6-import-data--migrasi-database)
-   - [Langkah 7: Hak Akses Folder & Storage Link](#langkah-7-hak-akses-folder--storage-link)
-3. [Panduan Deploy Alternatif (cPanel & VPS)](#-panduan-deploy-alternatif-cpanel--vps)
-4. [Arsitektur Akun & Hak Akses (Super Admin & Admin Staf)](#-arsitektur-akun--hak-akses)
-5. [Daftar Fitur & Modul Utama](#-daftar-fitur--modul-utama)
-6. [Troubleshooting Kendala Hosting di Hostinger](#-troubleshooting-kendala-hosting-di-hostinger)
+1. [Panduan Ringkas Deploy hPanel (Khusus Dosen)](#-panduan-ringkas-deploy-hpanel-khusus-dosen--tim-penguji)
+2. [Spesifikasi Server & Kebutuhan Sistem](#-spesifikasi-server--kebutuhan-sistem)
+3. [Panduan Lengkap Deploy ke Hostinger (hPanel)](#-panduan-deploy-ke-hostinger-hpanel)
+4. [Panduan Deploy Alternatif (cPanel & VPS)](#-panduan-deploy-alternatif-cpanel--vps)
+5. [Arsitektur Akun & Hak Akses (Super Admin & Admin Staf)](#-arsitektur-akun--hak-akses)
+6. [Daftar Fitur & Modul Utama](#-daftar-fitur--modul-utama)
+7. [Troubleshooting Kendala Hosting di Hostinger](#-troubleshooting-kendala-hosting-di-hostinger)
 
 ---
 
@@ -135,7 +158,7 @@ FILESYSTEM_DISK=public
 - **Cara 1 (Via phpMyAdmin hPanel - Paling Mudah)**:
   1. Di hPanel, buka menu **Databases** -> klik tombol **Enter phpMyAdmin** pada database yang baru dibuat.
   2. Buka tab **Import**.
-  3. Upload file backup database `.sql` lokal Anda, lalu klik **Go / Kirim**.
+  3. Upload file **`database/amik_database.sql`** yang sudah disediakan langsung di dalam repositori ini, lalu klik **Go / Kirim**. Data awal, tabel, dan akun admin akan otomatis terisi lengkap.
 
 - **Cara 2 (Via SSH / Terminal hPanel)**:
   1. Buka menu **SSH Access** di hPanel, aktifkan dan buka terminal SSH.
