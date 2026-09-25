@@ -469,14 +469,14 @@ const navGroups = [
         <span>Beranda</span>
       </a>
 
-      <!-- 2. Akademik -->
+      <!-- 2. Layanan Mahasiswa -->
       <a
-        href="/akademik"
-        class="flex flex-col items-center py-1 px-2.5 rounded-xl transition-all duration-150 active:scale-95"
-        :class="currentPath.startsWith('/akademik') ? 'text-emerald-300 font-bold' : 'text-slate-400 hover:text-emerald-300'"
+        href="/mahasiswa"
+        class="flex flex-col items-center py-1 px-2 rounded-xl transition-all duration-150 active:scale-95"
+        :class="currentPath.startsWith('/mahasiswa') ? 'text-emerald-300 font-bold' : 'text-slate-400 hover:text-emerald-300'"
       >
         <i class="fas fa-graduation-cap text-base mb-0.5"></i>
-        <span>Akademik</span>
+        <span>Layanan Mhs</span>
       </a>
 
       <!-- 3. PMB (Elevated Floating Center Button) -->
