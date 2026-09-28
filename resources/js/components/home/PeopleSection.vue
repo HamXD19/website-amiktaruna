@@ -5,31 +5,29 @@ const props = defineProps({
   dosen: {
     type: Array,
     default: () => []
+  },
+  setting: {
+    type: Object,
+    default: () => ({})
   }
 });
 
-// Select top 4 leadership figures from real database
+const eyebrow = computed(() => props.setting?.page_headers?.home_dosen?.eyebrow || 'Kepemimpinan & Pengajar');
+const title = computed(() => props.setting?.page_headers?.home_dosen?.title || 'Sivitas pengajar berdedikasi');
+const titleHighlight = computed(() => props.setting?.page_headers?.home_dosen?.highlight || 'mengawal mutu akademik.');
+const subtitle = computed(() => props.setting?.page_headers?.home_dosen?.subtitle || 'Dipimpin oleh para akademisi dan praktisi berpengalaman yang berfokus pada kemajuan kompetensi mahasiswa di bidang teknologi informasi terapan.');
+
+// Select top 4 leadership figures by level_organigram or fallback
 const leadershipFigures = computed(() => {
   if (!props.dosen || props.dosen.length === 0) return [];
 
-  // Filter key leaders
-  const direktur = props.dosen.find(d => d.jabatan && d.jabatan.includes('Direktur AMIK Taruna'));
-  const wadir1 = props.dosen.find(d => d.jabatan && d.jabatan.includes('Wakil Direktur I'));
-  const wadir2 = props.dosen.find(d => d.jabatan && d.jabatan.includes('Wakil Direktur II'));
-  const wadir3 = props.dosen.find(d => d.jabatan && d.jabatan.includes('Wakil Direktur III'));
+  const sorted = [...props.dosen].sort((a, b) => {
+    const lvlA = a.level_organigram || 99;
+    const lvlB = b.level_organigram || 99;
+    return lvlA - lvlB;
+  });
 
-  const list = [direktur, wadir1, wadir2, wadir3].filter(Boolean);
-
-  // If not enough found by strict title, fill with first few
-  if (list.length < 4) {
-    props.dosen.forEach(d => {
-      if (!list.find(l => l.id === d.id) && list.length < 4) {
-        list.push(d);
-      }
-    });
-  }
-
-  return list;
+  return sorted.slice(0, 4);
 });
 
 // Helper for clean primary title (clean multiple pipe strings if any)
@@ -48,14 +46,14 @@ const formatJabatan = (jabatanStr) => {
       <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6 bg-white rounded-3xl p-6 sm:p-10 shadow-xl border border-slate-200/80 relative z-10">
         <div class="max-w-2xl">
           <span class="text-xs font-bold uppercase tracking-widest text-brand-800 bg-brand-50 px-3 py-1 rounded border border-brand-200/70">
-            Kepemimpinan &amp; Pengajar
+            {{ eyebrow }}
           </span>
           <h2 class="mt-4 text-3xl sm:text-4xl lg:text-[40px] font-extrabold text-slate-900 tracking-tight leading-[1.18]">
-            Sivitas pengajar berdedikasi
-            <span class="text-brand-800 block">mengawal mutu akademik.</span>
+            {{ title }}
+            <span v-if="titleHighlight" class="text-brand-800 block">{{ titleHighlight }}</span>
           </h2>
           <p class="mt-4 text-base text-slate-600 leading-relaxed">
-            Dipimpin oleh para akademisi dan praktisi berpengalaman yang berfokus pada kemajuan kompetensi mahasiswa di bidang teknologi informasi terapan.
+            {{ subtitle }}
           </p>
         </div>
 

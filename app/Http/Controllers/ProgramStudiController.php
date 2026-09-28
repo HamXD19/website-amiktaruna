@@ -85,6 +85,10 @@ class ProgramStudiController extends Controller
         ProgramStudi::create([
 
             'nama_prodi'=>$request->nama_prodi,
+            'jenjang'=>$request->jenjang ?? 'Diploma 3 (D3)',
+            'gelar'=>$request->gelar ?? 'A.Md.',
+            'masa_studi'=>$request->masa_studi ?? '3 Tahun (6 Semester)',
+            'kurikulum'=>$request->kurikulum ?? 'Berbasis Vokasi & KKNI',
 
             'slug'=>Str::slug(
                 $request->nama_prodi

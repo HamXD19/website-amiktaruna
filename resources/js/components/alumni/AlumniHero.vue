@@ -1,10 +1,16 @@
 <script setup>
-defineProps({
+import { computed } from 'vue';
+
+const props = defineProps({
   setting: {
     type: Object,
     default: () => ({})
   }
 });
+
+const eyebrow = computed(() => props.setting?.page_headers?.alumni?.eyebrow || 'Jejaring & Sivitas Alumni');
+const title = computed(() => props.setting?.page_headers?.alumni?.title || 'Jejak Langkah & Sinergi Alumni');
+const subtitle = computed(() => props.setting?.page_headers?.alumni?.subtitle || 'Menghubungkan rekam jejak lulusan di dunia profesional, penyelarasan kurikulum vokasi dengan industri, serta kolaborasi berkelanjutan untuk kemajuan almamater.');
 </script>
 
 <template>
@@ -29,17 +35,17 @@ defineProps({
           <!-- Eyebrow Pill -->
           <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 mb-4 shadow-xs">
             <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-            Jejaring &amp; Sivitas Alumni
+            {{ eyebrow }}
           </div>
 
           <!-- Main Heading -->
           <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-[1.15]">
-            Jejak Langkah &amp; Sinergi Alumni
+            {{ title }}
           </h1>
 
           <!-- Subtitle -->
           <p class="mt-4 sm:mt-5 text-base sm:text-lg text-slate-300 leading-relaxed max-w-2xl font-normal">
-            Menghubungkan rekam jejak lulusan di dunia profesional, penyelarasan kurikulum vokasi dengan industri, serta kolaborasi berkelanjutan untuk kemajuan almamater.
+            {{ subtitle }}
           </p>
 
           <!-- Quick Anchor Badges -->

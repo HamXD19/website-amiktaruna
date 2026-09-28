@@ -48,19 +48,19 @@ defineProps({
       <UnifiedHero :setting="setting" />
 
       <!-- 3. Identity / Introduction Pillars (4 Academic Strengths) -->
-      <TrustMetrics :prodis="program_studis" />
+      <TrustMetrics :prodis="program_studis" :setting="setting" />
 
       <!-- 4. Academic Programs (Numbered Editorial List 01, 02, 03) -->
-      <AcademicSection :program-studis="program_studis" />
+      <AcademicSection :program-studis="program_studis" :setting="setting" />
 
       <!-- 5. News & Publications (Featured Article + Supporting News List) -->
-      <NewsSection :beritas="beritas" />
+      <NewsSection :beritas="beritas" :setting="setting" />
 
       <!-- 6. Alumni (Tracer Study & Authentic Alumni Synergy) -->
-      <AlumniSection :alumni-sections="alumni_sections" />
+      <AlumniSection :alumni-sections="alumni_sections" :setting="setting" />
 
       <!-- 7. People / Leadership (Portrait Editorial Faculty Highlights) -->
-      <PeopleSection :dosen="dosen" />
+      <PeopleSection :dosen="dosen" :setting="setting" />
 
       <!-- 8. Institutional Call to Action (Strong Closing Conversion Statement) -->
       <CtaSection :setting="setting" />

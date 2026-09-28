@@ -1,513 +1,884 @@
 @extends('layouts.app')
 
-@section('title', 'Setting Website')
+@section('title', 'Pusat Pengaturan Website & Konten Dinamis')
 
 @php
     $setting = $setting ?? new \App\Models\Setting();
+    $headers = $setting->page_headers ?? [];
+    $facts = $setting->home_facts ?? [];
+    $pillars = $setting->home_pillars ?? [];
+    $homeCta = $setting->home_cta ?? [];
+    $mobileBanners = $setting->mobile_banners ?? [];
+    $tentangPillars = $setting->tentang_pillars ?? [];
+    $akademikValues = $setting->akademik_values ?? [];
+    $alumniPillars = $setting->alumni_pillars ?? [];
+    $pmbPillars = $setting->pmb_pillars ?? [];
 @endphp
 
 @section('content')
 
 <style>
-    .card-setting{
-        border:none;
-        border-radius:24px;
-        box-shadow:0 10px 30px rgba(0,0,0,0.05);
-        overflow:hidden;
+    .cms-tab-nav {
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 8px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.02);
     }
 
-    .card-header-custom{
-        background:white;
-        padding:25px 30px;
-        border-bottom:1px solid #e5e7eb;
+    .cms-tab-btn {
+        border: none;
+        background: transparent;
+        color: #64748b;
+        font-weight: 600;
+        font-size: 0.86rem;
+        padding: 10px 18px;
+        border-radius: 12px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s ease;
+        text-decoration: none;
     }
 
-    .card-header-custom h5{
-        margin:0;
-        font-weight:700;
+    .cms-tab-btn:hover {
+        background: #f1f5f9;
+        color: #0f172a;
     }
 
-    .card-body{
-        padding:30px;
+    .cms-tab-btn.active {
+        background: #047857;
+        color: #ffffff !important;
+        box-shadow: 0 4px 12px rgba(4, 120, 87, 0.25);
     }
 
-    .form-label{
-        font-weight:600;
-        margin-bottom:8px;
+    .card-setting-pane {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 20px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+        padding: 28px 32px;
+        margin-top: 20px;
     }
 
-    .form-control{
-        border-radius:14px;
-        padding:12px 15px;
-        border:1px solid #d1d5db;
+    .section-divider {
+        padding-bottom: 12px;
+        margin-bottom: 22px;
+        border-bottom: 2px solid #f1f5f9;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
     }
 
-    .form-control:focus{
-        box-shadow:none;
-        border-color:#059669;
+    .section-title {
+        font-size: 1.05rem;
+        font-weight: 800;
+        color: #0f172a;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 0;
     }
 
-    .preview-img{
-        width:100%;
-        max-width:220px;
-        border-radius:18px;
-        margin-top:10px;
-        border:4px solid white;
-        box-shadow:0 5px 20px rgba(0,0,0,0.08);
+    .section-title i {
+        color: #10b981;
     }
 
-    .btn-save{
-        background:#059669;
-        color:white;
-        border:none;
-        padding:12px 30px;
-        border-radius:14px;
-        font-weight:600;
+    .form-label {
+        font-weight: 700;
+        font-size: 0.82rem;
+        color: #334155;
+        margin-bottom: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
     }
 
-    .btn-save:hover{
-        background:#047857;
-        color:white;
+    .form-control, .form-select {
+        border-radius: 12px;
+        padding: 10px 14px;
+        border: 1px solid #cbd5e1;
+        font-size: 0.9rem;
+        color: #0f172a;
+        transition: all 0.2s ease;
     }
 
-    .section-title{
-        font-size:18px;
-        font-weight:700;
-        margin-bottom:25px;
-        color:#0f172a;
-        border-left:5px solid #059669;
-        padding-left:12px;
+    .form-control:focus, .form-select:focus {
+        border-color: #10b981;
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+    }
+
+    .form-hint {
+        font-size: 0.76rem;
+        color: #64748b;
+        margin-top: 4px;
+    }
+
+    .sub-card {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .preview-box {
+        border: 1px dashed #cbd5e1;
+        border-radius: 14px;
+        padding: 10px;
+        background: #f8fafc;
+        text-align: center;
+        max-width: 200px;
+        margin-top: 8px;
+    }
+
+    .preview-box img {
+        max-width: 100%;
+        max-height: 120px;
+        object-fit: contain;
+        border-radius: 8px;
+    }
+
+    .btn-save-sticky {
+        position: sticky;
+        bottom: 20px;
+        z-index: 100;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        padding: 14px 24px;
+        border-radius: 18px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        border: 1px solid #e2e8f0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 25px;
     }
 </style>
 
 <div class="container-fluid p-0">
 
+    <!-- Top Header -->
     <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
         <div>
-            <h4 class="fw-bold text-slate-900 mb-1">Pengaturan Website</h4>
-            <p class="text-slate-500 small mb-0">Konfigurasi nama portal, identitas kampus, logo, kontak, dan footer</p>
+            <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-bold mb-2">
+                <i class="fas fa-sliders text-emerald-600"></i>
+                <span>Pusat Konten &amp; Konfigurasi Dinamis</span>
+            </div>
+            <h3 class="fw-extrabold text-slate-900 mb-1" style="letter-spacing: -0.5px;">
+                Pengaturan Tampilan &amp; Konten Website
+            </h3>
+            <p class="text-slate-500 small mb-0">
+                Ubah teks, pilar keunggulan, header halaman, spesifikasi, dan banner secara langsung tanpa menyentuh kode program.
+            </p>
         </div>
 
         <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-secondary btn-sm rounded-pill px-3 fw-bold">
-            <i class="fas fa-arrow-left me-1"></i>Kembali
+            <i class="fas fa-arrow-left me-1"></i>Kembali ke Dashboard
         </a>
     </div>
 
-    <div class="card card-setting">
+    @if(session('success'))
+        <div class="alert alert-success border border-emerald-400 bg-emerald-50 text-emerald-800 rounded-3 mb-4 p-3 d-flex align-items-center gap-2">
+            <i class="fas fa-check-circle fs-5 text-emerald-600"></i>
+            <div>{{ session('success') }}</div>
+        </div>
+    @endif
 
-        <div class="card-header-custom">
+    <form action="{{ url('/admin/setting/update') }}" method="POST" enctype="multipart/form-data" id="settingForm">
+        @csrf
+        @method('PUT')
 
-            <h5>
-                Kelola Tampilan Website
-            </h5>
+        <!-- TAB NAVIGATION (5 TABS) -->
+        <div class="cms-tab-nav" id="cmsTabs" role="tablist">
+            <button class="cms-tab-btn active" id="tab-btn-identitas" data-bs-toggle="pill" data-bs-target="#tab-identitas" type="button" role="tab">
+                <i class="fas fa-landmark"></i>
+                <span>1. Identitas &amp; Logo</span>
+            </button>
+            <button class="cms-tab-btn" id="tab-btn-beranda" data-bs-toggle="pill" data-bs-target="#tab-beranda" type="button" role="tab">
+                <i class="fas fa-home"></i>
+                <span>2. Konten Beranda</span>
+            </button>
+            <button class="cms-tab-btn" id="tab-btn-headers" data-bs-toggle="pill" data-bs-target="#tab-headers" type="button" role="tab">
+                <i class="fas fa-heading"></i>
+                <span>3. Header Tiap Halaman</span>
+            </button>
+            <button class="cms-tab-btn" id="tab-btn-subhalaman" data-bs-toggle="pill" data-bs-target="#tab-subhalaman" type="button" role="tab">
+                <i class="fas fa-layer-group"></i>
+                <span>4. Nilai &amp; Pilar Sub-Halaman</span>
+            </button>
+            <button class="cms-tab-btn" id="tab-btn-kontak" data-bs-toggle="pill" data-bs-target="#tab-kontak" type="button" role="tab">
+                <i class="fas fa-map-location-dot"></i>
+                <span>5. Kontak, Peta &amp; Footer</span>
+            </button>
+        </div>
+
+        <!-- TAB PANES -->
+        <div class="tab-content" id="cmsTabContent">
+
+            <!-- =====================================================
+                 TAB 1: IDENTITAS & LOGO
+            ===================================================== -->
+            <div class="tab-pane fade show active" id="tab-identitas" role="tabpanel">
+                <div class="card-setting-pane">
+                    <div class="section-divider">
+                        <h4 class="section-title">
+                            <i class="fas fa-id-card"></i>
+                            <span>Identitas Institusi &amp; Branding</span>
+                        </h4>
+                    </div>
+
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <label class="form-label">Nama Website / Institusi</label>
+                            <input type="text" name="nama_website" class="form-control" value="{{ $setting->nama_website }}" placeholder="Contoh: AMIK Taruna Probolinggo" required>
+                            <div class="form-hint">Ditampilkan pada navbar, judul tab browser, dan copyright footer.</div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Badge Akreditasi Singkat</label>
+                            <input type="text" name="badge_akreditasi" class="form-control" value="{{ $setting->badge_akreditasi ?? 'Terakreditasi B' }}" placeholder="Contoh: Terakreditasi B">
+                            <div class="form-hint">Ditampilkan di samping logo kampus pada tampilan mobile smartphone.</div>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Tagline Institusi</label>
+                            <input type="text" name="tagline" class="form-control" value="{{ $setting->tagline }}" placeholder="Contoh: Menyiapkan Generasi Unggul dan Mandiri di Bidang Teknologi Informasi">
+                            <div class="form-hint">Slogan resmi yang menggambarkan visi misi kampus.</div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Logo Resmi Institusi</label>
+                            <input type="file" name="logo" class="form-control" accept="image/*">
+                            <div class="form-hint">Format: PNG, JPG, WEBP transparan disarankan (Maks 2MB).</div>
+                            @if($setting->logo)
+                                <div class="preview-box">
+                                    <img src="{{ asset('uploads/' . $setting->logo) }}" alt="Logo Saat Ini">
+                                    <div class="text-xs text-muted mt-1">Logo Aktif</div>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- =====================================================
+                 TAB 2: KONTEN BERANDA (HERO, FACTS, PILLARS, CTA, MOBILE)
+            ===================================================== -->
+            <div class="tab-pane fade" id="tab-beranda" role="tabpanel">
+                <div class="card-setting-pane">
+                    
+                    <!-- 2.1 Hero Section -->
+                    <div class="section-divider">
+                        <h4 class="section-title">
+                            <i class="fas fa-image"></i>
+                            <span>Hero Section Beranda (Editorial Headline)</span>
+                        </h4>
+                    </div>
+
+                    <div class="row g-4 mb-5">
+                        <div class="col-md-6">
+                            <label class="form-label">Hero Judul Utama (Baris 1)</label>
+                            <input type="text" name="hero_judul" class="form-control" value="{{ $setting->hero_judul ?? 'Pendidikan Vokasi Teknologi' }}">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Hero Highlight Teks (Baris 2 Warna Hijau)</label>
+                            <input type="text" name="hero_highlight" class="form-control" value="{{ $setting->hero_highlight ?? 'Kesiapan Nyata di Dunia Kerja' }}">
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Hero Subjudul / Paragraf Pengantar</label>
+                            <textarea name="hero_subjudul" rows="3" class="form-control">{{ $setting->hero_subjudul ?? 'AMIK Taruna membekali mahasiswa dengan keahlian praktis manajemen informatika, kurikulum terapan yang relevan dengan kebutuhan industri, serta integritas kepemimpinan profesional.' }}</textarea>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label">Tombol 1 Teks</label>
+                            <input type="text" name="hero_button_1_text" class="form-control" value="{{ $setting->hero_button_1_text ?? 'Pendaftaran Mahasiswa Baru' }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Tombol 1 Link</label>
+                            <input type="text" name="hero_button_1_link" class="form-control" value="{{ $setting->hero_button_1_link ?? '/pmb' }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Tombol 2 Teks</label>
+                            <input type="text" name="hero_button_2_text" class="form-control" value="{{ $setting->hero_button_2_text ?? 'Pelajari Program Studi' }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Tombol 2 Link</label>
+                            <input type="text" name="hero_button_2_link" class="form-control" value="{{ $setting->hero_button_2_link ?? '/akademik' }}">
+                        </div>
+
+                        <!-- 3 Slide Gambar Hero -->
+                        <div class="col-md-4">
+                            <label class="form-label">Slide Foto 1 (Hero)</label>
+                            <input type="file" name="hero_slide_1" class="form-control" accept="image/*">
+                            @if($setting->hero_slide_1)
+                                <div class="preview-box"><img src="{{ asset('uploads/' . $setting->hero_slide_1) }}"></div>
+                            @endif
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Slide Foto 2 (Hero)</label>
+                            <input type="file" name="hero_slide_2" class="form-control" accept="image/*">
+                            @if($setting->hero_slide_2)
+                                <div class="preview-box"><img src="{{ asset('uploads/' . $setting->hero_slide_2) }}"></div>
+                            @endif
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Slide Foto 3 (Hero)</label>
+                            <input type="file" name="hero_slide_3" class="form-control" accept="image/*">
+                            @if($setting->hero_slide_3)
+                                <div class="preview-box"><img src="{{ asset('uploads/' . $setting->hero_slide_3) }}"></div>
+                            @endif
+                        </div>
+                    </div>
+
+                    <!-- 2.2 Bar Fakta 3 Kolom & Promo Caption -->
+                    <div class="section-divider">
+                        <h4 class="section-title">
+                            <i class="fas fa-chart-simple"></i>
+                            <span>Bar Fakta 3 Kolom &amp; Caption Promo Hero</span>
+                        </h4>
+                    </div>
+
+                    <div class="row g-3 mb-5">
+                        <div class="col-md-4">
+                            <div class="sub-card">
+                                <span class="badge bg-emerald-600 mb-2">Fakta Kolom 1</span>
+                                <div class="mb-2">
+                                    <label class="form-label">Judul Baris Atas</label>
+                                    <input type="text" name="home_facts[fact_1_title]" class="form-control" value="{{ $facts['fact_1_title'] ?? 'Status Resmi' }}">
+                                </div>
+                                <div>
+                                    <label class="form-label">Nilai / Status</label>
+                                    <input type="text" name="home_facts[fact_1_val]" class="form-control" value="{{ $facts['fact_1_val'] ?? 'Terakreditasi BAN-PT' }}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="sub-card">
+                                <span class="badge bg-emerald-600 mb-2">Fakta Kolom 2</span>
+                                <div class="mb-2">
+                                    <label class="form-label">Judul Baris Atas</label>
+                                    <input type="text" name="home_facts[fact_2_title]" class="form-control" value="{{ $facts['fact_2_title'] ?? 'Orientasi' }}">
+                                </div>
+                                <div>
+                                    <label class="form-label">Nilai / Status</label>
+                                    <input type="text" name="home_facts[fact_2_val]" class="form-control" value="{{ $facts['fact_2_val'] ?? 'Vokasi Siap Kerja' }}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="sub-card">
+                                <span class="badge bg-emerald-600 mb-2">Fakta Kolom 3</span>
+                                <div class="mb-2">
+                                    <label class="form-label">Judul Baris Atas</label>
+                                    <input type="text" name="home_facts[fact_3_title]" class="form-control" value="{{ $facts['fact_3_title'] ?? 'Infrastruktur' }}">
+                                </div>
+                                <div>
+                                    <label class="form-label">Nilai / Status</label>
+                                    <input type="text" name="home_facts[fact_3_val]" class="form-control" value="{{ $facts['fact_3_val'] ?? 'Lab Informatika Modern' }}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-8">
+                            <label class="form-label">Teks Bar Promo (Di Bawah Foto Kampus)</label>
+                            <input type="text" name="home_facts[promo_text]" class="form-control" value="{{ $facts['promo_text'] ?? 'Penerimaan Mahasiswa Baru Gelombang 2026/2027 Dibuka' }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Teks &amp; Link Tombol Promo</label>
+                            <div class="input-group">
+                                <input type="text" name="home_facts[promo_btn]" class="form-control" value="{{ $facts['promo_btn'] ?? 'Info PMB →' }}">
+                                <input type="text" name="home_facts[promo_link]" class="form-control" value="{{ $facts['promo_link'] ?? '/pmb' }}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2.3 4 Pilar Trust Metrics (Mengapa Memilih AMIK Taruna) -->
+                    <div class="section-divider">
+                        <h4 class="section-title">
+                            <i class="fas fa-award"></i>
+                            <span>4 Pilar Keunggulan Beranda (Trust Metrics)</span>
+                        </h4>
+                    </div>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <label class="form-label">Eyebrow Header</label>
+                            <input type="text" name="home_pillars[eyebrow]" class="form-control" value="{{ $pillars['eyebrow'] ?? 'Komitmen Mutu & Keunggulan' }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Judul Section</label>
+                            <input type="text" name="home_pillars[title]" class="form-control" value="{{ $pillars['title'] ?? 'Mengapa Memilih AMIK Taruna?' }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Subjudul Pengantar</label>
+                            <input type="text" name="home_pillars[subtitle]" class="form-control" value="{{ $pillars['subtitle'] ?? 'Mempersiapkan generasi masa depan dengan kompetensi teknologi informasi, kemampuan manajerial, dan etika profesional.' }}">
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-5">
+                        @php
+                            $defaultPillars = [
+                                ['icon' => 'badge-check', 'title' => 'Terakreditasi Resmi', 'badge' => 'Legal & Kredibel', 'desc' => 'Memiliki legalitas dan pengakuan resmi dari BAN-PT sebagai institusi pendidikan tinggi vokasi yang terpercaya.'],
+                                ['icon' => 'code-laptop', 'title' => 'Kurikulum Terapan', 'badge' => '70% Praktik', 'desc' => 'Proporsi praktik komputasi dan teknologi informasi yang dominan guna memastikan kesiapan kerja lulusan.'],
+                                ['icon' => 'users-academic', 'title' => 'Dosen Berpengalaman', 'badge' => 'Kompeten', 'desc' => 'Dibimbing oleh para akademisi dan praktisi profesional di bidang manajemen informatika dan teknologi.'],
+                                ['icon' => 'career-growth', 'title' => 'Peluang Karier Luas', 'badge' => 'Siap Kerja', 'desc' => 'Keahlian digital yang dicari di berbagai sektor: instansi pemerintah, BUMN, perbankan, industri kreatif, dan startup.']
+                            ];
+                            $activePillars = !empty($pillars['items']) ? $pillars['items'] : $defaultPillars;
+                        @endphp
+
+                        @for($i = 0; $i < 4; $i++)
+                            @php $p = $activePillars[$i] ?? $defaultPillars[$i]; @endphp
+                            <div class="col-md-6 col-lg-3">
+                                <div class="sub-card h-100">
+                                    <span class="badge bg-secondary mb-2">Pilar {{ $i+1 }}</span>
+                                    <div class="mb-2">
+                                        <label class="form-label">Judul Pilar</label>
+                                        <input type="text" name="home_pillars[items][{{ $i }}][title]" class="form-control" value="{{ $p['title'] }}">
+                                    </div>
+                                    <div class="mb-2">
+                                        <label class="form-label">Badge Sudut</label>
+                                        <input type="text" name="home_pillars[items][{{ $i }}][badge]" class="form-control" value="{{ $p['badge'] }}">
+                                    </div>
+                                    <div class="mb-2">
+                                        <label class="form-label">Jenis Ikon</label>
+                                        <select name="home_pillars[items][{{ $i }}][icon]" class="form-select">
+                                            <option value="badge-check" {{ ($p['icon'] ?? '') == 'badge-check' ? 'selected' : '' }}>badge-check (Centang/Perisai)</option>
+                                            <option value="code-laptop" {{ ($p['icon'] ?? '') == 'code-laptop' ? 'selected' : '' }}>code-laptop (Laptop/Kode)</option>
+                                            <option value="users-academic" {{ ($p['icon'] ?? '') == 'users-academic' ? 'selected' : '' }}>users-academic (Dosen/Siswa)</option>
+                                            <option value="career-growth" {{ ($p['icon'] ?? '') == 'career-growth' ? 'selected' : '' }}>career-growth (Grafik/Karier)</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="form-label">Deskripsi</label>
+                                        <textarea name="home_pillars[items][{{ $i }}][desc]" rows="3" class="form-control">{{ $p['desc'] }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        @endfor
+                    </div>
+
+                    <!-- 2.4 Section Penutup Beranda (CTA Pendaftaran PMB) -->
+                    <div class="section-divider">
+                        <h4 class="section-title">
+                            <i class="fas fa-bullhorn"></i>
+                            <span>Section Penutup Beranda (Call To Action PMB)</span>
+                        </h4>
+                    </div>
+
+                    <div class="row g-3 mb-5">
+                        <div class="col-md-4">
+                            <label class="form-label">Badge Pill Atas</label>
+                            <input type="text" name="home_cta[badge]" class="form-control" value="{{ $homeCta['badge'] ?? 'Penerimaan Mahasiswa Baru 2026/2027' }}">
+                        </div>
+                        <div class="col-md-8">
+                            <label class="form-label">Headline CTA</label>
+                            <input type="text" name="home_cta[headline]" class="form-control" value="{{ $homeCta['headline'] ?? 'Mulai langkah nyatamu di dunia teknologi & digital.' }}">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Paragraf Persuasi</label>
+                            <textarea name="home_cta[subheadline]" rows="2" class="form-control">{{ $homeCta['subheadline'] ?? 'Daftarkan dirimu di AMIK Taruna. Dapatkan pembekalan komputasi terapan, bimbingan dosen berpengalaman, dan sertifikasi keahlian siap industri.' }}</textarea>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">4 Poin Kepercayaan (Pisahkan dengan Tanda Titik Koma ';')</label>
+                            <input type="text" name="home_cta[points_str]" class="form-control" value="{{ $homeCta['points_str'] ?? 'Akreditasi BAN-PT Resmi; Biaya Kuliah Terjangkau; Beasiswa Prestasi & KIP-K; Konsultasi Program Studi Bebas Biaya' }}">
+                            <div class="form-hint">Format: Poin 1; Poin 2; Poin 3; Poin 4 (Otomatis diberi tanda centang hijau ✓)</div>
+                        </div>
+                    </div>
+
+                    <!-- 2.5 Slider Banner Tampilan Mobile -->
+                    <div class="section-divider">
+                        <h4 class="section-title">
+                            <i class="fas fa-mobile-screen"></i>
+                            <span>Slider Banner Tampilan HP / Smartphone</span>
+                        </h4>
+                    </div>
+
+                    <div class="row g-3">
+                        @php
+                            $defaultBanners = [
+                                ['title' => 'Penerimaan Mahasiswa Baru', 'highlight' => 'TA 2026/2027', 'desc' => 'Jalur Beasiswa KIP & Prestasi Akademik. Siapkan karir digital Anda!', 'badge' => 'PMB DIBUKA', 'link' => '/pmb', 'btnText' => 'Daftar Sekarang'],
+                                ['title' => 'Program Studi Vokasi D3', 'highlight' => 'Gelar Resmi A.Md.', 'desc' => 'Kurikulum praktis berbasis industri IT dengan sertifikasi kompetensi BNSP.', 'badge' => 'AKREDITASI BAIK', 'link' => '/akademik', 'btnText' => 'Lihat Program Studi'],
+                                ['title' => 'Pusat Dokumen Resmi', 'highlight' => 'Transparansi Akademik', 'desc' => 'Unduh kurikulum, pedoman akademik, modul, dan RPS per program studi.', 'badge' => 'DOWNLOAD DOKUMEN', 'link' => '/akademik', 'btnText' => 'Buka Dokumen']
+                            ];
+                            $activeBanners = !empty($mobileBanners) ? $mobileBanners : $defaultBanners;
+                        @endphp
+
+                        @for($b = 0; $b < 3; $b++)
+                            @php $ban = $activeBanners[$b] ?? $defaultBanners[$b]; @endphp
+                            <div class="col-md-4">
+                                <div class="sub-card">
+                                    <span class="badge bg-primary mb-2">Banner Mobile {{ $b+1 }}</span>
+                                    <div class="mb-2">
+                                        <label class="form-label">Judul Banner</label>
+                                        <input type="text" name="mobile_banners[{{ $b }}][title]" class="form-control" value="{{ $ban['title'] }}">
+                                    </div>
+                                    <div class="mb-2">
+                                        <label class="form-label">Teks Sorotan / Highlight</label>
+                                        <input type="text" name="mobile_banners[{{ $b }}][highlight]" class="form-control" value="{{ $ban['highlight'] }}">
+                                    </div>
+                                    <div class="mb-2">
+                                        <label class="form-label">Badge Label</label>
+                                        <input type="text" name="mobile_banners[{{ $b }}][badge]" class="form-control" value="{{ $ban['badge'] }}">
+                                    </div>
+                                    <div class="mb-2">
+                                        <label class="form-label">Deskripsi Singkat</label>
+                                        <textarea name="mobile_banners[{{ $b }}][desc]" rows="2" class="form-control">{{ $ban['desc'] }}</textarea>
+                                    </div>
+                                    <div class="row g-2">
+                                        <div class="col-6">
+                                            <label class="form-label">Teks Tombol</label>
+                                            <input type="text" name="mobile_banners[{{ $b }}][btnText]" class="form-control" value="{{ $ban['btnText'] }}">
+                                        </div>
+                                        <div class="col-6">
+                                            <label class="form-label">Link Tujuan</label>
+                                            <input type="text" name="mobile_banners[{{ $b }}][link]" class="form-control" value="{{ $ban['link'] }}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endfor
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- =====================================================
+                 TAB 3: HEADER TIAP HALAMAN PUBLIK
+            ===================================================== -->
+            <div class="tab-pane fade" id="tab-headers" role="tabpanel">
+                <div class="card-setting-pane">
+                    <div class="section-divider">
+                        <h4 class="section-title">
+                            <i class="fas fa-heading"></i>
+                            <span>Header Judul &amp; Pengantar Halaman Publik</span>
+                        </h4>
+                    </div>
+                    <p class="text-slate-500 small mb-4">
+                        Atur teks pembuka, lencana kecil (*eyebrow*), judul utama, dan narasi pengantar yang tampil di bagian atas setiap halaman website.
+                    </p>
+
+                    @php
+                        $pageConfigs = [
+                            'tentang' => [
+                                'nama' => 'Halaman Tentang Kampus (/tentang)',
+                                'default_eyebrow' => 'Profil & Identitas Institusi',
+                                'default_title' => 'Tentang AMIK Taruna',
+                                'default_sub' => 'Mengenal institusi, perjalanan pendidikan vokasi teknologi terapan, dan komitmen mutu civitas akademika AMIK Taruna Probolinggo.'
+                            ],
+                            'akademik' => [
+                                'nama' => 'Halaman Program Studi (/akademik)',
+                                'default_eyebrow' => 'Pendidikan Vokasi Terapan',
+                                'default_title' => 'Program Studi Akademik',
+                                'default_sub' => 'Pilihan program studi vokasi jenjang Diploma III yang dirancang untuk membekali mahasiswa dengan keahlian teknis komputasi, logika terapan, dan kesiapan berkarier di era industri digital.'
+                            ],
+                            'mahasiswa' => [
+                                'nama' => 'Halaman Layanan Mahasiswa (/mahasiswa)',
+                                'default_eyebrow' => 'Sivitas Akademika',
+                                'default_title' => 'Pelayanan Akademik',
+                                'default_sub' => 'Akses cepat ke berbagai portal dan layanan digital mahasiswa AMIK Taruna'
+                            ],
+                            'alumni' => [
+                                'nama' => 'Halaman Tracer Study Alumni (/alumni)',
+                                'default_eyebrow' => 'Jejaring & Rekam Jejak',
+                                'default_title' => 'Portal Alumni & Tracer Study',
+                                'default_sub' => 'Wadah sinergi almamater dengan alumni AMIK Taruna untuk penelusuran karier, survei mutu kurikulum vokasi, dan kontribusi pengembangan institusi.'
+                            ],
+                            'lppm' => [
+                                'nama' => 'Halaman Riset & Lembaga LPPM (/lppm)',
+                                'default_eyebrow' => 'Lembaga Penelitian & Pengabdian Masyarakat',
+                                'default_title' => 'Portal & Layanan LPPM',
+                                'default_sub' => 'Pusat layanan riset, jurnal publikasi ilmiah, dan pengabdian masyarakat Sivitas Akademika AMIK Taruna Probolinggo'
+                            ],
+                            'ppm' => [
+                                'nama' => 'Halaman Penjaminan Mutu PPM (/ppm)',
+                                'default_eyebrow' => 'Lembaga Mutu Internal',
+                                'default_title' => 'Pusat Penjaminan Mutu (PPM)',
+                                'default_sub' => 'Sistem Penjaminan Mutu Internal (SPMI) AMIK Taruna Probolinggo untuk menjaga, mengendalikan, dan meningkatkan standar mutu pendidikan tinggi secara berkelanjutan.'
+                            ],
+                            'berita' => [
+                                'nama' => 'Halaman Berita & Warta (/berita)',
+                                'default_eyebrow' => 'Portal Publikasi & Warta',
+                                'default_title' => 'Warta & Kabar Kampus',
+                                'default_sub' => 'Informasi resmi, agenda kegiatan, pengumuman akademik, dan publikasi Tridharma Perguruan Tinggi AMIK Taruna Probolinggo.'
+                            ],
+                            'ppks' => [
+                                'nama' => 'Halaman Satgas PPKS (/ppks)',
+                                'default_eyebrow' => 'Satgas PPKS AMIK Taruna',
+                                'default_title' => 'Layanan Pencegahan & Penanganan Kekerasan Seksual',
+                                'default_sub' => 'Kanal pelaporan resmi, terenkripsi, dan rahasia sesuai Permendikbudristek No. 30 Tahun 2021. Kami menjamin perlindungan privasi, keamanan identitas, serta pendampingan psikologis korban.'
+                            ],
+                            'kritiksaran' => [
+                                'nama' => 'Halaman Kritik & Saran (/kritik-saran)',
+                                'default_eyebrow' => 'Suara Sivitas & Publik',
+                                'default_title' => 'Kritik & Saran',
+                                'default_sub' => 'Berikan masukan, kritik konstruktif, dan saran untuk kemajuan tata kelola dan layanan digital AMIK Taruna'
+                            ],
+                        ];
+                    @endphp
+
+                    <div class="row g-4">
+                        @foreach($pageConfigs as $key => $conf)
+                            @php
+                                $valEye = $headers[$key]['eyebrow'] ?? $conf['default_eyebrow'];
+                                $valTitle = $headers[$key]['title'] ?? $conf['default_title'];
+                                $valSub = $headers[$key]['subtitle'] ?? $conf['default_sub'];
+                            @endphp
+                            <div class="col-md-6">
+                                <div class="sub-card h-100">
+                                    <h5 class="fw-bold text-slate-800 fs-6 mb-3 d-flex align-items-center gap-2">
+                                        <i class="fas fa-file-lines text-emerald-600"></i>
+                                        <span>{{ $conf['nama'] }}</span>
+                                    </h5>
+                                    <div class="mb-2">
+                                        <label class="form-label">Lencana / Eyebrow</label>
+                                        <input type="text" name="page_headers[{{ $key }}][eyebrow]" class="form-control" value="{{ $valEye }}">
+                                    </div>
+                                    <div class="mb-2">
+                                        <label class="form-label">Judul Utama</label>
+                                        <input type="text" name="page_headers[{{ $key }}][title]" class="form-control" value="{{ $valTitle }}">
+                                    </div>
+                                    <div>
+                                        <label class="form-label">Paragraf Subjudul</label>
+                                        <textarea name="page_headers[{{ $key }}][subtitle]" rows="2" class="form-control">{{ $valSub }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- =====================================================
+                 TAB 4: NILAI & PILAR SUB-HALAMAN
+            ===================================================== -->
+            <div class="tab-pane fade" id="tab-subhalaman" role="tabpanel">
+                <div class="card-setting-pane">
+
+                    <!-- 4.1 3 Pilar Profil Kampus (/tentang) -->
+                    <div class="section-divider">
+                        <h4 class="section-title">
+                            <i class="fas fa-university"></i>
+                            <span>3 Pilar Sekilas Profil Kampus (Halaman /tentang)</span>
+                        </h4>
+                    </div>
+
+                    @php
+                        $defaultTentangPillars = [
+                            ['title' => 'Pendidikan Terapan', 'desc' => 'Kurikulum terstruktur berbasis praktik & kesiapan kerja industri.'],
+                            ['title' => 'Praktisi Berpengalaman', 'desc' => 'Dosen dan praktisi kompeten di bidang rekayasa TI & sistem bisnis.'],
+                            ['title' => 'Kelanjutan Studi', 'desc' => 'Kemudahan transfer SKS ke jenjang sarjana di PTN maupun Swasta.']
+                        ];
+                        $activeTP = !empty($tentangPillars['items']) ? $tentangPillars['items'] : $defaultTentangPillars;
+                    @endphp
+
+                    <div class="row g-3 mb-5">
+                        <div class="col-12">
+                            <label class="form-label">Judul Headline Profil Institusi</label>
+                            <input type="text" name="tentang_pillars[headline]" class="form-control" value="{{ $tentangPillars['headline'] ?? 'Menumbuhkan keahlian nyata di bidang teknologi komputasi & digital.' }}">
+                        </div>
+
+                        @for($t = 0; $t < 3; $t++)
+                            @php $itemTP = $activeTP[$t] ?? $defaultTentangPillars[$t]; @endphp
+                            <div class="col-md-4">
+                                <div class="sub-card">
+                                    <span class="badge bg-emerald-600 mb-2">Pilar Profil {{ $t+1 }}</span>
+                                    <div class="mb-2">
+                                        <label class="form-label">Judul</label>
+                                        <input type="text" name="tentang_pillars[items][{{ $t }}][title]" class="form-control" value="{{ $itemTP['title'] }}">
+                                    </div>
+                                    <div>
+                                        <label class="form-label">Deskripsi</label>
+                                        <textarea name="tentang_pillars[items][{{ $t }}][desc]" rows="2" class="form-control">{{ $itemTP['desc'] }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        @endfor
+                    </div>
+
+                    <!-- 4.2 3 Nilai Vokasi Akademik (/akademik) -->
+                    <div class="section-divider">
+                        <h4 class="section-title">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span>3 Nilai Keunggulan Vokasi (Halaman /akademik)</span>
+                        </h4>
+                    </div>
+
+                    @php
+                        $defaultAkademikValues = [
+                            ['icon' => 'fas fa-laptop-code', 'title' => '60% Kurikulum Praktik', 'desc' => 'Fokus pada penguasaan studi kasus nyata, perancangan aplikasi, dan pemecahan masalah komputasi industri.'],
+                            ['icon' => 'fas fa-chalkboard-teacher', 'title' => 'Dosen Praktisi Industri', 'desc' => 'Pengajar berpengalaman mendampingi mahasiswa dari pemahaman konseptual hingga penerapan praktis.'],
+                            ['icon' => 'fas fa-share-alt', 'title' => 'Transfer SKS Lanjutan', 'desc' => 'Lulusan dapat dengan mudah melanjutkan studi ke jenjang sarjana di PTN maupun Swasta dengan penyesuaian SKS.']
+                        ];
+                        $activeAV = !empty($akademikValues) ? $akademikValues : $defaultAkademikValues;
+                    @endphp
+
+                    <div class="row g-3 mb-5">
+                        @for($a = 0; $a < 3; $a++)
+                            @php $itemAV = $activeAV[$a] ?? $defaultAkademikValues[$a]; @endphp
+                            <div class="col-md-4">
+                                <div class="sub-card">
+                                    <span class="badge bg-info text-dark mb-2">Nilai Vokasi {{ $a+1 }}</span>
+                                    <div class="mb-2">
+                                        <label class="form-label">Judul Nilai</label>
+                                        <input type="text" name="akademik_values[{{ $a }}][title]" class="form-control" value="{{ $itemAV['title'] }}">
+                                    </div>
+                                    <div class="mb-2">
+                                        <label class="form-label">Ikon FontAwesome</label>
+                                        <input type="text" name="akademik_values[{{ $a }}][icon]" class="form-control" value="{{ $itemAV['icon'] }}">
+                                    </div>
+                                    <div>
+                                        <label class="form-label">Deskripsi</label>
+                                        <textarea name="akademik_values[{{ $a }}][desc]" rows="3" class="form-control">{{ $itemAV['desc'] }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        @endfor
+                    </div>
+
+                    <!-- 4.3 3 Pilar Sinergi Alumni (/alumni) -->
+                    <div class="section-divider">
+                        <h4 class="section-title">
+                            <i class="fas fa-users-rays"></i>
+                            <span>3 Pilar Sinergi Alumni (Halaman /alumni)</span>
+                        </h4>
+                    </div>
+
+                    @php
+                        $defaultAlumniPillars = [
+                            ['icon' => 'fas fa-chart-line', 'badge' => 'Pilar Pengembangan', 'title' => 'Relevansi Kurikulum', 'desc' => 'Tracer study memetakan kesesuaian keahlian lulusan dengan kebutuhan nyata industri teknologi masa kini.'],
+                            ['icon' => 'fas fa-network-wired', 'badge' => 'Pilar Kolaborasi', 'title' => 'Jejaring Profesional', 'desc' => 'Menghubungkan lulusan lintas angkatan yang berkarier di institusi pemerintah, BUMN, dan industri kreatif.'],
+                            ['icon' => 'fas fa-hand-holding-heart', 'badge' => 'Pilar Solidaritas', 'title' => 'Dukungan Fasilitas', 'desc' => 'Sinergi dana abadi membantu penyediaan fasilitas laboratorium serta beasiswa bagi mahasiswa berprestasi.']
+                        ];
+                        $activeAlum = !empty($alumniPillars) ? $alumniPillars : $defaultAlumniPillars;
+                    @endphp
+
+                    <div class="row g-3">
+                        @for($al = 0; $al < 3; $al++)
+                            @php $itemAl = $activeAlum[$al] ?? $defaultAlumniPillars[$al]; @endphp
+                            <div class="col-md-4">
+                                <div class="sub-card">
+                                    <span class="badge bg-teal text-white mb-2" style="background:#0d9488;">Pilar Alumni {{ $al+1 }}</span>
+                                    <div class="mb-2">
+                                        <label class="form-label">Judul Pilar</label>
+                                        <input type="text" name="alumni_pillars[{{ $al }}][title]" class="form-control" value="{{ $itemAl['title'] }}">
+                                    </div>
+                                    <div class="mb-2">
+                                        <label class="form-label">Lencana Bawah</label>
+                                        <input type="text" name="alumni_pillars[{{ $al }}][badge]" class="form-control" value="{{ $itemAl['badge'] }}">
+                                    </div>
+                                    <div class="mb-2">
+                                        <label class="form-label">Ikon FontAwesome</label>
+                                        <input type="text" name="alumni_pillars[{{ $al }}][icon]" class="form-control" value="{{ $itemAl['icon'] }}">
+                                    </div>
+                                    <div>
+                                        <label class="form-label">Deskripsi</label>
+                                        <textarea name="alumni_pillars[{{ $al }}][desc]" rows="3" class="form-control">{{ $itemAl['desc'] }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        @endfor
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- =====================================================
+                 TAB 5: KONTAK, PETA & FOOTER
+            ===================================================== -->
+            <div class="tab-pane fade" id="tab-kontak" role="tabpanel">
+                <div class="card-setting-pane">
+                    <div class="section-divider">
+                        <h4 class="section-title">
+                            <i class="fas fa-location-dot"></i>
+                            <span>Informasi Alamat, Kontak &amp; Peta Lokasi</span>
+                        </h4>
+                    </div>
+
+                    <div class="row g-4 mb-5">
+                        <div class="col-md-6">
+                            <label class="form-label">Alamat Lengkap Kampus</label>
+                            <textarea name="alamat" rows="3" class="form-control" placeholder="Contoh: Jl. Hayam Wuruk No. 123, Kraksaan, Probolinggo">{{ $setting->alamat }}</textarea>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">URL Sematan Google Maps (Iframe Embed URL)</label>
+                            <textarea name="maps_embed_url" rows="3" class="form-control" placeholder="Contoh: https://www.google.com/maps?q=AMIK%20Taruna%20Probolinggo&output=embed">{{ $setting->maps_embed_url ?? 'https://www.google.com/maps?q=AMIK%20Taruna%20Probolinggo&output=embed' }}</textarea>
+                            <div class="form-hint">Dapat diisi URL embed Google Maps resmi kampus.</div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label">Nomor Telepon Kantor</label>
+                            <input type="text" name="telepon" class="form-control" value="{{ $setting->telepon }}" placeholder="Contoh: (0335) 420123 / 081234567890">
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label">Alamat Email Resmi</label>
+                            <input type="email" name="email" class="form-control" value="{{ $setting->email }}" placeholder="info@amiktaruna.ac.id">
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label">Jam Operasional Layanan</label>
+                            <input type="text" name="jam_operasional" class="form-control" value="{{ $setting->jam_operasional }}" placeholder="Senin - Sabtu: 08.00 - 16.00 WIB">
+                        </div>
+                    </div>
+
+                    <!-- Footer & Media Sosial -->
+                    <div class="section-divider">
+                        <h4 class="section-title">
+                            <i class="fas fa-share-nodes"></i>
+                            <span>Tautan Media Sosial &amp; Deskripsi Footer</span>
+                        </h4>
+                    </div>
+
+                    <div class="row g-4">
+                        <div class="col-12">
+                            <label class="form-label">Deskripsi Singkat Footer</label>
+                            <textarea name="footer_deskripsi" rows="2" class="form-control">{{ $setting->footer_deskripsi ?? 'Perguruan tinggi vokasi teknologi informasi yang berdedikasi melahirkan praktisi dan profesional digital siap kerja.' }}</textarea>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label"><i class="fab fa-instagram text-danger me-1"></i> Instagram</label>
+                            <input type="url" name="instagram" class="form-control" value="{{ $setting->instagram }}" placeholder="https://instagram.com/...">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label"><i class="fab fa-facebook text-primary me-1"></i> Facebook</label>
+                            <input type="url" name="facebook" class="form-control" value="{{ $setting->facebook }}" placeholder="https://facebook.com/...">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label"><i class="fab fa-youtube text-danger me-1"></i> YouTube</label>
+                            <input type="url" name="youtube" class="form-control" value="{{ $setting->youtube }}" placeholder="https://youtube.com/...">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label"><i class="fab fa-tiktok text-dark me-1"></i> TikTok</label>
+                            <input type="url" name="tiktok" class="form-control" value="{{ $setting->tiktok }}" placeholder="https://tiktok.com/...">
+                        </div>
+                    </div>
+
+                </div>
+            </div>
 
         </div>
 
-        <div class="card-body">
-
-            <form action="/admin/setting/update"
-                  method="POST"
-                  enctype="multipart/form-data">
-
-                @csrf
-
-                @method('PUT')
-
-                <!-- IDENTITAS -->
-
-                <div class="section-title">
-                    Identitas Website
-                </div>
-
-                <div class="row">
-
-                    <div class="col-md-6 mb-4">
-
-                        <label class="form-label">
-                            Nama Website
-                        </label>
-
-                        <input type="text"
-                               name="nama_website"
-                               class="form-control"
-                               value="{{ $setting->nama_website }}">
-
-                    </div>
-
-                    <div class="col-md-6 mb-4">
-
-                        <label class="form-label">
-                            Tagline
-                        </label>
-
-                        <input type="text"
-                               name="tagline"
-                               class="form-control"
-                               value="{{ $setting->tagline }}">
-
-                    </div>
-
-                </div>
-
-                <!-- LOGO -->
-
-                <div class="section-title">
-                    Logo Website
-                </div>
-
-                <div class="mb-4">
-
-                    <label class="form-label">
-                        Upload Logo
-                    </label>
-
-                    <input type="file"
-                           name="logo"
-                           class="form-control">
-
-                    @if($setting->logo)
-
-                        <img src="{{ asset('uploads/' . $setting->logo) }}"
-                             class="preview-img">
-
-                    @endif
-
-                </div>
-
-                <!-- HERO -->
-
-                <div class="section-title">
-                    Hero Section
-                </div>
-
-                <div class="row">
-
-                    <div class="col-md-6 mb-4">
-
-                        <label class="form-label">
-                            Hero Judul
-                        </label>
-
-                        <input type="text"
-                               name="hero_judul"
-                               class="form-control"
-                               value="{{ $setting->hero_judul }}">
-
-                    </div>
-
-                    <div class="col-md-6 mb-4">
-
-                        <label class="form-label">
-                            Hero Highlight
-                        </label>
-
-                        <input type="text"
-                               name="hero_highlight"
-                               class="form-control"
-                               value="{{ $setting->hero_highlight }}">
-
-                    </div>
-
-                </div>
-
-                <div class="mb-4">
-
-                    <label class="form-label">
-                        Hero Subjudul
-                    </label>
-
-                    <textarea name="hero_subjudul"
-                              rows="4"
-                              class="form-control">{{ $setting->hero_subjudul }}</textarea>
-
-                </div>
-
-                <!-- BUTTON HERO -->
-
-                <div class="row">
-
-                    <div class="col-md-6 mb-4">
-
-                        <label class="form-label">
-                            Button 1 Text
-                        </label>
-
-                        <input type="text"
-                               name="hero_button_1_text"
-                               class="form-control"
-                               value="{{ $setting->hero_button_1_text }}">
-
-                    </div>
-
-                    <div class="col-md-6 mb-4">
-
-                        <label class="form-label">
-                            Button 1 Link
-                        </label>
-
-                        <input type="text"
-                               name="hero_button_1_link"
-                               class="form-control"
-                               value="{{ $setting->hero_button_1_link }}">
-
-                    </div>
-
-                </div>
-
-                <div class="row">
-
-                    <div class="col-md-6 mb-4">
-
-                        <label class="form-label">
-                            Button 2 Text
-                        </label>
-
-                        <input type="text"
-                               name="hero_button_2_text"
-                               class="form-control"
-                               value="{{ $setting->hero_button_2_text }}">
-
-                    </div>
-
-                    <div class="col-md-6 mb-4">
-
-                        <label class="form-label">
-                            Button 2 Link
-                        </label>
-
-                        <input type="text"
-                               name="hero_button_2_link"
-                               class="form-control"
-                               value="{{ $setting->hero_button_2_link }}">
-
-                    </div>
-
-                </div>
-
-                <!-- HERO SLIDER -->
-
-                <div class="section-title">
-                    Hero Carousel
-                </div>
-
-                <div class="row">
-
-                    <!-- SLIDE 1 -->
-
-                    <div class="col-md-4 mb-4">
-
-                        <label class="form-label">
-                            Slide 1
-                        </label>
-
-                        <input type="file"
-                               name="hero_slide_1"
-                               class="form-control">
-
-                        @if($setting->hero_slide_1)
-
-                            <img src="{{ asset('uploads/' . $setting->hero_slide_1) }}"
-                                 class="preview-img">
-
-                        @endif
-
-                    </div>
-
-                    <!-- SLIDE 2 -->
-
-                    <div class="col-md-4 mb-4">
-
-                        <label class="form-label">
-                            Slide 2
-                        </label>
-
-                        <input type="file"
-                               name="hero_slide_2"
-                               class="form-control">
-
-                        @if($setting->hero_slide_2)
-
-                            <img src="{{ asset('uploads/' . $setting->hero_slide_2) }}"
-                                 class="preview-img">
-
-                        @endif
-
-                    </div>
-
-                    <!-- SLIDE 3 -->
-
-                    <div class="col-md-4 mb-4">
-
-                        <label class="form-label">
-                            Slide 3
-                        </label>
-
-                        <input type="file"
-                               name="hero_slide_3"
-                               class="form-control">
-
-                        @if($setting->hero_slide_3)
-
-                            <img src="{{ asset('uploads/' . $setting->hero_slide_3) }}"
-                                 class="preview-img">
-
-                        @endif
-
-                    </div>
-
-                </div>
-
-                <!-- FOOTER -->
-
-                <div class="section-title">
-                    Footer & Kontak
-                </div>
-
-                <div class="mb-4">
-
-                    <label class="form-label">
-                        Footer Deskripsi
-                    </label>
-
-                    <textarea name="footer_deskripsi"
-                              rows="4"
-                              class="form-control">{{ $setting->footer_deskripsi }}</textarea>
-
-                </div>
-
-                <div class="mb-4">
-
-                    <label class="form-label">
-                        Alamat
-                    </label>
-
-                    <textarea name="alamat"
-                              rows="3"
-                              class="form-control">{{ $setting->alamat }}</textarea>
-
-                </div>
-
-                <div class="row">
-
-                    <div class="col-md-4 mb-4">
-
-                        <label class="form-label">
-                            Telepon
-                        </label>
-
-                        <input type="text"
-                               name="telepon"
-                               class="form-control"
-                               value="{{ $setting->telepon }}">
-
-                    </div>
-
-                    <div class="col-md-4 mb-4">
-
-                        <label class="form-label">
-                            Email
-                        </label>
-
-                        <input type="email"
-                               name="email"
-                               class="form-control"
-                               value="{{ $setting->email }}">
-
-                    </div>
-
-                    <div class="col-md-4 mb-4">
-
-                        <label class="form-label">
-                            Jam Operasional
-                        </label>
-
-                        <input type="text"
-                               name="jam_operasional"
-                               class="form-control"
-                               value="{{ $setting->jam_operasional }}">
-
-                    </div>
-
-                </div>
-
-                <!-- SOSMED -->
-
-                <div class="section-title">
-                    Sosial Media
-                </div>
-
-                <div class="row">
-
-                    <div class="col-md-6 mb-4">
-
-                        <label class="form-label">
-                            Instagram
-                        </label>
-
-                        <input type="text"
-                               name="instagram"
-                               class="form-control"
-                               value="{{ $setting->instagram }}">
-
-                    </div>
-
-                    <div class="col-md-6 mb-4">
-
-                        <label class="form-label">
-                            Facebook
-                        </label>
-
-                        <input type="text"
-                               name="facebook"
-                               class="form-control"
-                               value="{{ $setting->facebook }}">
-
-                    </div>
-
-                    <div class="col-md-6 mb-4">
-
-                        <label class="form-label">
-                            Youtube
-                        </label>
-
-                        <input type="text"
-                               name="youtube"
-                               class="form-control"
-                               value="{{ $setting->youtube }}">
-
-                    </div>
-
-                    <div class="col-md-6 mb-5">
-
-                        <label class="form-label">
-                            TikTok
-                        </label>
-
-                        <input type="text"
-                               name="tiktok"
-                               class="form-control"
-                               value="{{ $setting->tiktok }}">
-
-                    </div>
-
-                </div>
-
-                <!-- BUTTON -->
-
-                <button type="submit"
-                        class="btn btn-primary btn-save">
-
-                    <i data-lucide="save"></i>
-
-                    Simpan Setting
-
-                </button>
-
-            </form>
-
+        <!-- STICKY BOTTOM SAVE ACTION BAR -->
+        <div class="btn-save-sticky">
+            <div class="d-flex align-items-center gap-2 text-slate-600 small">
+                <i class="fas fa-circle-info text-emerald-600"></i>
+                <span>Perubahan akan langsung diterapkan ke seluruh halaman website publik.</span>
+            </div>
+
+            <button type="submit" class="btn btn-success rounded-pill px-5 py-2.5 fw-bold shadow-sm d-inline-flex align-items-center gap-2">
+                <i class="fas fa-floppy-disk"></i>
+                <span>Simpan Semua Pengaturan</span>
+            </button>
         </div>
 
-    </div>
+    </form>
 
 </div>
 

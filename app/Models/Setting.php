@@ -55,7 +55,7 @@ class Setting extends Model
 
         /*
         |--------------------------------------------------------------------------
-        | FOOTER
+        | FOOTER & KONTAK
         |--------------------------------------------------------------------------
         */
 
@@ -64,6 +64,8 @@ class Setting extends Model
         'telepon',
         'email',
         'jam_operasional',
+        'maps_embed_url',
+        'badge_akreditasi',
 
         /*
         |--------------------------------------------------------------------------
@@ -75,5 +77,33 @@ class Setting extends Model
         'youtube',
         'tiktok',
         'facebook',
+
+        /*
+        |--------------------------------------------------------------------------
+        | KONTEN DINAMIS (JSON)
+        |--------------------------------------------------------------------------
+        */
+
+        'page_headers',
+        'home_facts',
+        'home_pillars',
+        'home_cta',
+        'mobile_banners',
+        'tentang_pillars',
+        'akademik_values',
+        'alumni_pillars',
+        'pmb_pillars',
+    ];
+
+    protected $casts = [
+        'page_headers' => 'array',
+        'home_facts' => 'array',
+        'home_pillars' => 'array',
+        'home_cta' => 'array',
+        'mobile_banners' => 'array',
+        'tentang_pillars' => 'array',
+        'akademik_values' => 'array',
+        'alumni_pillars' => 'array',
+        'pmb_pillars' => 'array',
     ];
 }

@@ -76,10 +76,14 @@ class SettingController extends Controller
             $data['hero_slide_3'] = $namaFile;
         }
 
+        if (isset($data['home_cta']['points_str'])) {
+            $data['home_cta']['points'] = array_values(array_filter(array_map('trim', explode(';', $data['home_cta']['points_str']))));
+        }
+
         $setting->update($data);
 
         ActivityLogger::log('UPDATE', 'Setting Website', 'Memperbarui konfigurasi identitas dan tampilan website');
 
-        return back()->with('success', 'Setting berhasil diupdate');
+        return back()->with('success', 'Pengaturan tampilan & konten website berhasil disimpan!');
     }
 }

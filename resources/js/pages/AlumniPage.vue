@@ -29,7 +29,7 @@ defineProps({
       <AlumniHero :setting="setting" />
 
       <!-- 3. Introduction & Academic Value Pillars -->
-      <AlumniIntro />
+      <AlumniIntro :setting="setting" />
 
       <!-- 4. Alumni Content Sections (Authentic Tracer Study & Dana Abadi) -->
       <AlumniContentSection :alumni-sections="alumni_sections" />

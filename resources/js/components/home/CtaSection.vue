@@ -1,11 +1,33 @@
 <script setup>
+import { computed } from 'vue';
 import AppButton from '../ui/AppButton.vue';
 
-defineProps({
+const props = defineProps({
   setting: {
     type: Object,
     default: () => ({})
   }
+});
+
+const defaultPoints = [
+  'Akreditasi BAN-PT Resmi',
+  'Biaya Kuliah Terjangkau',
+  'Beasiswa Prestasi & KIP-K',
+  'Konsultasi Program Studi Bebas Biaya'
+];
+
+const badge = computed(() => props.setting?.home_cta?.badge || 'Penerimaan Mahasiswa Baru 2026/2027');
+const headline = computed(() => props.setting?.home_cta?.headline || 'Mulai langkah nyatamu di dunia teknologi & digital.');
+const subheadline = computed(() => props.setting?.home_cta?.subheadline || 'Daftarkan dirimu di AMIK Taruna. Dapatkan pembekalan komputasi terapan, bimbingan dosen berpengalaman, dan sertifikasi keahlian siap industri.');
+
+const pointsList = computed(() => {
+  if (props.setting?.home_cta?.points && Array.isArray(props.setting.home_cta.points) && props.setting.home_cta.points.length > 0) {
+    return props.setting.home_cta.points;
+  }
+  if (props.setting?.home_cta?.points_str) {
+    return props.setting.home_cta.points_str.split(';').map(s => s.trim()).filter(Boolean);
+  }
+  return defaultPoints;
 });
 </script>
 
@@ -20,18 +42,17 @@ defineProps({
         <!-- Eyebrow Pill -->
         <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-widest bg-brand-50 text-brand-800 border border-brand-200/70 mb-6">
           <span class="w-1.5 h-1.5 rounded-full bg-brand-700"></span>
-          Penerimaan Mahasiswa Baru 2026/2027
+          {{ badge }}
         </div>
 
         <!-- Strong Closing Statement Headline -->
         <h2 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900 leading-[1.15] max-w-3xl mx-auto">
-          Mulai langkah nyatamu
-          <span class="text-brand-800 block mt-1">di dunia teknologi &amp; digital.</span>
+          {{ headline }}
         </h2>
 
         <!-- Concise Academic Lead -->
         <p class="mt-6 text-base sm:text-lg text-slate-600 leading-relaxed max-w-2xl mx-auto">
-          Daftarkan dirimu di AMIK Taruna. Dapatkan pembekalan komputasi terapan, bimbingan dosen berpengalaman, dan sertifikasi keahlian siap industri.
+          {{ subheadline }}
         </p>
 
         <!-- Conversion Actions -->
@@ -58,10 +79,9 @@ defineProps({
 
         <!-- Quick Trust Indicators -->
         <div class="mt-12 pt-8 border-t border-slate-200/80 flex flex-wrap items-center justify-center gap-6 sm:gap-10 text-xs text-slate-600 font-semibold">
-          <span>✓ Akreditasi BAN-PT Resmi</span>
-          <span>✓ Biaya Kuliah Terjangkau</span>
-          <span>✓ Beasiswa Prestasi &amp; KIP-K</span>
-          <span>✓ Konsultasi Program Studi Bebas Biaya</span>
+          <span v-for="point in pointsList" :key="point">
+            ✓ {{ point }}
+          </span>
         </div>
 
       </div>

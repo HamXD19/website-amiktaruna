@@ -5,8 +5,17 @@ const props = defineProps({
   alumniSections: {
     type: Array,
     default: () => []
+  },
+  setting: {
+    type: Object,
+    default: () => ({})
   }
 });
+
+const eyebrow = computed(() => props.setting?.page_headers?.home_alumni?.eyebrow || 'Ikatan Alumni & Rekam Jejak');
+const title = computed(() => props.setting?.page_headers?.home_alumni?.title || 'Jejak lulusan kami');
+const titleHighlight = computed(() => props.setting?.page_headers?.home_alumni?.highlight || 'di dunia profesional & industri digital.');
+const subtitle = computed(() => props.setting?.page_headers?.home_alumni?.subtitle || 'Hubungan erat antara almamater dan alumni memperkuat ekosistem penyerapan kerja, umpan balik kurikulum terapan, serta sinergi tridharma berkelanjutan.');
 
 // Fallback items based on real institutional data if array empty
 const defaultAlumniItems = [
@@ -46,14 +55,14 @@ const displayItems = computed(() => {
       <!-- Section Header Card -->
       <div class="max-w-3xl mb-12 bg-white rounded-3xl p-6 sm:p-10 shadow-xl border border-slate-200/80 relative z-10">
         <span class="text-xs font-bold uppercase tracking-widest text-brand-800 bg-brand-50 px-3 py-1 rounded border border-brand-200/70">
-          Ikatan Alumni &amp; Rekam Jejak
+          {{ eyebrow }}
         </span>
         <h2 class="mt-4 text-3xl sm:text-4xl lg:text-[40px] font-extrabold text-slate-900 tracking-tight leading-[1.18]">
-          Jejak lulusan kami
-          <span class="text-brand-800 block">di dunia profesional &amp; industri digital.</span>
+          {{ title }}
+          <span v-if="titleHighlight" class="text-brand-800 block">{{ titleHighlight }}</span>
         </h2>
         <p class="mt-4 text-base sm:text-lg text-slate-600 leading-relaxed">
-          Hubungan erat antara almamater dan alumni memperkuat ekosistem penyerapan kerja, umpan balik kurikulum terapan, serta sinergi tridharma berkelanjutan.
+          {{ subtitle }}
         </p>
       </div>
 

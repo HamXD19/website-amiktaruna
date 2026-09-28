@@ -1,14 +1,19 @@
 <script setup>
+import { computed } from 'vue';
 import SectionHeader from '../ui/SectionHeader.vue';
 
-defineProps({
+const props = defineProps({
   prodis: {
     type: Array,
     default: () => []
+  },
+  setting: {
+    type: Object,
+    default: () => ({})
   }
 });
 
-const pillars = [
+const defaultPillars = [
   {
     icon: 'badge-check',
     title: 'Terakreditasi Resmi',
@@ -34,6 +39,17 @@ const pillars = [
     badge: 'Siap Kerja'
   }
 ];
+
+const eyebrow = computed(() => props.setting?.home_pillars?.eyebrow || 'Komitmen Mutu & Keunggulan');
+const title = computed(() => props.setting?.home_pillars?.title || 'Mengapa Memilih AMIK Taruna?');
+const subtitle = computed(() => props.setting?.home_pillars?.subtitle || 'Mempersiapkan generasi masa depan dengan kompetensi teknologi informasi, kemampuan manajerial, dan etika profesional.');
+
+const displayPillars = computed(() => {
+  if (props.setting?.home_pillars?.items && Array.isArray(props.setting.home_pillars.items) && props.setting.home_pillars.items.length > 0) {
+    return props.setting.home_pillars.items;
+  }
+  return defaultPillars;
+});
 </script>
 
 <template>
@@ -42,16 +58,16 @@ const pillars = [
       
       <!-- Section Header -->
       <SectionHeader
-        eyebrow="Komitmen Mutu & Keunggulan"
-        title="Mengapa Memilih AMIK Taruna?"
-        subtitle="Mempersiapkan generasi masa depan dengan kompetensi teknologi informasi, kemampuan manajerial, dan etika profesional."
+        :eyebrow="eyebrow"
+        :title="title"
+        :subtitle="subtitle"
       />
 
       <!-- 4 Pillars Grid -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <div
-          v-for="(pillar, idx) in pillars"
-          :key="pillar.title"
+          v-for="(pillar, idx) in displayPillars"
+          :key="pillar.title || idx"
           class="card rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between group"
         >
           <div>

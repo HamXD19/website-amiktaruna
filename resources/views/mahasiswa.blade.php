@@ -7,13 +7,13 @@
     <!-- TITLE -->
     <div class="text-center mb-5">
         <div class="d-inline-flex align-items-center gap-2 px-3 py-1 mb-3 rounded-pill bg-emerald-500/20 text-emerald-300 fw-bold small border border-emerald-500/30">
-            <i class="fas fa-graduation-cap"></i> Sivitas Akademika
+            <i class="fas fa-graduation-cap"></i> {{ $setting->page_headers['mahasiswa']['eyebrow'] ?? 'Sivitas Akademika' }}
         </div>
         <h1 class="fw-bold display-6 text-white mb-2">
-            Pelayanan Akademik
+            {{ $setting->page_headers['mahasiswa']['title'] ?? 'Pelayanan Akademik' }}
         </h1>
         <p class="text-slate-300 mx-auto" style="max-width: 600px;">
-            Akses cepat ke berbagai portal dan layanan digital mahasiswa AMIK Taruna
+            {{ $setting->page_headers['mahasiswa']['subtitle'] ?? 'Akses cepat ke berbagai portal dan layanan digital mahasiswa AMIK Taruna' }}
         </p>
     </div>
 

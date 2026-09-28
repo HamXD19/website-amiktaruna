@@ -92,7 +92,7 @@ const isMapActive = ref(false);
         <div class="lg:col-span-7">
           <div class="relative rounded-xl overflow-hidden shadow-card border border-slate-200/90 bg-slate-100 aspect-[16/10]">
             <iframe
-              src="https://www.google.com/maps?q=AMIK%20Taruna%20Probolinggo&output=embed"
+              :src="setting?.maps_embed_url || 'https://www.google.com/maps?q=AMIK%20Taruna%20Probolinggo&output=embed'"
               class="w-full h-full border-0"
               :class="isMapActive ? 'pointer-events-auto' : 'pointer-events-none sm:pointer-events-auto'"
               allowfullscreen=""

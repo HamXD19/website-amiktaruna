@@ -9,6 +9,10 @@ class ProgramStudi extends Model
     protected $fillable = [
 
         'nama_prodi',
+        'jenjang',
+        'gelar',
+        'masa_studi',
+        'kurikulum',
 
         'slug',
 

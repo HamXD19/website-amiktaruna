@@ -151,13 +151,13 @@
             <div class="col-lg-7">
                 <div class="d-inline-flex align-items-center gap-2 px-3 py-1.5 rounded-pill mb-3" style="background: rgba(74, 222, 128, 0.15); border: 1px solid rgba(74, 222, 128, 0.3);">
                     <i class="fas fa-newspaper text-success"></i>
-                    <span class="text-success fw-bold small text-uppercase tracking-wider">Portal Publikasi &amp; Warta</span>
+                    <span class="text-success fw-bold small text-uppercase tracking-wider">{{ $setting->page_headers['berita']['eyebrow'] ?? 'Portal Publikasi & Warta' }}</span>
                 </div>
                 <h1 class="fw-extrabold text-white mb-2" style="font-size: 2.3rem; letter-spacing: -0.5px;">
-                    Warta &amp; Kabar Kampus
+                    {{ $setting->page_headers['berita']['title'] ?? 'Warta & Kabar Kampus' }}
                 </h1>
                 <p class="text-slate-300 mb-0" style="font-size: 1rem; line-height: 1.7;">
-                    Informasi resmi, agenda kegiatan, pengumuman akademik, dan publikasi Tridharma Perguruan Tinggi AMIK Taruna Probolinggo.
+                    {{ $setting->page_headers['berita']['subtitle'] ?? 'Informasi resmi, agenda kegiatan, pengumuman akademik, dan publikasi Tridharma Perguruan Tinggi AMIK Taruna Probolinggo.' }}
                 </p>
             </div>
 

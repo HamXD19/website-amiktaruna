@@ -81,6 +81,19 @@ const ctaPrimaryLink = computed(() => props.setting?.hero_button_1_link || '/pmb
 
 const ctaSecondaryText = computed(() => props.setting?.hero_button_2_text || 'Pelajari Program Studi');
 const ctaSecondaryLink = computed(() => props.setting?.hero_button_2_link || '/akademik');
+
+const fact1Title = computed(() => props.setting?.home_facts?.fact_1_title || 'Status Resmi');
+const fact1Val = computed(() => props.setting?.home_facts?.fact_1_val || 'Terakreditasi BAN-PT');
+
+const fact2Title = computed(() => props.setting?.home_facts?.fact_2_title || 'Orientasi');
+const fact2Val = computed(() => props.setting?.home_facts?.fact_2_val || 'Vokasi Siap Kerja');
+
+const fact3Title = computed(() => props.setting?.home_facts?.fact_3_title || 'Infrastruktur');
+const fact3Val = computed(() => props.setting?.home_facts?.fact_3_val || 'Lab Informatika Modern');
+
+const promoText = computed(() => props.setting?.home_facts?.promo_text || 'Penerimaan Mahasiswa Baru Gelombang 2026/2027 Dibuka');
+const promoBtn = computed(() => props.setting?.home_facts?.promo_btn || 'Info PMB →');
+const promoLink = computed(() => props.setting?.home_facts?.promo_link || '/pmb');
 </script>
 
 <template>
@@ -133,16 +146,16 @@ const ctaSecondaryLink = computed(() => props.setting?.hero_button_2_link || '/a
           <div class="mt-9 pt-6 border-t border-emerald-500/20 w-full">
             <div class="grid grid-cols-3 gap-3 sm:gap-6 text-left">
               <div>
-                <span class="block text-[11px] font-bold uppercase tracking-wider text-slate-400">Status Resmi</span>
-                <span class="block text-xs sm:text-sm font-semibold text-emerald-200 mt-0.5">Terakreditasi BAN-PT</span>
+                <span class="block text-[11px] font-bold uppercase tracking-wider text-slate-400">{{ fact1Title }}</span>
+                <span class="block text-xs sm:text-sm font-semibold text-emerald-200 mt-0.5">{{ fact1Val }}</span>
               </div>
               <div class="border-l border-emerald-500/20 pl-3 sm:pl-6">
-                <span class="block text-[11px] font-bold uppercase tracking-wider text-slate-400">Orientasi</span>
-                <span class="block text-xs sm:text-sm font-semibold text-emerald-200 mt-0.5">Vokasi Siap Kerja</span>
+                <span class="block text-[11px] font-bold uppercase tracking-wider text-slate-400">{{ fact2Title }}</span>
+                <span class="block text-xs sm:text-sm font-semibold text-emerald-200 mt-0.5">{{ fact2Val }}</span>
               </div>
               <div class="border-l border-emerald-500/20 pl-3 sm:pl-6">
-                <span class="block text-[11px] font-bold uppercase tracking-wider text-slate-400">Infrastruktur</span>
-                <span class="block text-xs sm:text-sm font-semibold text-emerald-200 mt-0.5">Lab Informatika Modern</span>
+                <span class="block text-[11px] font-bold uppercase tracking-wider text-slate-400">{{ fact3Title }}</span>
+                <span class="block text-xs sm:text-sm font-semibold text-emerald-200 mt-0.5">{{ fact3Val }}</span>
               </div>
             </div>
           </div>
@@ -217,10 +230,10 @@ const ctaSecondaryLink = computed(() => props.setting?.hero_button_2_link || '/a
             <div class="mt-3 flex items-center justify-between px-1 text-xs text-slate-300">
               <div class="flex items-center gap-2">
                 <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-                <span class="font-medium text-emerald-200">Penerimaan Mahasiswa Baru Gelombang 2026/2027 Dibuka</span>
+                <span class="font-medium text-emerald-200">{{ promoText }}</span>
               </div>
-              <a href="/pmb" class="font-bold text-emerald-400 hover:text-emerald-300 hover:underline">
-                Info PMB →
+              <a :href="promoLink" class="font-bold text-emerald-400 hover:text-emerald-300 hover:underline">
+                {{ promoBtn }}
               </a>
             </div>
 

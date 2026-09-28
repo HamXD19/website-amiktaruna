@@ -100,6 +100,27 @@
                         <input type="text" name="tagline" class="form-control" value="{{ old('tagline', $program->tagline) }}">
                     </div>
 
+                    <!-- SPESIFIKASI PRODI -->
+                    <div class="col-md-3">
+                        <label class="form-label small fw-semibold text-slate-700"><i class="fas fa-graduation-cap me-1 text-success"></i> Jenjang</label>
+                        <input type="text" name="jenjang" class="form-control" value="{{ old('jenjang', $program->jenjang ?? 'Diploma 3 (D3)') }}" placeholder="Diploma 3 (D3)">
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label small fw-semibold text-slate-700"><i class="fas fa-certificate me-1 text-success"></i> Gelar Lulusan</label>
+                        <input type="text" name="gelar" class="form-control" value="{{ old('gelar', $program->gelar ?? 'A.Md.') }}" placeholder="A.Md.">
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label small fw-semibold text-slate-700"><i class="fas fa-clock me-1 text-success"></i> Masa Studi</label>
+                        <input type="text" name="masa_studi" class="form-control" value="{{ old('masa_studi', $program->masa_studi ?? '3 Tahun (6 Semester)') }}" placeholder="3 Tahun (6 Semester)">
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label small fw-semibold text-slate-700"><i class="fas fa-book-reader me-1 text-success"></i> Kurikulum</label>
+                        <input type="text" name="kurikulum" class="form-control" value="{{ old('kurikulum', $program->kurikulum ?? 'Berbasis Vokasi & KKNI') }}" placeholder="Berbasis Vokasi & KKNI">
+                    </div>
+
                     <!-- AKREDITASI -->
                     <div class="col-md-6">
                         <label class="form-label small fw-semibold text-slate-700"><i class="fa-regular fa-star me-1 text-success"></i> Akreditasi</label>

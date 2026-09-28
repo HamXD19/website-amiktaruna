@@ -223,15 +223,15 @@ const handleImageError = () => {
             <div class="mt-8 flex flex-wrap items-center gap-3 pt-6 border-t border-emerald-900/60 text-xs text-emerald-200/90">
               <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#0a2e1e] border border-[#166534]/70">
                 <i class="fas fa-graduation-cap text-emerald-400"></i>
-                <span>Gelar: <strong>A.Md.</strong></span>
+                <span>Gelar: <strong>{{ program.gelar || 'A.Md.' }}</strong></span>
               </div>
               <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#0a2e1e] border border-[#166534]/70">
                 <i class="fas fa-clock text-emerald-400"></i>
-                <span>Masa Studi: <strong>3 Tahun (6 Semester)</strong></span>
+                <span>Masa Studi: <strong>{{ program.masa_studi || '3 Tahun (6 Semester)' }}</strong></span>
               </div>
               <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#0a2e1e] border border-[#166534]/70">
                 <i class="fas fa-book-reader text-emerald-400"></i>
-                <span>Kurikulum: <strong>Berbasis Vokasi & KKNI</strong></span>
+                <span>Kurikulum: <strong>{{ program.kurikulum || 'Berbasis Vokasi & KKNI' }}</strong></span>
               </div>
             </div>
 
@@ -658,8 +658,8 @@ const handleImageError = () => {
                   </div>
 
                   <div class="flex items-center justify-between text-[11px] text-emerald-200/80 border-t border-white/10 pt-3 relative z-10 font-medium">
-                    <span>Gelar A.Md.</span>
-                    <span>3 Tahun</span>
+                    <span>Gelar {{ program.gelar || 'A.Md.' }}</span>
+                    <span>{{ program.masa_studi || '3 Tahun' }}</span>
                   </div>
                 </div>
 
@@ -671,11 +671,11 @@ const handleImageError = () => {
                   <dl class="space-y-3 text-xs sm:text-sm">
                     <div class="flex items-center justify-between py-2 border-b border-emerald-500/20">
                       <dt class="text-slate-400">Jenjang Studi</dt>
-                      <dd class="font-bold text-white">Diploma III (D3)</dd>
+                      <dd class="font-bold text-white">{{ program.jenjang || 'Diploma III (D3)' }}</dd>
                     </div>
                     <div class="flex items-center justify-between py-2 border-b border-emerald-500/20">
                       <dt class="text-slate-400">Gelar Kelulusan</dt>
-                      <dd class="font-bold text-emerald-300">A.Md.</dd>
+                      <dd class="font-bold text-emerald-300">{{ program.gelar || 'A.Md.' }}</dd>
                     </div>
                     <div class="flex items-center justify-between py-2 border-b border-emerald-500/20">
                       <dt class="text-slate-400">Status Akreditasi</dt>
@@ -683,7 +683,11 @@ const handleImageError = () => {
                     </div>
                     <div class="flex items-center justify-between py-2 border-b border-emerald-500/20">
                       <dt class="text-slate-400">Masa Studi Normal</dt>
-                      <dd class="font-bold text-white">6 Semester (3 Tahun)</dd>
+                      <dd class="font-bold text-white">{{ program.masa_studi || '6 Semester (3 Tahun)' }}</dd>
+                    </div>
+                    <div v-if="program.kurikulum" class="flex items-center justify-between py-2 border-b border-emerald-500/20">
+                      <dt class="text-slate-400">Kurikulum</dt>
+                      <dd class="font-bold text-white">{{ program.kurikulum }}</dd>
                     </div>
                     <div class="flex items-center justify-between py-2">
                       <dt class="text-slate-400">Status PD-Dikti</dt>

@@ -104,13 +104,13 @@
         <div class="row align-items-center g-4">
             <div class="col-lg-8">
                 <div class="d-inline-flex align-items-center gap-2 px-3 py-1 mb-3 rounded-pill bg-emerald-500/20 text-emerald-300 fw-bold small border border-emerald-500/30">
-                    <i class="fas fa-shield-alt text-emerald-400"></i> Satgas PPKS AMIK Taruna
+                    <i class="fas fa-shield-alt text-emerald-400"></i> {{ $setting->page_headers['ppks']['eyebrow'] ?? 'Satgas PPKS AMIK Taruna' }}
                 </div>
                 <h1 class="fw-bold text-white mb-2" style="font-size: clamp(1.6rem, 3.5vw, 2.4rem); letter-spacing: -0.5px;">
-                    Layanan Pencegahan &amp; Penanganan Kekerasan Seksual
+                    {{ $setting->page_headers['ppks']['title'] ?? 'Layanan Pencegahan & Penanganan Kekerasan Seksual' }}
                 </h1>
                 <p class="text-slate-300 mb-0" style="font-size: 0.95rem; line-height: 1.7; max-width: 680px;">
-                    Kanal pelaporan resmi, terenkripsi, dan rahasia sesuai <strong>Permendikbudristek No. 30 Tahun 2021</strong>. Kami menjamin perlindungan privasi, keamanan identitas, serta pendampingan psikologis dan pemulihan hak korban.
+                    {{ $setting->page_headers['ppks']['subtitle'] ?? 'Kanal pelaporan resmi, terenkripsi, dan rahasia sesuai Permendikbudristek No. 30 Tahun 2021. Kami menjamin perlindungan privasi, keamanan identitas, serta pendampingan psikologis dan pemulihan hak korban.' }}
                 </p>
             </div>
             <div class="col-lg-4 text-lg-end">

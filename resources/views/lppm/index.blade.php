@@ -7,13 +7,13 @@
     <!-- HEADER TITLE -->
     <div class="text-center mb-5">
         <div class="d-inline-flex align-items-center gap-2 px-3 py-1 mb-3 rounded-pill bg-emerald-500/20 text-emerald-300 fw-bold small border border-emerald-500/30">
-            <i class="fas fa-flask"></i> Lembaga Penelitian & Pengabdian Masyarakat
+            <i class="fas fa-flask"></i> {{ $setting->page_headers['lppm']['eyebrow'] ?? 'Lembaga Penelitian & Pengabdian Masyarakat' }}
         </div>
         <h1 class="fw-bold display-6 text-white mb-2">
-            Portal & Layanan LPPM
+            {{ $setting->page_headers['lppm']['title'] ?? 'Portal & Layanan LPPM' }}
         </h1>
         <p class="text-slate-300 mx-auto" style="max-width: 650px;">
-            Pusat layanan riset, jurnal publikasi ilmiah, dan pengabdian masyarakat Sivitas Akademika AMIK Taruna Probolinggo
+            {{ $setting->page_headers['lppm']['subtitle'] ?? 'Pusat layanan riset, jurnal publikasi ilmiah, dan pengabdian masyarakat Sivitas Akademika AMIK Taruna Probolinggo' }}
         </p>
     </div>
 

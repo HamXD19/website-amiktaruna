@@ -217,20 +217,21 @@
                     @endif
                 </div>
 
-                <!-- Verified Pillars -->
+                <!-- Verified Pillars (Dinamis dari Admin Setting) -->
+                @php
+                    $pmbPillars = $setting->pmb_pillars ?? [
+                        ['icon' => 'fas fa-check-circle', 'color' => 'text-emerald-400', 'text' => ($setting->badge_akreditasi ?? 'Terakreditasi BAN-PT')],
+                        ['icon' => 'fas fa-award', 'color' => 'text-amber-400', 'text' => 'Beasiswa KIP Kuliah'],
+                        ['icon' => 'fas fa-certificate', 'color' => 'text-cyan-400', 'text' => 'Sertifikasi BNSP']
+                    ];
+                @endphp
                 <div class="mt-4 pt-3 border-top border-emerald-500/20 d-flex flex-wrap align-items-center gap-3 gap-md-4 text-slate-300 small">
+                    @foreach($pmbPillars as $pp)
                     <div class="d-flex align-items-center gap-1.5">
-                        <i class="fas fa-check-circle text-emerald-400"></i>
-                        <span>Terakreditasi BAN-PT</span>
+                        <i class="{{ $pp['icon'] ?? 'fas fa-check-circle' }} {{ $pp['color'] ?? 'text-emerald-400' }}"></i>
+                        <span>{{ $pp['text'] ?? '' }}</span>
                     </div>
-                    <div class="d-flex align-items-center gap-1.5">
-                        <i class="fas fa-award text-amber-400"></i>
-                        <span>Beasiswa KIP Kuliah</span>
-                    </div>
-                    <div class="d-flex align-items-center gap-1.5">
-                        <i class="fas fa-certificate text-cyan-400"></i>
-                        <span>Sertifikasi BNSP</span>
-                    </div>
+                    @endforeach
                 </div>
             </div>
 

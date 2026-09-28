@@ -137,7 +137,7 @@
                 <div class="mb-4">
 
                     <label class="label-title">
-                        Nama Dosen
+                        Nama Dosen & Gelar
                     </label>
 
                     <input type="text"
@@ -145,6 +145,25 @@
                            class="form-control"
                            value="{{ $dosen->nama }}"
                            required>
+
+                </div>
+
+                <!-- TINGKAT ORGANIGRAM -->
+                <div class="mb-4">
+
+                    <label class="label-title">
+                        Tingkat Organigram / Bagan Struktur
+                    </label>
+
+                    <select name="level_organigram" class="form-select" required>
+                        <option value="1" {{ ($dosen->level_organigram ?? 6) == 1 ? 'selected' : '' }}>Level 1 - Pimpinan Utama (Direktur)</option>
+                        <option value="2" {{ ($dosen->level_organigram ?? 6) == 2 ? 'selected' : '' }}>Level 2 - Wakil Direktur (Wadir I, II, III)</option>
+                        <option value="3" {{ ($dosen->level_organigram ?? 6) == 3 ? 'selected' : '' }}>Level 3 - Lembaga, Pusat & Kaprodi</option>
+                        <option value="4" {{ ($dosen->level_organigram ?? 6) == 4 ? 'selected' : '' }}>Level 4 - Kepala Bagian (Kabag)</option>
+                        <option value="5" {{ ($dosen->level_organigram ?? 6) == 5 ? 'selected' : '' }}>Level 5 - Staf & Tenaga Kependidikan</option>
+                        <option value="6" {{ ($dosen->level_organigram ?? 6) == 6 ? 'selected' : '' }}>Level 6 - Dosen Pengajar Lainnya</option>
+                    </select>
+                    <small class="text-muted d-block mt-1">Mengontrol posisi dosen pada bagan struktur hirarkis di halaman Tentang Kampus.</small>
 
                 </div>
 

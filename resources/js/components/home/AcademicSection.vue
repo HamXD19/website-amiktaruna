@@ -1,14 +1,23 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 const props = defineProps({
   programStudis: {
     type: Array,
     default: () => []
+  },
+  setting: {
+    type: Object,
+    default: () => ({})
   }
 });
 
 const activeHoverIndex = ref(0);
+
+const eyebrow = computed(() => props.setting?.page_headers?.home_akademik?.eyebrow || 'Program Akademik');
+const title = computed(() => props.setting?.page_headers?.home_akademik?.title || 'Belajar teknologi yang dekat');
+const titleHighlight = computed(() => props.setting?.page_headers?.home_akademik?.highlight || 'dengan kebutuhan industri.');
+const subtitle = computed(() => props.setting?.page_headers?.home_akademik?.subtitle || 'Kurikulum vokasi terpadu yang dirancang bersama pakar industri untuk mencetak praktisi teknologi informasi yang siap terjun ke dunia kerja nyata.');
 
 // Default programs fallback if array is empty
 const defaultPrograms = [
@@ -56,13 +65,6 @@ const getProdiExcerpt = (p) => {
 };
 </script>
 
-<script>
-import { computed } from 'vue';
-export default {
-  inheritAttrs: false
-};
-</script>
-
 <template>
   <section class="py-16 lg:py-24 border-b border-emerald-900/30">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -70,14 +72,14 @@ export default {
       <!-- Section Header: Editorial & Prestigious Card -->
       <div class="max-w-3xl mb-10 bg-white rounded-3xl p-6 sm:p-10 shadow-xl border border-slate-200/80 relative z-10">
         <span class="text-xs font-bold uppercase tracking-widest text-brand-800 bg-brand-50 px-3 py-1 rounded border border-brand-200/70">
-          Program Akademik
+          {{ eyebrow }}
         </span>
         <h2 class="mt-4 text-3xl sm:text-4xl lg:text-[40px] font-extrabold text-slate-900 tracking-tight leading-[1.18]">
-          Belajar teknologi yang dekat
-          <span class="text-brand-800 block">dengan kebutuhan industri.</span>
+          {{ title }}
+          <span v-if="titleHighlight" class="text-brand-800 block">{{ titleHighlight }}</span>
         </h2>
         <p class="mt-4 text-base sm:text-lg text-slate-600 leading-relaxed">
-          Kurikulum vokasi terpadu yang dirancang bersama pakar industri untuk mencetak praktisi teknologi informasi yang siap terjun ke dunia kerja nyata.
+          {{ subtitle }}
         </p>
       </div>
 

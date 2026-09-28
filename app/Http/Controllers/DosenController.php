@@ -24,9 +24,10 @@ class DosenController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama'     => 'required|string|max:255',
-            'jabatan'  => 'required|array',
-            'foto'     => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120'
+            'nama'             => 'required|string|max:255',
+            'jabatan'          => 'required|array',
+            'level_organigram' => 'nullable|integer|between:1,6',
+            'foto'             => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120'
         ]);
 
         $foto = null;
@@ -46,9 +47,10 @@ class DosenController extends Controller
         }
 
         Dosen::create([
-            'nama' => $request->nama,
-            'jabatan' => implode('|', $request->jabatan),
-            'foto' => $foto
+            'nama'             => $request->nama,
+            'jabatan'          => implode('|', $request->jabatan),
+            'level_organigram' => $request->level_organigram ?? 6,
+            'foto'             => $foto
         ]);
 
         ActivityLogger::log('CREATE', 'Dosen', "Menambahkan data dosen baru: {$request->nama}");
@@ -79,15 +81,19 @@ class DosenController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'nama'     => 'required|string|max:255',
-            'jabatan'  => 'required|array',
-            'foto'     => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120'
+            'nama'             => 'required|string|max:255',
+            'jabatan'          => 'required|array',
+            'level_organigram' => 'nullable|integer|between:1,6',
+            'foto'             => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120'
         ]);
 
         $dosen = Dosen::findOrFail($id);
 
         $dosen->nama = $request->nama;
         $dosen->jabatan = implode('|', $request->jabatan);
+        if ($request->has('level_organigram')) {
+            $dosen->level_organigram = $request->level_organigram;
+        }
 
         // =========================
         // UPDATE & AUTO COMPRESS FOTO

@@ -5,8 +5,16 @@ const props = defineProps({
   beritas: {
     type: Array,
     default: () => []
+  },
+  setting: {
+    type: Object,
+    default: () => ({})
   }
 });
+
+const eyebrow = computed(() => props.setting?.page_headers?.home_berita?.eyebrow || 'Publikasi & Kabar Kampus');
+const title = computed(() => props.setting?.page_headers?.home_berita?.title || 'Kabar Terkini AMIK Taruna');
+const subtitle = computed(() => props.setting?.page_headers?.home_berita?.subtitle || 'Informasi resmi, agenda kegiatan, pengumuman, dan pencapaian akademik civitas kampus AMIK Taruna Probolinggo.');
 
 // Category Filter state
 const selectedCategory = ref('semua');
@@ -110,13 +118,13 @@ const supportingArticles = computed(() => {
           <div class="max-w-2xl">
             <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-bold uppercase tracking-wider mb-3">
               <i class="fas fa-bullhorn text-xs"></i>
-              <span>Publikasi &amp; Kabar Kampus</span>
+              <span>{{ eyebrow }}</span>
             </div>
             <h2 class="text-3xl sm:text-4xl lg:text-[40px] font-black text-white tracking-tight leading-[1.18]">
-              Kabar Terkini AMIK Taruna
+              {{ title }}
             </h2>
             <p class="mt-3 text-sm sm:text-base text-slate-300 leading-relaxed">
-              Informasi resmi, agenda kegiatan, pengumuman, dan pencapaian akademik civitas kampus AMIK Taruna Probolinggo.
+              {{ subtitle }}
             </p>
           </div>
 

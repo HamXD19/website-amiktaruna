@@ -29,7 +29,7 @@ defineProps({
       <AkademikHero :setting="setting" :total-prodi="program_studis.length" />
 
       <!-- 3. Academic Value Pillars (60% Praktik, Praktisi Industri, Transfer SKS) -->
-      <AkademikValue />
+      <AkademikValue :setting="setting" />
 
       <!-- 4. Program Studi Editorial Showcase (Alternating Layout & Detail Links) -->
       <AkademikList :programs="program_studis" />

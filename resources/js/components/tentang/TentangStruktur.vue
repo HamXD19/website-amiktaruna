@@ -20,79 +20,33 @@ const formatJabatan = (jabatanStr) => {
 };
 
 // Classification helpers
-const isDirektur = (d) => {
+const getLevel = (d) => {
+  if (d.level_organigram && Number(d.level_organigram) >= 1 && Number(d.level_organigram) <= 6) {
+    return Number(d.level_organigram);
+  }
   const j = d.jabatan || '';
-  return j.includes('Direktur AMIK Taruna') && !j.includes('Wakil Direktur');
-};
-
-const isWadir = (d) => {
-  const j = d.jabatan || '';
-  return j.includes('Wakil Direktur');
-};
-
-const isKaprodiOrUnit = (d) => {
-  const j = d.jabatan || '';
-  if (isDirektur(d) || isWadir(d)) return false;
-  return (
+  if (j.includes('Direktur AMIK Taruna') && !j.includes('Wakil Direktur')) return 1;
+  if (j.includes('Wakil Direktur')) return 2;
+  if (
     j.includes('Ketua Lembaga') ||
     j.includes('Ketua Pusat') ||
     j.includes('Ketua UPT') ||
     j.includes('Ketua Unit') ||
     j.includes('Ketua Program Studi')
-  );
-};
-
-const isKabag = (d) => {
-  const j = d.jabatan || '';
-  if (isDirektur(d) || isWadir(d) || isKaprodiOrUnit(d)) return false;
-  return j.includes('Kepala Bagian');
-};
-
-const isStaf = (d) => {
-  const j = d.jabatan || '';
-  if (isDirektur(d) || isWadir(d) || isKaprodiOrUnit(d) || isKabag(d)) return false;
-  return j.includes('Staf') || j.includes('Staff');
-};
-
-const isDosenPengajar = (d) => {
-  const j = d.jabatan || '';
-  if (isDirektur(d) || isWadir(d) || isKaprodiOrUnit(d) || isKabag(d) || isStaf(d)) return false;
-  return true;
+  ) return 3;
+  if (j.includes('Kepala Bagian')) return 4;
+  if (j.includes('Staf') || j.includes('Staff')) return 5;
+  return 6;
 };
 
 // Organigram Levels (Top-down structure)
 const organigramLevels = computed(() => {
-  // 1. Direktur
-  const direktur = props.dosen.filter(isDirektur);
-
-  // 2. Wakil Direktur
-  const wadir = props.dosen.filter(isWadir).sort((a, b) => {
-    // Sort Wadir I, II, III
-    return (a.jabatan || '').localeCompare(b.jabatan || '');
-  });
-
-  // 3. Lembaga, Pusat, & Kaprodi
-  const kaprodiUnit = props.dosen.filter(isKaprodiOrUnit).sort((a, b) => {
-    // Put Ketua Lembaga / Penjaminan mutu first, then Kaprodi
-    const getWeight = (j) => {
-      if (j.includes('Lembaga')) return 1;
-      if (j.includes('Penjaminan')) return 2;
-      if (j.includes('Sistem Informasi') && !j.includes('Akuntansi')) return 3;
-      if (j.includes('Teknologi Informasi')) return 4;
-      if (j.includes('Sistem Informasi Akuntansi')) return 5;
-      return 6;
-    };
-    return getWeight(a.jabatan || '') - getWeight(b.jabatan || '');
-  });
-
-  // 4. Kepala Bagian (Kabag)
-  const kabag = props.dosen.filter(isKabag);
-
-  // 5. Staf & Tenaga Kependidikan
-  const staf = props.dosen.filter(isStaf);
-
-  // 6. Dosen Pengajar Lainnya
-  const dosenLain = props.dosen.filter(isDosenPengajar);
+  const direktur = props.dosen.filter(d => getLevel(d) === 1);
+  const wadir = props.dosen.filter(d => getLevel(d) === 2).sort((a, b) => (a.jabatan || '').localeCompare(b.jabatan || ''));
+  const kaprodiUnit = props.dosen.filter(d => getLevel(d) === 3);
+  const kabag = props.dosen.filter(d => getLevel(d) === 4);
+  const staf = props.dosen.filter(d => getLevel(d) === 5);
+  const dosenLain = props.dosen.filter(d => getLevel(d) === 6);
 
   return [
     {

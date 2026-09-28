@@ -145,13 +145,13 @@
     <div class="ppm-hero-header text-center mb-5 position-relative">
         <div class="d-inline-flex align-items-center gap-2 px-3 py-1.5 rounded-pill mb-3" style="background: rgba(74, 222, 128, 0.15); border: 1px solid rgba(74, 222, 128, 0.3);">
             <i class="fas fa-shield-alt text-success"></i>
-            <span class="text-success fw-bold small text-uppercase tracking-wider">Lembaga Mutu Internal</span>
+            <span class="text-success fw-bold small text-uppercase tracking-wider">{{ $setting->page_headers['ppm']['eyebrow'] ?? 'Lembaga Mutu Internal' }}</span>
         </div>
         <h1 class="fw-extrabold text-white mb-3" style="font-size: 2.4rem; letter-spacing: -0.5px;">
-            Pusat Penjaminan Mutu (PPM)
+            {{ $setting->page_headers['ppm']['title'] ?? 'Pusat Penjaminan Mutu (PPM)' }}
         </h1>
         <p class="text-slate-300 mx-auto mb-0" style="max-width: 720px; font-size: 1.05rem; line-height: 1.7;">
-            Sistem Penjaminan Mutu Internal (SPMI) AMIK Taruna Probolinggo untuk menjaga, mengendalikan, dan meningkatkan standar mutu pendidikan tinggi secara berkelanjutan.
+            {{ $setting->page_headers['ppm']['subtitle'] ?? 'Sistem Penjaminan Mutu Internal (SPMI) AMIK Taruna Probolinggo untuk menjaga, mengendalikan, dan meningkatkan standar mutu pendidikan tinggi secara berkelanjutan.' }}
         </p>
     </div>
 

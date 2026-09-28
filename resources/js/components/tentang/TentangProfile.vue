@@ -26,6 +26,18 @@ const paragraphs = computed(() => {
     .filter(p => p.length > 0);
 });
 
+// Pillars from settings or defaults
+const pillars = computed(() => {
+  if (props.setting?.tentang_pillars && Array.isArray(props.setting.tentang_pillars) && props.setting.tentang_pillars.length > 0) {
+    return props.setting.tentang_pillars;
+  }
+  return [
+    { tag: 'Pilar I', title: 'Pendidikan Terapan', desc: 'Kurikulum terstruktur berbasis praktik & kesiapan kerja industri.' },
+    { tag: 'Pilar II', title: 'Praktisi Berpengalaman', desc: 'Dosen dan praktisi kompeten di bidang rekayasa TI & sistem bisnis.' },
+    { tag: 'Pilar III', title: 'Kelanjutan Studi', desc: 'Kemudahan transfer SKS ke jenjang sarjana di PTN maupun Swasta.' }
+  ];
+});
+
 // Authentic campus building image from uploads
 const buildingPhoto = computed(() => {
   if (props.setting?.hero_slide_1) {
@@ -70,33 +82,17 @@ const buildingPhoto = computed(() => {
 
             <!-- Academic Highlights Pillars (Derived from real description facts) -->
             <div class="mt-10 pt-8 border-t border-emerald-500/20 grid grid-cols-1 sm:grid-cols-3 gap-6">
-              <div class="p-4 rounded-xl bg-emerald-950/50 border border-emerald-500/20">
+              <div
+                v-for="(pillar, pIdx) in pillars"
+                :key="pIdx"
+                class="p-4 rounded-xl bg-emerald-950/50 border border-emerald-500/20"
+              >
                 <span class="text-xs font-mono font-bold text-emerald-400 uppercase tracking-wider block mb-1">
-                  Pilar I
+                  {{ pillar.tag || ('Pilar ' + (pIdx + 1)) }}
                 </span>
-                <h4 class="text-sm font-bold text-white">Pendidikan Terapan</h4>
+                <h4 class="text-sm font-bold text-white">{{ pillar.title }}</h4>
                 <p class="text-xs text-slate-300 mt-1">
-                  Kurikulum terstruktur berbasis praktik &amp; kesiapan kerja industri.
-                </p>
-              </div>
-
-              <div class="p-4 rounded-xl bg-emerald-950/50 border border-emerald-500/20">
-                <span class="text-xs font-mono font-bold text-emerald-400 uppercase tracking-wider block mb-1">
-                  Pilar II
-                </span>
-                <h4 class="text-sm font-bold text-white">Praktisi Berpengalaman</h4>
-                <p class="text-xs text-slate-300 mt-1">
-                  Dosen dan praktisi kompeten di bidang rekayasa TI &amp; sistem bisnis.
-                </p>
-              </div>
-
-              <div class="p-4 rounded-xl bg-emerald-950/50 border border-emerald-500/20">
-                <span class="text-xs font-mono font-bold text-emerald-400 uppercase tracking-wider block mb-1">
-                  Pilar III
-                </span>
-                <h4 class="text-sm font-bold text-white">Kelanjutan Studi</h4>
-                <p class="text-xs text-slate-300 mt-1">
-                  Kemudahan transfer SKS ke jenjang sarjana di PTN maupun Swasta.
+                  {{ pillar.desc }}
                 </p>
               </div>
             </div>

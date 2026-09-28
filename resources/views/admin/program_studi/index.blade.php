@@ -186,6 +186,23 @@
                         <label><i class="fa-regular fa-tag me-1"></i> Tagline</label>
                         <input type="text" name="tagline" class="form-control" placeholder="Tagline menarik">
                     </div>
+
+                    <div class="col-md-3">
+                        <label><i class="fas fa-graduation-cap me-1 text-success"></i> Jenjang</label>
+                        <input type="text" name="jenjang" class="form-control" value="Diploma 3 (D3)" placeholder="Diploma 3 (D3)">
+                    </div>
+                    <div class="col-md-3">
+                        <label><i class="fas fa-certificate me-1 text-success"></i> Gelar Lulusan</label>
+                        <input type="text" name="gelar" class="form-control" value="A.Md." placeholder="A.Md.">
+                    </div>
+                    <div class="col-md-3">
+                        <label><i class="fas fa-clock me-1 text-success"></i> Masa Studi</label>
+                        <input type="text" name="masa_studi" class="form-control" value="3 Tahun (6 Semester)" placeholder="3 Tahun (6 Semester)">
+                    </div>
+                    <div class="col-md-3">
+                        <label><i class="fas fa-book-reader me-1 text-success"></i> Kurikulum</label>
+                        <input type="text" name="kurikulum" class="form-control" value="Berbasis Vokasi & KKNI" placeholder="Berbasis Vokasi & KKNI">
+                    </div>
                     <div class="col-md-6">
                         <label><i class="fa-regular fa-star me-1"></i> Akreditasi</label>
                         <input type="text" name="akreditasi" class="form-control" placeholder="Contoh: Unggul / B">

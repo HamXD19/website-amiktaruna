@@ -25,7 +25,7 @@ defineProps({
               <h3 class="text-base font-extrabold text-white tracking-tight">
                 {{ setting?.nama_website || 'AMIK Taruna' }}
               </h3>
-              <p class="text-xs text-brand-300 font-medium">Akademi Manajemen Informatika dan Komputer</p>
+              <p class="text-xs text-brand-300 font-medium">{{ setting?.tagline || 'Akademi Manajemen Informatika dan Komputer' }}</p>
             </div>
           </div>
           
@@ -153,7 +153,7 @@ defineProps({
 
       <!-- Bottom Bar -->
       <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
-        <p>&copy; {{ new Date().getFullYear() }} {{ setting?.nama_website || 'AMIK Taruna' }}. Hak cipta dilindungi undang-undang.</p>
+        <p>&copy; {{ new Date().getFullYear() }} {{ setting?.nama_website || 'AMIK Taruna' }}. {{ setting?.footer_copyright || 'Hak cipta dilindungi undang-undang.' }}</p>
         <div class="flex items-center gap-4">
           <a href="/kritik-saran" class="hover:text-slate-300 transition-colors">Kritik & Saran</a>
           <span>•</span>

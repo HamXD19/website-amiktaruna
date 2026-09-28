@@ -5,13 +5,13 @@
 <div class="container py-5">
     <div class="text-center mb-5">
         <div class="d-inline-flex align-items-center gap-2 px-3 py-1 mb-3 rounded-pill bg-emerald-500/20 text-emerald-300 fw-bold small border border-emerald-500/30">
-            <i class="fas fa-comment-dots"></i> Suara Sivitas & Publik
+            <i class="fas fa-comment-dots"></i> {{ $setting->page_headers['kritiksaran']['eyebrow'] ?? 'Suara Sivitas & Publik' }}
         </div>
         <h1 class="fw-bold display-6 text-white mb-2">
-            Kritik &amp; Saran
+            {{ $setting->page_headers['kritiksaran']['title'] ?? 'Kritik & Saran' }}
         </h1>
         <p class="text-slate-300 mx-auto" style="max-width: 600px;">
-            Berikan masukan, kritik konstruktif, dan saran untuk kemajuan tata kelola dan layanan digital AMIK Taruna
+            {{ $setting->page_headers['kritiksaran']['subtitle'] ?? 'Berikan masukan, kritik konstruktif, dan saran untuk kemajuan tata kelola dan layanan digital AMIK Taruna' }}
         </p>
     </div>
 

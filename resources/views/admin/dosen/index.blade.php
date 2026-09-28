@@ -148,7 +148,7 @@
                     <div class="col-md-4">
 
                         <label class="fw-semibold mb-2">
-                            Nama Dosen
+                            Nama Dosen & Gelar
                         </label>
 
                         <input type="text"
@@ -156,6 +156,21 @@
                                class="form-control"
                                placeholder="Masukkan nama dosen"
                                required>
+
+                        <div class="mt-3">
+                            <label class="fw-semibold mb-2">
+                                Tingkat Organigram / Bagan
+                            </label>
+                            <select name="level_organigram" class="form-select" required>
+                                <option value="1">Level 1 - Pimpinan Utama (Direktur)</option>
+                                <option value="2">Level 2 - Wakil Direktur (Wadir I, II, III)</option>
+                                <option value="3">Level 3 - Lembaga, Pusat & Kaprodi</option>
+                                <option value="4">Level 4 - Kepala Bagian (Kabag)</option>
+                                <option value="5">Level 5 - Staf & Tenaga Kependidikan</option>
+                                <option value="6" selected>Level 6 - Dosen Pengajar Lainnya</option>
+                            </select>
+                            <small class="text-muted d-block mt-1">Menentukan posisi bagan struktur di halaman Tentang Kampus.</small>
+                        </div>
 
                     </div>
 

@@ -24,10 +24,10 @@ const props = defineProps({
 const currentSlide = ref(0);
 let slideInterval = null;
 
-const banners = [
+const defaultBanners = [
   {
     title: 'Penerimaan Mahasiswa Baru',
-    highlight: 'TA 2024/2025',
+    highlight: 'TA 2026/2027',
     desc: 'Jalur Beasiswa KIP & Prestasi Akademik. Siapkan karir digital Anda!',
     badge: 'PMB DIBUKA',
     link: '/pmb',
@@ -54,7 +54,7 @@ const banners = [
     highlight: 'Transparansi Akademik',
     desc: 'Unduh kurikulum, pedoman akademik, modul, dan RPS per program studi.',
     badge: 'DOWNLOAD DOKUMEN',
-    link: '/dokumen',
+    link: '/akademik',
     btnText: 'Buka Dokumen',
     gradient: 'from-[#2e1d05] via-[#201404] to-[#110a02]',
     accentColor: 'text-amber-300',
@@ -62,6 +62,16 @@ const banners = [
     icon: 'fas fa-file-pdf'
   }
 ];
+
+const banners = computed(() => {
+  if (props.setting?.mobile_banners && Array.isArray(props.setting.mobile_banners) && props.setting.mobile_banners.length > 0) {
+    return props.setting.mobile_banners.map((b, idx) => ({
+      ...defaultBanners[idx % defaultBanners.length],
+      ...b
+    }));
+  }
+  return defaultBanners;
+});
 
 const nextSlide = () => {
   currentSlide.value = (currentSlide.value + 1) % banners.length;
@@ -246,7 +256,7 @@ const whatsappUrl = computed(() => {
                   {{ setting?.nama_website || 'AMIK Taruna' }}
                 </span>
                 <span class="inline-flex items-center text-[10px] text-emerald-400 bg-emerald-950/80 px-1.5 py-0.2 rounded border border-emerald-500/30 font-semibold">
-                  <i class="fas fa-check-circle text-[9px] mr-1 text-emerald-400"></i>Terakreditasi B
+                  <i class="fas fa-check-circle text-[9px] mr-1 text-emerald-400"></i>{{ setting?.badge_akreditasi || 'Terakreditasi B' }}
                 </span>
               </div>
               <p class="text-[11px] text-slate-300 mt-0.5 font-medium">

@@ -1,5 +1,7 @@
 <script setup>
-defineProps({
+import { computed } from 'vue';
+
+const props = defineProps({
   setting: {
     type: Object,
     default: () => ({})
@@ -9,6 +11,11 @@ defineProps({
     default: 3
   }
 });
+
+const eyebrow = computed(() => props.setting?.page_headers?.akademik?.eyebrow || 'Pendidikan Vokasi Terapan');
+const title = computed(() => props.setting?.page_headers?.akademik?.title || 'Program Studi Akademik');
+const subtitle = computed(() => props.setting?.page_headers?.akademik?.subtitle || 'Pilihan program studi vokasi jenjang Diploma III yang dirancang untuk membekali mahasiswa dengan keahlian teknis komputasi, logika terapan, dan kesiapan berkarier di era industri digital.');
+const badgeAkreditasi = computed(() => props.setting?.badge_akreditasi || 'Akreditasi BAN-PT / LAM-INFOKOM');
 </script>
 
 <template>
@@ -32,17 +39,17 @@ defineProps({
           <!-- Eyebrow Pill -->
           <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 mb-4 shadow-xs">
             <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-            Pendidikan Vokasi Terapan
+            {{ eyebrow }}
           </div>
 
           <!-- Main Heading -->
           <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-[1.15]">
-            Program Studi Akademik
+            {{ title }}
           </h1>
 
           <!-- Subtitle -->
           <p class="mt-4 sm:mt-5 text-base sm:text-lg text-slate-300 leading-relaxed max-w-2xl font-normal">
-            Pilihan program studi vokasi jenjang Diploma III yang dirancang untuk membekali mahasiswa dengan keahlian teknis komputasi, logika terapan, dan kesiapan berkarier di era industri digital.
+            {{ subtitle }}
           </p>
 
           <!-- Quick Meta & Badges -->
@@ -53,7 +60,7 @@ defineProps({
             </span>
             <span class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-950/60 text-emerald-300 border border-emerald-500/30 font-semibold shadow-xs">
               <i class="fas fa-shield-alt text-emerald-400"></i>
-              <span>Akreditasi BAN-PT / LAM-INFOKOM</span>
+              <span>{{ badgeAkreditasi }}</span>
             </span>
             <span class="text-emerald-400/80 font-mono text-[11px] self-center ml-2">
               {{ totalProdi }} Program Keahlian

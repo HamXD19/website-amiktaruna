@@ -10,6 +10,7 @@ class Dosen extends Model
 
         'nama',
         'jabatan',
+        'level_organigram',
         'foto',
 
         'bio',
