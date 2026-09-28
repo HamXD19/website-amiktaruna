@@ -24,7 +24,7 @@ defineProps({
 </script>
 
 <template>
-  <div class="min-h-screen flex flex-col bg-[#fbfcfb] text-slate-800 antialiased selection:bg-brand-100 selection:text-brand-900">
+  <div class="min-h-screen flex flex-col bg-transparent text-slate-100 antialiased selection:bg-brand-500 selection:text-white">
     
     <!-- 1. Header / Navbar (Sticky, Grouped Navigation, Elevated PMB CTA) -->
     <AppNavbar :setting="setting" current-path="/alumni" />

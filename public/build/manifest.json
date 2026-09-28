@@ -17,7 +17,7 @@
     "isDynamicEntry": true
   },
   "resources/css/app.css": {
-    "file": "assets/app-MpTlesyz.css",
+    "file": "assets/app-Dxt-b1J3.css",
     "name": "app",
     "names": [
       "app.css"
@@ -26,7 +26,7 @@
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-zikLWOVw.js",
+    "file": "assets/app-tBlt97AR.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
@@ -76,7 +76,7 @@
     ]
   },
   "resources/js/pages/AlumniPage.vue": {
-    "file": "assets/AlumniPage-BGZtGY2l.js",
+    "file": "assets/AlumniPage-CUPorsIW.js",
     "name": "AlumniPage",
     "src": "resources/js/pages/AlumniPage.vue",
     "isDynamicEntry": true,
