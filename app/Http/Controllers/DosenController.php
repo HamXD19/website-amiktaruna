@@ -3,17 +3,68 @@
 namespace App\Http\Controllers;
 
 use App\Models\Dosen;
+use App\Models\Kategori;
+use App\Http\Controllers\KategoriController;
 use App\Services\ImageOptimizer;
 use App\Services\ActivityLogger;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class DosenController extends Controller
 {
+    private function getJabatanList()
+    {
+        KategoriController::seedJabatanDefaults();
+
+        $fromDb = Kategori::where('modul', 'jabatan')
+            ->where('is_active', true)
+            ->orderBy('urutan')
+            ->pluck('nama')
+            ->toArray();
+
+        // Also harvest any existing jabatan assigned to dosens
+        $fromDosens = [];
+        foreach (Dosen::whereNotNull('jabatan')->pluck('jabatan') as $jString) {
+            foreach (explode('|', $jString) as $item) {
+                $item = trim($item);
+                if (!empty($item)) {
+                    $fromDosens[] = $item;
+                }
+            }
+        }
+
+        return array_values(array_unique(array_merge($fromDb, $fromDosens)));
+    }
+
+    private function syncNewJabatan(array $jabatanArray)
+    {
+        foreach ($jabatanArray as $jName) {
+            $jName = trim($jName);
+            if (!empty($jName)) {
+                $exists = Kategori::where('nama', $jName)->where('modul', 'jabatan')->exists();
+                if (!$exists) {
+                    $maxUrutan = Kategori::where('modul', 'jabatan')->max('urutan') ?? 20;
+                    Kategori::create([
+                        'nama' => $jName,
+                        'slug' => Str::slug($jName) ?: 'jabatan-' . time(),
+                        'modul' => 'jabatan',
+                        'warna' => 'primary',
+                        'ikon' => '👔',
+                        'keterangan' => 'Jabatan Dosen & Sivitas Akademika',
+                        'urutan' => $maxUrutan + 1,
+                        'is_active' => true,
+                    ]);
+                }
+            }
+        }
+    }
+
     public function index()
     {
         $dosen = Dosen::all();
+        $jabatanList = $this->getJabatanList();
 
-        return view('admin.dosen.index', compact('dosen'));
+        return view('admin.dosen.index', compact('dosen', 'jabatanList'));
     }
 
     /*
@@ -29,6 +80,8 @@ class DosenController extends Controller
             'level_organigram' => 'nullable|integer|between:1,6',
             'foto'             => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120'
         ]);
+
+        $this->syncNewJabatan($request->jabatan);
 
         $foto = null;
 
@@ -69,8 +122,9 @@ class DosenController extends Controller
     public function edit($id)
     {
         $dosen = Dosen::findOrFail($id);
+        $jabatanList = $this->getJabatanList();
 
-        return view('admin.dosen_edit', compact('dosen'));
+        return view('admin.dosen_edit', compact('dosen', 'jabatanList'));
     }
 
     /*
@@ -86,6 +140,8 @@ class DosenController extends Controller
             'level_organigram' => 'nullable|integer|between:1,6',
             'foto'             => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120'
         ]);
+
+        $this->syncNewJabatan($request->jabatan);
 
         $dosen = Dosen::findOrFail($id);
 

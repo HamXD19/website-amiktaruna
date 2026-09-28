@@ -383,6 +383,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::middleware(['menu.permission:kategori'])->group(function () {
         Route::get('/kategori', [KategoriController::class, 'index'])->name('admin.kategori.index');
         Route::post('/kategori', [KategoriController::class, 'store'])->name('admin.kategori.store');
+        Route::post('/kategori/ajax-store', [KategoriController::class, 'storeAjax'])->name('admin.kategori.storeAjax');
         Route::post('/kategori/{id}', [KategoriController::class, 'update'])->name('admin.kategori.update');
         Route::delete('/kategori/{id}', [KategoriController::class, 'destroy'])->name('admin.kategori.destroy');
     });

@@ -176,103 +176,40 @@
 
 <!-- JABATAN -->
 <div class="col-md-4">
-
-    <label class="fw-semibold mb-2">
-        Jabatan
-    </label>
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <label class="fw-semibold mb-0">
+            Jabatan <span class="text-danger">*</span>
+        </label>
+        <a href="{{ route('admin.kategori.index', ['modul' => 'jabatan']) }}" target="_blank" class="small text-success text-decoration-none fw-semibold">
+            <i class="fas fa-cog me-1"></i>Master Jabatan
+        </a>
+    </div>
 
     <select name="jabatan[]"
+            id="jabatanSelectIndex"
             class="form-select"
             multiple
             required
-            style="height:300px;">
-
-        <option value="Direktur AMIK Taruna">
-            Direktur AMIK Taruna
-        </option>
-
-        <option value="Wakil Direktur I Bidang Akademik">
-            Wakil Direktur I Bidang Akademik
-        </option>
-
-        <option value="Wakil Direktur II Bidang Administrasi & Keuangan">
-            Wakil Direktur II Bidang Administrasi & Keuangan
-        </option>
-
-        <option value="Wakil Direktur III Bidang Kemahasiswaan & Alumni">
-            Wakil Direktur III Bidang Kemahasiswaan & Alumni
-        </option>
-
-        <option value="Ketua Pusat Penjaminan Mutu">
-            Ketua Pusat Penjaminan Mutu
-        </option>
-
-        <option value="Ketua Program Studi Teknologi Informasi">
-            Ketua Program Studi Teknologi Informasi
-        </option>
-
-        <option value="Ketua Program Studi Sistem Informasi Akuntansi">
-            Ketua Program Studi Sistem Informasi Akuntansi
-        </option>
-
-        <option value="Ketua Program Studi Sistem Informasi">
-            Ketua Program Studi Sistem Informasi
-        </option>
-
-        <option value="Staff Pusat Penjaminan Mutu">
-            Staff Pusat Penjaminan Mutu
-        </option>
-
-        <option value="Ketua Lembaga Penelitian & Pengabdian Masyarakat">
-            Ketua Lembaga Penelitian & Pengabdian Masyarakat
-        </option>
-
-        <option value="Ketua UPT Perpustakaan & Kearsipan">
-            Ketua UPT Perpustakaan & Kearsipan
-        </option>
-
-        <option value="Ketua Unit Kerjasama & Pengembangan Institusi">
-            Ketua Unit Kerjasama & Pengembangan Institusi
-        </option>
-
-        <option value="Kepala Bagian Administrasi Umum & Keuangan">
-            Kepala Bagian Administrasi Umum & Keuangan
-        </option>
-
-        <option value="Staf Administrasi Umum & Keuangan">
-            Staf Administrasi Umum & Keuangan
-        </option>
-
-        <option value="Kepala Bagian Administrasi Akademik">
-            Kepala Bagian Administrasi Akademik
-        </option>
-
-        <option value="Staf Administrasi Akademik">
-            Staf Administrasi Akademik
-        </option>
-
-        <option value="Staf SI, Humas & Layanan">
-            Staf SI, Humas & Layanan
-        </option>
-
-        <option value="Staf Alumni & Pusat Karir">
-            Staf Alumni & Pusat Karir
-        </option>
-
-        <option value="Staf Perpustakaan & Kearsipan">
-            Staf Perpustakaan & Kearsipan
-        </option>
-
-        <option value="Dosen">
-            Dosen
-        </option>
-
+            style="height:220px;">
+        @foreach($jabatanList as $j)
+            <option value="{{ $j }}" {{ $j === 'Dosen' ? 'selected' : '' }}>
+                {{ $j }}
+            </option>
+        @endforeach
     </select>
 
-    <small class="text-muted">
-        Tekan CTRL untuk memilih lebih dari satu jabatan
-    </small>
-
+    <!-- Quick Add New Jabatan -->
+    <div class="mt-2">
+        <div class="input-group input-group-sm">
+            <input type="text" id="newJabatanInputIndex" class="form-control" placeholder="Ketik jabatan baru jika belum ada...">
+            <button type="button" class="btn btn-outline-success fw-bold" onclick="addCustomJabatan('jabatanSelectIndex', 'newJabatanInputIndex')">
+                <i class="fas fa-plus me-1"></i>Tambah
+            </button>
+        </div>
+        <small class="text-muted d-block mt-1">
+            Tekan CTRL untuk memilih lebih dari 1 jabatan.
+        </small>
+    </div>
 </div>
 
                     <!-- FOTO -->
@@ -399,5 +336,60 @@
     </div>
 
 </div>
+
+<script>
+function addCustomJabatan(selectId, inputId) {
+    const input = document.getElementById(inputId);
+    const select = document.getElementById(selectId);
+    if (!input || !select) return;
+
+    const val = input.value.trim();
+    if (!val) {
+        alert('Silakan ketik nama jabatan baru terlebih dahulu.');
+        input.focus();
+        return;
+    }
+
+    // Check if option already exists
+    let exists = false;
+    for (let i = 0; i < select.options.length; i++) {
+        if (select.options[i].value.toLowerCase() === val.toLowerCase()) {
+            select.options[i].selected = true;
+            exists = true;
+            break;
+        }
+    }
+
+    if (!exists) {
+        const newOpt = new Option(val, val, true, true);
+        select.add(newOpt);
+
+        // Auto save to master kategori in background
+        fetch('{{ route("admin.kategori.storeAjax") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({ nama: val })
+        }).catch(() => {});
+    }
+
+    input.value = '';
+    input.focus();
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const input = document.getElementById('newJabatanInputIndex');
+    if (input) {
+        input.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addCustomJabatan('jabatanSelectIndex', 'newJabatanInputIndex');
+            }
+        });
+    }
+});
+</script>
 
 @endsection

@@ -89,6 +89,12 @@
             </div>
         </div>
         <div class="col-6 col-md-4 col-xl-2">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white h-100 border-start border-emerald border-4" style="border-left: 4px solid #059669 !important;">
+                <div class="text-slate-400 small fw-semibold mb-1">Jabatan Dosen</div>
+                <div class="h3 fw-bold mb-0" style="color: #059669;">{{ $stats['jabatan'] ?? 0 }}</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-xl-2">
             <div class="card border-0 shadow-sm rounded-4 p-3 bg-white h-100 border-start border-secondary border-4">
                 <div class="text-slate-400 small fw-semibold mb-1">Umum / Semua</div>
                 <div class="h3 fw-bold text-secondary mb-0">{{ $stats['umum'] }}</div>
@@ -104,7 +110,7 @@
                 <div class="card-body p-4">
                     <h6 class="fw-bold text-slate-900 mb-3 d-flex align-items-center gap-2">
                         <i class="fas fa-plus-circle text-success"></i>
-                        Tambah Kategori Baru
+                        Tambah Kategori / Jabatan Baru
                     </h6>
 
                     <form method="POST" action="{{ route('admin.kategori.store') }}">
@@ -112,20 +118,21 @@
 
                         <!-- NAMA KATEGORI -->
                         <div class="mb-3">
-                            <label class="form-label small fw-semibold text-slate-700">Nama Kategori <span class="text-danger">*</span></label>
-                            <input type="text" name="nama" class="form-control rounded-3" placeholder="Contoh: Prestasi Mahasiswa / Beasiswa" required>
+                            <label class="form-label small fw-semibold text-slate-700">Nama Kategori / Jabatan <span class="text-danger">*</span></label>
+                            <input type="text" name="nama" class="form-control rounded-3" placeholder="Contoh: Sekretaris Jurusan / Pembina UKM" required>
                         </div>
 
                         <!-- MODUL / FITUR -->
                         <div class="mb-3">
                             <label class="form-label small fw-semibold text-slate-700">Modul / Fitur Target <span class="text-danger">*</span></label>
                             <select name="modul" class="form-select rounded-3" required>
-                                <option value="berita" selected>Berita Kampus</option>
-                                <option value="pmb">Berita & Informasi PMB</option>
-                                <option value="dokumen">Dokumen Mutu (PPM / LPPM)</option>
-                                <option value="prodi_dokumen">Dokumen Prodi (Profil, RPS, Kurikulum)</option>
-                                <option value="layanan">Layanan Akademik</option>
-                                <option value="umum">Umum (Bisa Dipakai di Semua)</option>
+                                <option value="berita" {{ request('modul') == 'berita' ? 'selected' : '' }}>Berita Kampus</option>
+                                <option value="pmb" {{ request('modul') == 'pmb' ? 'selected' : '' }}>Berita & Informasi PMB</option>
+                                <option value="dokumen" {{ request('modul') == 'dokumen' ? 'selected' : '' }}>Dokumen Mutu (PPM / LPPM)</option>
+                                <option value="prodi_dokumen" {{ request('modul') == 'prodi_dokumen' ? 'selected' : '' }}>Dokumen Prodi (Profil, RPS, Kurikulum)</option>
+                                <option value="layanan" {{ request('modul') == 'layanan' ? 'selected' : '' }}>Layanan Akademik</option>
+                                <option value="jabatan" {{ request('modul') == 'jabatan' ? 'selected' : '' }}>Jabatan Dosen &amp; Sivitas</option>
+                                <option value="umum" {{ request('modul') == 'umum' ? 'selected' : '' }}>Umum (Bisa Dipakai di Semua)</option>
                             </select>
                             <small class="text-slate-400">Pilih fitur di mana kategori ini akan muncul.</small>
                         </div>
@@ -229,6 +236,10 @@
                                class="btn btn-sm rounded-pill px-3 {{ $currentModul == 'layanan' ? 'btn-success fw-bold' : 'btn-light text-slate-600' }}">
                                 Layanan ({{ $stats['layanan'] }})
                             </a>
+                            <a href="{{ route('admin.kategori.index', ['modul' => 'jabatan', 'search' => request('search')]) }}" 
+                               class="btn btn-sm rounded-pill px-3 {{ $currentModul == 'jabatan' ? 'btn-success fw-bold' : 'btn-light text-slate-600' }}">
+                                Jabatan Dosen ({{ $stats['jabatan'] ?? 0 }})
+                            </a>
                         </div>
 
                         <!-- SEARCH -->
@@ -252,7 +263,7 @@
                                     <th width="50" class="text-center">Ikon</th>
                                     <th>Kategori &amp; Keterangan</th>
                                     <th width="110">Modul</th>
-                                    <th width="80" class="text-center">Berita</th>
+                                    <th width="90" class="text-center">Pemakaian</th>
                                     <th width="90" class="text-center">Status</th>
                                     <th width="120" class="text-center">Aksi</th>
                                 </tr>
@@ -300,16 +311,27 @@
                                             <span class="badge bg-purple bg-opacity-10 text-purple rounded-pill px-2.5 py-1" style="background-color: #f3e8ff; color: #7e22ce;">Dokumen Prodi</span>
                                         @elseif($kat->modul == 'layanan')
                                             <span class="badge bg-info bg-opacity-10 text-info rounded-pill px-2.5 py-1">Layanan</span>
+                                        @elseif($kat->modul == 'jabatan')
+                                            <span class="badge rounded-pill px-2.5 py-1" style="background-color: #ecfdf5; color: #047857; border: 1px solid #a7f3d0;">Jabatan Dosen</span>
                                         @else
                                             <span class="badge bg-secondary bg-opacity-10 text-secondary rounded-pill px-2.5 py-1">Umum</span>
                                         @endif
                                     </td>
 
-                                    <!-- JUMLAH BERITA TERKAIT -->
+                                    <!-- JUMLAH PEMAKAIAN -->
                                     <td class="text-center">
-                                        <span class="badge bg-light text-slate-700 border rounded-pill px-2.5 py-1">
-                                            {{ $kat->beritas_count }}
-                                        </span>
+                                        @if($kat->modul == 'jabatan')
+                                            @php
+                                                $dosenCount = \App\Models\Dosen::where('jabatan', 'LIKE', "%{$kat->nama}%")->count();
+                                            @endphp
+                                            <span class="badge bg-light text-slate-700 border rounded-pill px-2.5 py-1" title="Digunakan oleh {{ $dosenCount }} dosen">
+                                                <i class="fas fa-users-tie me-1 text-emerald-700"></i>{{ $dosenCount }}
+                                            </span>
+                                        @else
+                                            <span class="badge bg-light text-slate-700 border rounded-pill px-2.5 py-1">
+                                                {{ ($kat->beritas_count ?? 0) + ($kat->prodi_dokumens_count ?? 0) }}
+                                            </span>
+                                        @endif
                                     </td>
 
                                     <!-- STATUS -->
@@ -391,6 +413,7 @@
                                                                 <option value="dokumen" {{ $kat->modul == 'dokumen' ? 'selected' : '' }}>Dokumen Mutu (PPM / LPPM)</option>
                                                                 <option value="prodi_dokumen" {{ $kat->modul == 'prodi_dokumen' ? 'selected' : '' }}>Dokumen Prodi (Profil, RPS, Kurikulum)</option>
                                                                 <option value="layanan" {{ $kat->modul == 'layanan' ? 'selected' : '' }}>Layanan Akademik</option>
+                                                                <option value="jabatan" {{ $kat->modul == 'jabatan' ? 'selected' : '' }}>Jabatan Dosen &amp; Sivitas</option>
                                                                 <option value="umum" {{ $kat->modul == 'umum' ? 'selected' : '' }}>Umum (Semua Fitur)</option>
                                                             </select>
                                                         </div>

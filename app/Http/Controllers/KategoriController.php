@@ -163,6 +163,43 @@ class KategoriController extends Controller
                 }
             }
         }
+
+        // Pastikan kategori Jabatan Dosen & Tendik tersedia
+        static::seedJabatanDefaults();
+    }
+
+    public static function seedJabatanDefaults()
+    {
+        if (Kategori::where('modul', 'jabatan')->count() === 0) {
+            $jabatanDefaults = [
+                ['nama' => 'Direktur AMIK Taruna', 'slug' => 'direktur-amik-taruna', 'modul' => 'jabatan', 'warna' => 'success', 'ikon' => '👔', 'keterangan' => 'Pimpinan Utama AMIK Taruna', 'urutan' => 1, 'is_active' => true],
+                ['nama' => 'Wakil Direktur I Bidang Akademik', 'slug' => 'wakil-direktur-i', 'modul' => 'jabatan', 'warna' => 'primary', 'ikon' => '🎓', 'keterangan' => 'Pimpinan Bidang Kurikulum & Akademik', 'urutan' => 2, 'is_active' => true],
+                ['nama' => 'Wakil Direktur II Bidang Administrasi & Keuangan', 'slug' => 'wakil-direktur-ii', 'modul' => 'jabatan', 'warna' => 'primary', 'ikon' => '💼', 'keterangan' => 'Pimpinan Bidang Keuangan & SDM', 'urutan' => 3, 'is_active' => true],
+                ['nama' => 'Wakil Direktur III Bidang Kemahasiswaan & Alumni', 'slug' => 'wakil-direktur-iii', 'modul' => 'jabatan', 'warna' => 'primary', 'ikon' => '🤝', 'keterangan' => 'Pimpinan Bidang Kemahasiswaan & Kerjasama', 'urutan' => 4, 'is_active' => true],
+                ['nama' => 'Ketua Lembaga Penelitian & Pengabdian Masyarakat', 'slug' => 'ketua-lppm', 'modul' => 'jabatan', 'warna' => 'info', 'ikon' => '🔬', 'keterangan' => 'Kepala LPPM Kampus', 'urutan' => 5, 'is_active' => true],
+                ['nama' => 'Ketua Pusat Penjaminan Mutu', 'slug' => 'ketua-ppm', 'modul' => 'jabatan', 'warna' => 'warning', 'ikon' => '🛡️', 'keterangan' => 'Kepala Penjaminan Mutu Internal (PPM)', 'urutan' => 6, 'is_active' => true],
+                ['nama' => 'Ketua UPT Perpustakaan & Kearsipan', 'slug' => 'ketua-perpustakaan', 'modul' => 'jabatan', 'warna' => 'info', 'ikon' => '📚', 'keterangan' => 'Kepala Unit Perpustakaan', 'urutan' => 7, 'is_active' => true],
+                ['nama' => 'Ketua Unit Kerjasama & Pengembangan Institusi', 'slug' => 'ketua-kerjasama', 'modul' => 'jabatan', 'warna' => 'info', 'ikon' => '🌐', 'keterangan' => 'Kepala Hubungan Kerjasama Institusi', 'urutan' => 8, 'is_active' => true],
+                ['nama' => 'Ketua Program Studi Teknologi Informasi', 'slug' => 'kaprodi-ti', 'modul' => 'jabatan', 'warna' => 'success', 'ikon' => '💻', 'keterangan' => 'Kaprodi D3 Teknologi Informasi', 'urutan' => 9, 'is_active' => true],
+                ['nama' => 'Ketua Program Studi Sistem Informasi Akuntansi', 'slug' => 'kaprodi-sia', 'modul' => 'jabatan', 'warna' => 'success', 'ikon' => '📊', 'keterangan' => 'Kaprodi D3 Sistem Informasi Akuntansi', 'urutan' => 10, 'is_active' => true],
+                ['nama' => 'Ketua Program Studi Sistem Informasi', 'slug' => 'kaprodi-si', 'modul' => 'jabatan', 'warna' => 'success', 'ikon' => '🖥️', 'keterangan' => 'Kaprodi D3 Sistem Informasi', 'urutan' => 11, 'is_active' => true],
+                ['nama' => 'Kepala Bagian Administrasi Umum & Keuangan', 'slug' => 'kabag-keuangan', 'modul' => 'jabatan', 'warna' => 'secondary', 'ikon' => '🏢', 'keterangan' => 'Kabag Administrasi Umum & Keuangan', 'urutan' => 12, 'is_active' => true],
+                ['nama' => 'Kepala Bagian Administrasi Akademik', 'slug' => 'kabag-akademik', 'modul' => 'jabatan', 'warna' => 'secondary', 'ikon' => '📋', 'keterangan' => 'Kabag Administrasi Akademik (BAAK)', 'urutan' => 13, 'is_active' => true],
+                ['nama' => 'Staff Pusat Penjaminan Mutu', 'slug' => 'staf-ppm', 'modul' => 'jabatan', 'warna' => 'secondary', 'ikon' => '👤', 'keterangan' => 'Staf Pelaksana PPM', 'urutan' => 14, 'is_active' => true],
+                ['nama' => 'Staf Administrasi Umum & Keuangan', 'slug' => 'staf-keuangan', 'modul' => 'jabatan', 'warna' => 'secondary', 'ikon' => '👤', 'keterangan' => 'Staf Keuangan & Umum', 'urutan' => 15, 'is_active' => true],
+                ['nama' => 'Staf Administrasi Akademik', 'slug' => 'staf-akademik', 'modul' => 'jabatan', 'warna' => 'secondary', 'ikon' => '👤', 'keterangan' => 'Staf Akademik Kampus', 'urutan' => 16, 'is_active' => true],
+                ['nama' => 'Staf SI, Humas & Layanan', 'slug' => 'staf-humas', 'modul' => 'jabatan', 'warna' => 'secondary', 'ikon' => '👤', 'keterangan' => 'Staf Humas & IT Layanan', 'urutan' => 17, 'is_active' => true],
+                ['nama' => 'Staf Alumni & Pusat Karir', 'slug' => 'staf-alumni', 'modul' => 'jabatan', 'warna' => 'secondary', 'ikon' => '👤', 'keterangan' => 'Staf CDC & Alumni', 'urutan' => 18, 'is_active' => true],
+                ['nama' => 'Staf Perpustakaan & Kearsipan', 'slug' => 'staf-perpustakaan', 'modul' => 'jabatan', 'warna' => 'secondary', 'ikon' => '👤', 'keterangan' => 'Staf Perpustakaan Kampus', 'urutan' => 19, 'is_active' => true],
+                ['nama' => 'Dosen', 'slug' => 'dosen', 'modul' => 'jabatan', 'warna' => 'secondary', 'ikon' => '👨‍🏫', 'keterangan' => 'Dosen / Tenaga Pendidik', 'urutan' => 20, 'is_active' => true],
+            ];
+
+            foreach ($jabatanDefaults as $jd) {
+                if (!Kategori::where('slug', $jd['slug'])->where('modul', 'jabatan')->exists()) {
+                    Kategori::create($jd);
+                }
+            }
+        }
     }
 
     public function index(Request $request)
@@ -194,6 +231,7 @@ class KategoriController extends Controller
             'dokumen' => Kategori::where('modul', 'dokumen')->count(),
             'prodi_dokumen' => Kategori::where('modul', 'prodi_dokumen')->count(),
             'layanan' => Kategori::where('modul', 'layanan')->count(),
+            'jabatan' => Kategori::where('modul', 'jabatan')->count(),
             'umum' => Kategori::where('modul', 'umum')->count(),
         ];
 
@@ -204,7 +242,7 @@ class KategoriController extends Controller
     {
         $request->validate([
             'nama' => 'required|string|max:100',
-            'modul' => 'required|string|in:berita,pmb,dokumen,prodi_dokumen,layanan,umum',
+            'modul' => 'required|string|in:berita,pmb,dokumen,prodi_dokumen,layanan,umum,jabatan',
             'slug' => 'nullable|string|max:100|unique:kategoris,slug',
             'warna' => 'nullable|string|max:30',
             'ikon' => 'nullable|string|max:50',
@@ -235,8 +273,45 @@ class KategoriController extends Controller
             'is_active' => $request->has('is_active') ? (bool) $request->is_active : true,
         ]);
 
-        return redirect()->route('admin.kategori.index')
+        return redirect()->route('admin.kategori.index', ['modul' => $request->modul])
             ->with('success', "Kategori '{$request->nama}' berhasil ditambahkan.");
+    }
+
+    public function storeAjax(Request $request)
+    {
+        $request->validate([
+            'nama' => 'required|string|max:100',
+        ]);
+
+        $nama = trim($request->nama);
+        $slug = Str::slug($nama);
+
+        $kategori = Kategori::where('nama', $nama)
+            ->where('modul', 'jabatan')
+            ->first();
+
+        if (!$kategori) {
+            $maxUrutan = Kategori::where('modul', 'jabatan')->max('urutan') ?? 20;
+            $kategori = Kategori::create([
+                'nama' => $nama,
+                'slug' => $slug ?: 'jabatan-' . time(),
+                'modul' => 'jabatan',
+                'warna' => 'primary',
+                'ikon' => '👔',
+                'keterangan' => 'Jabatan Dosen & Sivitas Akademika',
+                'urutan' => $maxUrutan + 1,
+                'is_active' => true,
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'id' => $kategori->id,
+                'nama' => $kategori->nama,
+                'slug' => $kategori->slug,
+            ]
+        ]);
     }
 
     public function update(Request $request, $id)
@@ -245,7 +320,7 @@ class KategoriController extends Controller
 
         $request->validate([
             'nama' => 'required|string|max:100',
-            'modul' => 'required|string|in:berita,pmb,dokumen,prodi_dokumen,layanan,umum',
+            'modul' => 'required|string|in:berita,pmb,dokumen,prodi_dokumen,layanan,umum,jabatan',
             'slug' => 'required|string|max:100|unique:kategoris,slug,'.$id,
             'warna' => 'nullable|string|max:30',
             'ikon' => 'nullable|string|max:50',
@@ -263,6 +338,19 @@ class KategoriController extends Controller
             PPMDokumen::where('kategori', $oldSlug)->update(['kategori' => $newSlug]);
         }
 
+        // Jika nama jabatan dosen berubah, update di data dosen
+        if ($kategori->modul === 'jabatan' && $kategori->nama !== $request->nama) {
+            $dosens = \App\Models\Dosen::where('jabatan', 'LIKE', "%{$kategori->nama}%")->get();
+            foreach ($dosens as $d) {
+                $parts = explode('|', $d->jabatan);
+                $updatedParts = array_map(function($p) use ($kategori, $request) {
+                    return trim($p) === trim($kategori->nama) ? trim($request->nama) : trim($p);
+                }, $parts);
+                $d->jabatan = implode('|', $updatedParts);
+                $d->save();
+            }
+        }
+
         $kategori->update([
             'nama' => $request->nama,
             'slug' => $newSlug,
@@ -274,7 +362,7 @@ class KategoriController extends Controller
             'is_active' => $request->has('is_active') ? (bool) $request->is_active : false,
         ]);
 
-        return redirect()->route('admin.kategori.index')
+        return redirect()->route('admin.kategori.index', ['modul' => $request->modul])
             ->with('success', "Kategori '{$kategori->nama}' berhasil diperbarui.");
     }
 
@@ -282,22 +370,27 @@ class KategoriController extends Controller
     {
         $kategori = Kategori::findOrFail($id);
 
-        // Cek apakah kategori digunakan oleh berita atau dokumen
+        // Cek apakah kategori digunakan oleh berita, dokumen, atau dosen
         $usedInBerita = Berita::where('kategori', $kategori->slug)->count();
         $usedInProdiDok = ProdiDokumen::where('kategori', $kategori->slug)->count();
         $usedInPPMDok = PPMDokumen::where('kategori', $kategori->slug)->count();
+        $usedInDosen = 0;
+        if ($kategori->modul === 'jabatan') {
+            $usedInDosen = \App\Models\Dosen::where('jabatan', 'LIKE', "%{$kategori->nama}%")->count();
+        }
 
-        $totalUsed = $usedInBerita + $usedInProdiDok + $usedInPPMDok;
+        $totalUsed = $usedInBerita + $usedInProdiDok + $usedInPPMDok + $usedInDosen;
 
         if ($totalUsed > 0) {
-            return redirect()->route('admin.kategori.index')
-                ->with('error', "Kategori '{$kategori->nama}' tidak dapat dihapus karena masih digunakan oleh {$totalUsed} data/dokumen aktif. Silakan ubah kategori data tersebut terlebih dahulu atau nonaktifkan kategori ini.");
+            return redirect()->route('admin.kategori.index', ['modul' => $kategori->modul])
+                ->with('error', "Kategori/Jabatan '{$kategori->nama}' tidak dapat dihapus karena masih digunakan oleh {$totalUsed} data/dokumen/dosen aktif. Silakan ubah data terkait terlebih dahulu atau nonaktifkan kategori ini.");
         }
 
         $nama = $kategori->nama;
+        $modul = $kategori->modul;
         $kategori->delete();
 
-        return redirect()->route('admin.kategori.index')
+        return redirect()->route('admin.kategori.index', ['modul' => $modul])
             ->with('success', "Kategori '{$nama}' berhasil dihapus.");
     }
 }
