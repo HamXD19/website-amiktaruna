@@ -17,17 +17,64 @@ const title = computed(() => props.setting?.page_headers?.home_dosen?.title || '
 const titleHighlight = computed(() => props.setting?.page_headers?.home_dosen?.highlight || 'mengawal mutu akademik.');
 const subtitle = computed(() => props.setting?.page_headers?.home_dosen?.subtitle || 'Dipimpin oleh para akademisi dan praktisi berpengalaman yang berfokus pada kemajuan kompetensi mahasiswa di bidang teknologi informasi terapan.');
 
-// Select top 4 leadership figures by level_organigram or fallback
+// Select top 4 leadership figures: Direktur & 3 Wakil Direktur
 const leadershipFigures = computed(() => {
   if (!props.dosen || props.dosen.length === 0) return [];
 
-  const sorted = [...props.dosen].sort((a, b) => {
-    const lvlA = a.level_organigram || 99;
-    const lvlB = b.level_organigram || 99;
+  // 1. If explicit IDs are set in admin settings (e.g. [6, 10, 12, 13])
+  let configuredIds = props.setting?.home_dosen_ids;
+  if (typeof configuredIds === 'string') {
+    try {
+      configuredIds = JSON.parse(configuredIds);
+    } catch (e) {
+      configuredIds = null;
+    }
+  }
+
+  if (Array.isArray(configuredIds) && configuredIds.length > 0) {
+    const list = [];
+    for (const id of configuredIds) {
+      const found = props.dosen.find(d => Number(d.id) === Number(id));
+      if (found) list.push(found);
+    }
+    if (list.length > 0) return list.slice(0, 4);
+  }
+
+  // 2. Fallback: strictly filter for Direktur & Wakil Direktur
+  const leaders = props.dosen.filter(d => {
+    const lvl = Number(d.level_organigram);
+    const jab = (d.jabatan || '').toLowerCase();
+    return lvl === 1 || lvl === 2 || jab.includes('direktur');
+  });
+
+  if (leaders.length > 0) {
+    const sorted = [...leaders].sort((a, b) => {
+      const lvlA = Number(a.level_organigram) || 99;
+      const lvlB = Number(b.level_organigram) || 99;
+      if (lvlA !== lvlB) return lvlA - lvlB;
+
+      // Same level (e.g. both Wadir level 2): sort by Roman Numeral I, II, III
+      const getWadirOrder = (jabatan) => {
+        const j = (jabatan || '').toLowerCase();
+        if (/wadir\s*i\b|wakil\s+direktur\s+i\b|akademik/i.test(j)) return 1;
+        if (/wadir\s*ii\b|wakil\s+direktur\s+ii\b|keuangan|administrasi/i.test(j)) return 2;
+        if (/wadir\s*iii\b|wakil\s+direktur\s+iii\b|kemahasiswaan|alumni/i.test(j)) return 3;
+        return 4;
+      };
+      return getWadirOrder(a.jabatan) - getWadirOrder(b.jabatan);
+    });
+
+    return sorted.slice(0, 4);
+  }
+
+  // 3. Fallback: by level_organigram
+  const fallbackSorted = [...props.dosen].sort((a, b) => {
+    const lvlA = Number(a.level_organigram) || 99;
+    const lvlB = Number(b.level_organigram) || 99;
     return lvlA - lvlB;
   });
 
-  return sorted.slice(0, 4);
+  return fallbackSorted.slice(0, 4);
 });
 
 // Helper for clean primary title (clean multiple pipe strings if any)

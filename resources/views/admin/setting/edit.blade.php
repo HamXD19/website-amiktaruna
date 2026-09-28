@@ -9,6 +9,11 @@
     $pillars = $setting->home_pillars ?? [];
     $homeCta = $setting->home_cta ?? [];
     $mobileBanners = $setting->mobile_banners ?? [];
+    $homeDosenIds = $setting->home_dosen_ids ?? [];
+    if (!is_array($homeDosenIds)) {
+        $homeDosenIds = json_decode($homeDosenIds, true) ?? [];
+    }
+    $allDosen = $allDosen ?? \App\Models\Dosen::orderBy('level_organigram')->orderBy('nama')->get();
     $tentangPillars = $setting->tentang_pillars ?? [];
     $akademikValues = $setting->akademik_values ?? [];
     $alumniPillars = $setting->alumni_pillars ?? [];
@@ -490,7 +495,61 @@
                         </div>
                     </div>
 
-                    <!-- 2.5 Slider Banner Tampilan Mobile -->
+                    <!-- 2.5 Pimpinan Utama di Beranda (Direktur & 3 Wakil Direktur) -->
+                    <div class="section-divider">
+                        <h4 class="section-title">
+                            <i class="fas fa-users-line"></i>
+                            <span>Pimpinan Utama di Beranda (Direktur &amp; 3 Wakil Direktur)</span>
+                        </h4>
+                    </div>
+
+                    <div class="alert alert-info border-0 rounded-3 mb-4 shadow-sm" style="background-color: #f0fdf4; border-left: 4px solid #059669 !important;">
+                        <div class="d-flex gap-3 align-items-center">
+                            <i class="fas fa-circle-check fa-2x text-emerald-600"></i>
+                            <div>
+                                <strong class="text-slate-800">Konfigurasi 4 Pimpinan Beranda:</strong>
+                                <p class="mb-0 text-muted small">Sesuai hierarki institusi, beranda menampilkan 4 pimpinan utama: <strong>Direktur</strong> dan <strong>3 Wakil Direktur (Wadir I, II, III)</strong>. Anda dapat memilih dosen/pejabat yang ditampilkan pada masing-masing slot kartu di bawah ini:</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-5">
+                        @php
+                            $slotLabels = [
+                                0 => ['title' => 'Slot 1 (Direktur)', 'badge' => 'Direktur Utama', 'default_id' => 6],
+                                1 => ['title' => 'Slot 2 (Wadir I)', 'badge' => 'Wadir I - Akademik', 'default_id' => 10],
+                                2 => ['title' => 'Slot 3 (Wadir II)', 'badge' => 'Wadir II - Keuangan & Adm', 'default_id' => 12],
+                                3 => ['title' => 'Slot 4 (Wadir III)', 'badge' => 'Wadir III - Kemahasiswaan', 'default_id' => 13],
+                            ];
+                        @endphp
+
+                        @for($s = 0; $s < 4; $s++)
+                            @php
+                                $selectedId = $homeDosenIds[$s] ?? $slotLabels[$s]['default_id'];
+                            @endphp
+                            <div class="col-md-6 col-lg-3">
+                                <div class="sub-card h-100">
+                                    <span class="badge bg-emerald-600 mb-2">{{ $slotLabels[$s]['badge'] }}</span>
+                                    <div class="mb-2">
+                                        <label class="form-label fw-bold">{{ $slotLabels[$s]['title'] }}</label>
+                                        <select name="home_dosen_ids[{{ $s }}]" class="form-select">
+                                            <option value="">-- Pilih Pimpinan --</option>
+                                            @foreach($allDosen as $dosen)
+                                                <option value="{{ $dosen->id }}" {{ (string)$selectedId === (string)$dosen->id ? 'selected' : '' }}>
+                                                    {{ $dosen->nama }} ({{ \Illuminate\Support\Str::limit($dosen->jabatan ?? 'Dosen', 28) }})
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="form-hint small text-muted">
+                                        Kartu ke-{{ $s + 1 }} yang muncul di halaman depan beranda.
+                                    </div>
+                                </div>
+                            </div>
+                        @endfor
+                    </div>
+
+                    <!-- 2.6 Slider Banner Tampilan Mobile -->
                     <div class="section-divider">
                         <h4 class="section-title">
                             <i class="fas fa-mobile-screen"></i>

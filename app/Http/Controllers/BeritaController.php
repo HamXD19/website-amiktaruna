@@ -356,7 +356,7 @@ $kegiatan = Berita::where('kategori', 'kegiatan_kampus')
 
         $visimisi = VisiMisi::first();
 
-        $dosen = Dosen::all();
+        $dosen = Dosen::orderBy('level_organigram')->orderBy('id')->get();
 
         return view('home', compact(
             'beritas',

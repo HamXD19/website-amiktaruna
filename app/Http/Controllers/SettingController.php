@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Setting;
+use App\Models\Dosen;
 use App\Services\ActivityLogger;
 use Illuminate\Http\Request;
 
@@ -11,7 +12,8 @@ class SettingController extends Controller
     public function edit()
     {
         $setting = Setting::first();
-        return view('admin.setting.edit', compact('setting'));
+        $allDosen = Dosen::orderBy('level_organigram')->orderBy('nama')->get();
+        return view('admin.setting.edit', compact('setting', 'allDosen'));
     }
 
     public function update(Request $request)
@@ -19,6 +21,10 @@ class SettingController extends Controller
         $setting = Setting::first();
 
         $data = $request->all();
+
+        if ($request->has('home_dosen_ids')) {
+            $data['home_dosen_ids'] = array_values(array_filter($request->input('home_dosen_ids', [])));
+        }
 
         /*
         |------------------------------------------
