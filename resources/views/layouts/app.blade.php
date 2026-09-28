@@ -35,6 +35,11 @@
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
+    <!-- SweetAlert2 & Animate.css -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
         :root {
             --sidebar-bg: #022c22;        /* emerald-950 */
@@ -775,6 +780,115 @@
     if (typeof lucide !== 'undefined') {
         lucide.createIcons();
     }
+
+    // Custom Styled SweetAlert Toast
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3500,
+        timerProgressBar: true,
+        showClass: {
+            popup: 'animate__animated animate__fadeInDown animate__faster'
+        },
+        hideClass: {
+            popup: 'animate__animated animate__fadeOutUp animate__faster'
+        },
+        didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer);
+            toast.addEventListener('mouseleave', Swal.resumeTimer);
+        }
+    });
+
+    // Auto-fire session notifications with animations
+    @if(session('success'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: "{{ session('success') }}",
+            confirmButtonColor: '#059669',
+            confirmButtonText: 'Oke, Mengerti',
+            customClass: {
+                popup: 'rounded-4 shadow-lg border-0',
+                confirmButton: 'btn btn-success rounded-pill px-4'
+            },
+            showClass: {
+                popup: 'animate__animated animate__bounceIn'
+            },
+            hideClass: {
+                popup: 'animate__animated animate__fadeOutDown animate__faster'
+            },
+            timer: 3500,
+            timerProgressBar: true
+        });
+    @endif
+
+    @if(session('error'))
+        Swal.fire({
+            icon: 'error',
+            title: 'Peringatan / Gagal!',
+            text: "{{ session('error') }}",
+            confirmButtonColor: '#dc2626',
+            confirmButtonText: 'Tutup',
+            customClass: {
+                popup: 'rounded-4 shadow-lg border-0',
+                confirmButton: 'btn btn-danger rounded-pill px-4'
+            },
+            showClass: {
+                popup: 'animate__animated animate__shakeX'
+            },
+            hideClass: {
+                popup: 'animate__animated animate__fadeOutDown animate__faster'
+            }
+        });
+    @endif
+
+    @if(session('warning'))
+        Swal.fire({
+            icon: 'warning',
+            title: 'Perhatian!',
+            text: "{{ session('warning') }}",
+            confirmButtonColor: '#d97706',
+            confirmButtonText: 'Tutup',
+            customClass: {
+                popup: 'rounded-4 shadow-lg border-0',
+                confirmButton: 'btn btn-warning rounded-pill px-4'
+            },
+            showClass: {
+                popup: 'animate__animated animate__fadeIn'
+            },
+            hideClass: {
+                popup: 'animate__animated animate__fadeOut'
+            }
+        });
+    @endif
+
+    @if(session('info'))
+        Toast.fire({
+            icon: 'info',
+            title: "{{ session('info') }}"
+        });
+    @endif
+
+    @if($errors->any())
+        Swal.fire({
+            icon: 'error',
+            title: 'Validasi Gagal!',
+            html: `{!! '<ul class="text-start ps-3 mb-0">' . implode('', array_map(fn($e) => '<li>' . e($e) . '</li>', $errors->all())) . '</ul>' !!}`,
+            confirmButtonColor: '#dc2626',
+            confirmButtonText: 'Periksa Kembali',
+            customClass: {
+                popup: 'rounded-4 shadow-lg border-0',
+                confirmButton: 'btn btn-danger rounded-pill px-4'
+            },
+            showClass: {
+                popup: 'animate__animated animate__shakeX'
+            },
+            hideClass: {
+                popup: 'animate__animated animate__fadeOutDown animate__faster'
+            }
+        });
+    @endif
 </script>
 
 @stack('scripts')

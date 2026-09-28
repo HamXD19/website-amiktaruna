@@ -51,4 +51,9 @@ class Kategori extends Model
     {
         return $this->hasMany(PPMDokumen::class, 'kategori', 'slug');
     }
+
+    public function beritaPmbs()
+    {
+        return $this->hasMany(BeritaPMB::class, 'kategori', 'slug');
+    }
 }

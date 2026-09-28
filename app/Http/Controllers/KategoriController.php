@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Berita;
+use App\Models\BeritaPMB;
+use App\Models\Dosen;
 use App\Models\Kategori;
 use App\Models\ProdiDokumen;
 use App\Models\PPMDokumen;
@@ -206,7 +208,7 @@ class KategoriController extends Controller
     {
         $this->autoSeedDefaults();
 
-        $query = Kategori::withCount(['beritas', 'prodiDokumens'])->orderBy('urutan', 'asc')->latest();
+        $query = Kategori::withCount(['beritas', 'prodiDokumens', 'ppmDokumens', 'beritaPmbs'])->orderBy('urutan', 'asc')->latest();
 
         if ($request->filled('modul') && $request->modul !== 'semua') {
             $query->where('modul', $request->modul);
@@ -222,6 +224,21 @@ class KategoriController extends Controller
         }
 
         $kategoris = $query->paginate(15)->withQueryString();
+
+        // Calculate accurate total_used count for each kategori
+        $kategoris->getCollection()->transform(function ($kat) {
+            $used = 0;
+            if ($kat->modul === 'jabatan') {
+                $used = Dosen::where('jabatan', 'LIKE', "%{$kat->nama}%")->count();
+            } else {
+                $used = ($kat->beritas_count ?? 0)
+                      + ($kat->prodi_dokumens_count ?? 0)
+                      + ($kat->ppm_dokumens_count ?? 0)
+                      + ($kat->berita_pmbs_count ?? 0);
+            }
+            $kat->total_used = $used;
+            return $kat;
+        });
 
         // Hitung statistik kategori
         $stats = [
@@ -370,20 +387,21 @@ class KategoriController extends Controller
     {
         $kategori = Kategori::findOrFail($id);
 
-        // Cek apakah kategori digunakan oleh berita, dokumen, atau dosen
+        // Cek apakah kategori digunakan oleh berita, dokumen, PMB, atau dosen
         $usedInBerita = Berita::where('kategori', $kategori->slug)->count();
+        $usedInPMB = BeritaPMB::where('kategori', $kategori->slug)->count();
         $usedInProdiDok = ProdiDokumen::where('kategori', $kategori->slug)->count();
         $usedInPPMDok = PPMDokumen::where('kategori', $kategori->slug)->count();
         $usedInDosen = 0;
         if ($kategori->modul === 'jabatan') {
-            $usedInDosen = \App\Models\Dosen::where('jabatan', 'LIKE', "%{$kategori->nama}%")->count();
+            $usedInDosen = Dosen::where('jabatan', 'LIKE', "%{$kategori->nama}%")->count();
         }
 
-        $totalUsed = $usedInBerita + $usedInProdiDok + $usedInPPMDok + $usedInDosen;
+        $totalUsed = $usedInBerita + $usedInPMB + $usedInProdiDok + $usedInPPMDok + $usedInDosen;
 
         if ($totalUsed > 0) {
             return redirect()->route('admin.kategori.index', ['modul' => $kategori->modul])
-                ->with('error', "Kategori/Jabatan '{$kategori->nama}' tidak dapat dihapus karena masih digunakan oleh {$totalUsed} data/dokumen/dosen aktif. Silakan ubah data terkait terlebih dahulu atau nonaktifkan kategori ini.");
+                ->with('error', "Kategori '{$kategori->nama}' tidak dapat dihapus karena masih digunakan oleh {$totalUsed} data/konten/dosen aktif. Silakan ubah atau hapus data terkait terlebih dahulu, atau nonaktifkan kategori ini.");
         }
 
         $nama = $kategori->nama;
