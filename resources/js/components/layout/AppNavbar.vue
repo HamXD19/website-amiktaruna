@@ -262,11 +262,11 @@ const navGroups = [
           </a>
         </div>
 
-        <!-- Mobile Action & Hamburger Button -->
+        <!-- Mobile Action: Portal Sivitas Login -->
         <div class="flex items-center gap-2 lg:hidden">
           <a
             href="/login"
-            class="p-2 text-slate-300 hover:text-white bg-emerald-950/60 rounded-lg border border-emerald-500/25"
+            class="p-2 text-slate-300 hover:text-white bg-emerald-950/60 rounded-lg border border-emerald-500/25 transition active:scale-95"
             title="Portal Sivitas"
             aria-label="Portal Sivitas"
           >
@@ -274,20 +274,6 @@ const navGroups = [
               <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
           </a>
-          <button
-            type="button"
-            class="p-2 rounded-lg text-slate-200 hover:bg-emerald-950/60 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-400 border border-emerald-500/20"
-            :aria-expanded="mobileMenuOpen"
-            aria-label="Toggle Menu"
-            @click="mobileMenuOpen = !mobileMenuOpen"
-          >
-            <svg v-if="!mobileMenuOpen" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-            <svg v-else class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
         </div>
 
       </div>

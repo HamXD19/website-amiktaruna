@@ -26,7 +26,7 @@
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-2tqs84YD.js",
+    "file": "assets/app-Cn9iLx--.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
@@ -55,7 +55,7 @@
     ]
   },
   "resources/js/components/layout/AppNavbar.vue": {
-    "file": "assets/AppNavbar-Co3pOcTh.js",
+    "file": "assets/AppNavbar-B7an_XP8.js",
     "name": "AppNavbar",
     "src": "resources/js/components/layout/AppNavbar.vue",
     "isDynamicEntry": true,
@@ -64,7 +64,7 @@
     ]
   },
   "resources/js/pages/AkademikPage.vue": {
-    "file": "assets/AkademikPage-BeciC77p.js",
+    "file": "assets/AkademikPage-50ev-ib_.js",
     "name": "AkademikPage",
     "src": "resources/js/pages/AkademikPage.vue",
     "isDynamicEntry": true,
@@ -76,7 +76,7 @@
     ]
   },
   "resources/js/pages/AlumniPage.vue": {
-    "file": "assets/AlumniPage-D21VKTs_.js",
+    "file": "assets/AlumniPage-SbqupNCt.js",
     "name": "AlumniPage",
     "src": "resources/js/pages/AlumniPage.vue",
     "isDynamicEntry": true,
@@ -88,7 +88,7 @@
     ]
   },
   "resources/js/pages/BeritaDetailPage.vue": {
-    "file": "assets/BeritaDetailPage-Dz6M9go_.js",
+    "file": "assets/BeritaDetailPage-DIQM3iw6.js",
     "name": "BeritaDetailPage",
     "src": "resources/js/pages/BeritaDetailPage.vue",
     "isDynamicEntry": true,
@@ -100,7 +100,7 @@
     ]
   },
   "resources/js/pages/HomePage.vue": {
-    "file": "assets/HomePage-3OZ6Sd65.js",
+    "file": "assets/HomePage-CT7Z5SSw.js",
     "name": "HomePage",
     "src": "resources/js/pages/HomePage.vue",
     "isDynamicEntry": true,
@@ -115,7 +115,7 @@
     ]
   },
   "resources/js/pages/ProgramStudiDetailPage.vue": {
-    "file": "assets/ProgramStudiDetailPage-ByKFu3Vb.js",
+    "file": "assets/ProgramStudiDetailPage-CTojV1Ab.js",
     "name": "ProgramStudiDetailPage",
     "src": "resources/js/pages/ProgramStudiDetailPage.vue",
     "isDynamicEntry": true,
@@ -127,7 +127,7 @@
     ]
   },
   "resources/js/pages/TentangPage.vue": {
-    "file": "assets/TentangPage-CVVXxWrB.js",
+    "file": "assets/TentangPage-CJb0KNeQ.js",
     "name": "TentangPage",
     "src": "resources/js/pages/TentangPage.vue",
     "isDynamicEntry": true,
