@@ -256,6 +256,14 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
 
         Route::delete('/alumni-section/{id}', [AlumniSectionController::class, 'destroy'])
             ->name('alumni_section.destroy');
+
+        // Testimoni Alumni
+        Route::post('/alumni-testimoni', [AlumniSectionController::class, 'storeTestimoni'])
+            ->name('alumni_testimoni.store');
+        Route::put('/alumni-testimoni/{id}', [AlumniSectionController::class, 'updateTestimoni'])
+            ->name('alumni_testimoni.update');
+        Route::delete('/alumni-testimoni/{id}', [AlumniSectionController::class, 'destroyTestimoni'])
+            ->name('alumni_testimoni.destroy');
     });
 
     /*

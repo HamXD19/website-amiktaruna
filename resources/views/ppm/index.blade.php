@@ -325,10 +325,13 @@
                                 </div>
                                 <div class="col-12 col-md-auto text-md-end mt-2 mt-md-0">
                                     <div class="d-flex flex-wrap gap-2 justify-content-start justify-content-md-end">
-                                        <a href="{{ asset('uploads/ppm/' . $doc->file_pdf) }}" target="_blank" class="btn btn-outline-light rounded-pill px-3.5 py-2 fw-semibold d-inline-flex align-items-center gap-2 shadow-sm" style="font-size: 0.88rem;">
+                                        <button type="button" 
+                                                class="btn btn-outline-light rounded-pill px-3.5 py-2 fw-semibold d-inline-flex align-items-center gap-2 shadow-sm" 
+                                                style="font-size: 0.88rem;"
+                                                onclick="openPpmDocViewer('{{ asset('uploads/ppm/' . $doc->file_pdf) }}', '{{ addslashes($doc->nama_dokumen) }}', '{{ $ext }}')">
                                             <i class="fas fa-eye text-success"></i>
                                             <span>Lihat</span>
-                                        </a>
+                                        </button>
                                         <a href="{{ asset('uploads/ppm/' . $doc->file_pdf) }}" download class="btn {{ $isWord ? 'btn-primary' : 'btn-danger' }} rounded-pill px-3.5 py-2 fw-semibold d-inline-flex align-items-center gap-2 shadow-sm" style="font-size: 0.88rem;">
                                             <i class="fas fa-download"></i>
                                             <span>Unduh {{ strtoupper($ext) }}</span>
@@ -535,6 +538,54 @@ document.addEventListener('DOMContentLoaded', function () {
     // Inisialisasi awal (tanpa ubah URL)
     runFilter(false);
 });
+
+// Pop-up Document Viewer handler
+function openPpmDocViewer(fileUrl, docTitle, ext) {
+    document.getElementById('ppmDocTitle').textContent = docTitle;
+    document.getElementById('ppmDocBadge').textContent = ext.toUpperCase();
+    document.getElementById('ppmDocDownload').href = fileUrl;
+    document.getElementById('ppmDocNewTab').href = fileUrl;
+    document.getElementById('ppmDocIframe').src = fileUrl + '#toolbar=1';
+    const modal = new bootstrap.Modal(document.getElementById('ppmDocModal'));
+    modal.show();
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const modalEl = document.getElementById('ppmDocModal');
+    if (modalEl) {
+        modalEl.addEventListener('hidden.bs.modal', function () {
+            document.getElementById('ppmDocIframe').src = '';
+        });
+    }
+});
 </script>
+
+<!-- SPMI Pop-up Document Viewer Modal -->
+<div class="modal fade" id="ppmDocModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content rounded-4 border-0 shadow-lg overflow-hidden" style="background: #0f172a; border: 1px solid rgba(74, 222, 128, 0.3) !important;">
+            <div class="modal-header border-0 py-3 px-4" style="background: #022c22; border-bottom: 1px solid rgba(74, 222, 128, 0.2) !important;">
+                <div class="d-flex align-items-center gap-2 min-w-0 flex-grow-1">
+                    <span id="ppmDocBadge" class="badge rounded-pill text-uppercase font-monospace bg-dark text-emerald-400 border border-success">PDF</span>
+                    <h6 class="modal-title fw-bold text-white text-truncate mb-0" id="ppmDocTitle">Pratinjau Dokumen SPMI</h6>
+                </div>
+                <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                    <a id="ppmDocNewTab" href="#" target="_blank" class="btn btn-sm btn-outline-light rounded-pill px-3 d-none d-sm-inline-flex align-items-center gap-1">
+                        <i class="fas fa-external-link-alt text-xs"></i> Tab Baru
+                    </a>
+                    <a id="ppmDocDownload" href="#" download class="btn btn-sm btn-success rounded-pill px-3.5 d-inline-flex align-items-center gap-1.5 fw-bold">
+                        <i class="fas fa-download text-xs"></i> Unduh Berkas
+                    </a>
+                    <button type="button" class="btn btn-sm btn-outline-secondary rounded-circle text-white" data-bs-dismiss="modal" aria-label="Close" style="width: 32px; height: 32px; padding: 0;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="modal-body p-0" style="height: 75vh; background: #020617;">
+                <iframe id="ppmDocIframe" src="" class="w-100 h-100 border-0 bg-white" title="Pratinjau Dokumen Mutu"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
 
 @endsection

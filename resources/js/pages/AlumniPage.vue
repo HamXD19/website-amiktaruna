@@ -4,6 +4,7 @@ import AppFooter from '../components/layout/AppFooter.vue';
 import AlumniHero from '../components/alumni/AlumniHero.vue';
 import AlumniIntro from '../components/alumni/AlumniIntro.vue';
 import AlumniContentSection from '../components/alumni/AlumniContentSection.vue';
+import AlumniTestimonialSection from '../components/alumni/AlumniTestimonialSection.vue';
 import CtaSection from '../components/home/CtaSection.vue';
 
 defineProps({
@@ -12,6 +13,10 @@ defineProps({
     default: () => ({})
   },
   alumni_sections: {
+    type: Array,
+    default: () => []
+  },
+  alumni_testimonis: {
     type: Array,
     default: () => []
   }
@@ -34,7 +39,10 @@ defineProps({
       <!-- 4. Alumni Content Sections (Authentic Tracer Study & Dana Abadi) -->
       <AlumniContentSection :alumni-sections="alumni_sections" />
 
-      <!-- 5. Institutional Call to Action -->
+      <!-- 5. Alumni Testimonials (Stories & Career Insights) -->
+      <AlumniTestimonialSection :testimonis="alumni_testimonis" />
+
+      <!-- 6. Institutional Call to Action -->
       <CtaSection :setting="setting" />
     </main>
 

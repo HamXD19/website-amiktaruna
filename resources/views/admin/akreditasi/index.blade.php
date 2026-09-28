@@ -186,8 +186,9 @@
                                         @if($item->gambar)
 
                                             <img src="{{ asset('uploads/'.$item->gambar) }}"
-                                                 width="90"
-                                                 class="rounded-3">
+                                                 class="rounded-3 shadow-xs"
+                                                 style="width: 76px; height: 52px; object-fit: cover; border: 1px solid #cbd5e1;"
+                                                 alt="{{ $item->judul }}">
 
                                         @else
 

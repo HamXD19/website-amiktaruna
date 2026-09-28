@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import AppNavbar from '../components/layout/AppNavbar.vue';
 import AppFooter from '../components/layout/AppFooter.vue';
 import CtaSection from '../components/home/CtaSection.vue';
@@ -17,6 +17,44 @@ const props = defineProps({
   kategoriDokumen: {
     type: Array,
     default: () => []
+  }
+});
+
+// Pop-up Document Viewer state
+const activePreviewDoc = ref(null);
+
+const openPreviewModal = (doc) => {
+  activePreviewDoc.value = doc;
+  if (typeof document !== 'undefined') {
+    document.body.style.overflow = 'hidden';
+  }
+};
+
+const closePreviewModal = () => {
+  activePreviewDoc.value = null;
+  if (typeof document !== 'undefined') {
+    document.body.style.overflow = '';
+  }
+};
+
+const handleKeydown = (e) => {
+  if (e.key === 'Escape' && activePreviewDoc.value) {
+    closePreviewModal();
+  }
+};
+
+onMounted(() => {
+  if (typeof window !== 'undefined') {
+    window.addEventListener('keydown', handleKeydown);
+  }
+});
+
+onUnmounted(() => {
+  if (typeof window !== 'undefined') {
+    window.removeEventListener('keydown', handleKeydown);
+  }
+  if (typeof document !== 'undefined') {
+    document.body.style.overflow = '';
   }
 });
 
@@ -484,14 +522,23 @@ const handleImageError = () => {
 
                     <!-- Right Action Button -->
                     <div class="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                      <button
+                        type="button"
+                        @click="openPreviewModal(dok)"
+                        class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-white/10 hover:bg-white/20 text-white border border-white/20 transition-all shadow-xs hover:scale-102 cursor-pointer"
+                        title="Baca atau tinjau dokumen langsung"
+                      >
+                        <i class="fas fa-eye text-[11px] text-emerald-400"></i>
+                        <span>Lihat</span>
+                      </button>
                       <a
                         :href="`/uploads/program_studi/dokumen/${dok.file_dokumen}`"
                         target="_blank"
                         download
-                        class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold bg-[#16a34a] text-white hover:bg-[#15803d] transition-all shadow-xs group-hover:scale-102"
+                        class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-[#16a34a] text-white hover:bg-[#15803d] transition-all shadow-xs hover:scale-102"
                       >
                         <i class="fas fa-download text-[11px]"></i>
-                        <span>Unduh Berkas</span>
+                        <span>Unduh</span>
                       </a>
                     </div>
                   </div>
@@ -852,6 +899,108 @@ const handleImageError = () => {
 
     <!-- 5. Footer (Calm, High Contrast Slate, Verified Links) -->
     <AppFooter :setting="setting" />
+
+    <!-- 6. Pop-up Document Viewer Modal -->
+    <Teleport to="body">
+      <div
+        v-if="activePreviewDoc"
+        class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/80 backdrop-blur-sm transition-all"
+        @click.self="closePreviewModal"
+      >
+        <div class="bg-slate-900 border border-emerald-500/30 rounded-2xl w-full max-w-5xl h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+          
+          <!-- Modal Header -->
+          <div class="px-5 py-3.5 bg-slate-950/90 border-b border-emerald-500/20 flex items-center justify-between gap-4">
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono uppercase bg-emerald-950 text-emerald-400 border border-emerald-500/30 font-bold">
+                  {{ getFileExt(activePreviewDoc.file_dokumen) }}
+                </span>
+                <span v-if="activePreviewDoc.kategori_model?.nama || activePreviewDoc.kategori" class="text-xs text-emerald-300 font-medium truncate">
+                  {{ activePreviewDoc.kategori_model?.nama || activePreviewDoc.kategori }}
+                </span>
+                <span v-if="activePreviewDoc.tahun" class="text-xs text-slate-400">
+                  • {{ activePreviewDoc.tahun }}
+                </span>
+              </div>
+              <h3 class="text-base font-bold text-white truncate">
+                {{ activePreviewDoc.nama_dokumen }}
+              </h3>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="flex items-center gap-2 shrink-0">
+              <a
+                :href="`/uploads/program_studi/dokumen/${activePreviewDoc.file_dokumen}`"
+                target="_blank"
+                class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white/10 hover:bg-white/20 text-slate-200 border border-white/20 transition-colors"
+                title="Buka tab baru"
+              >
+                <i class="fas fa-external-link-alt text-[11px]"></i>
+                <span>Tab Baru</span>
+              </a>
+              <a
+                :href="`/uploads/program_studi/dokumen/${activePreviewDoc.file_dokumen}`"
+                download
+                class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#16a34a] hover:bg-[#15803d] text-white transition-colors shadow-xs"
+              >
+                <i class="fas fa-download text-[11px]"></i>
+                <span class="hidden sm:inline">Unduh Berkas</span>
+              </a>
+              <button
+                type="button"
+                @click="closePreviewModal"
+                class="w-8 h-8 rounded-lg bg-white/10 hover:bg-rose-500/20 text-slate-300 hover:text-rose-300 flex items-center justify-center transition-colors cursor-pointer"
+                title="Tutup (Esc)"
+              >
+                <i class="fas fa-times text-sm"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Modal Body / Iframe Preview -->
+          <div class="flex-1 bg-slate-950 relative flex flex-col items-center justify-center overflow-hidden">
+            <!-- If PDF -->
+            <iframe
+              v-if="!isWordFile(activePreviewDoc.file_dokumen)"
+              :src="`/uploads/program_studi/dokumen/${activePreviewDoc.file_dokumen}#toolbar=1`"
+              class="w-full h-full border-0 bg-white"
+              title="Pratinjau Dokumen PDF"
+            ></iframe>
+
+            <!-- Fallback if Word document -->
+            <div v-else class="text-center p-8 max-w-md">
+              <div class="w-16 h-16 rounded-2xl bg-blue-500/20 text-blue-400 flex items-center justify-center text-3xl mx-auto mb-4 border border-blue-500/30">
+                <i class="fas fa-file-word"></i>
+              </div>
+              <h4 class="text-lg font-bold text-white mb-2">Berkas Dokumen Word (.docx)</h4>
+              <p class="text-xs text-slate-400 mb-6 leading-relaxed">
+                Format dokumen Microsoft Word tidak dapat ditampilkan langsung di dalam browser viewer. Anda dapat mengunduh berkas ini atau membukanya langsung.
+              </p>
+              <div class="flex flex-wrap justify-center gap-3">
+                <a
+                  :href="`/uploads/program_studi/dokumen/${activePreviewDoc.file_dokumen}`"
+                  download
+                  class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold bg-[#16a34a] hover:bg-[#15803d] text-white shadow-md transition-all"
+                >
+                  <i class="fas fa-download"></i>
+                  <span>Unduh File Word</span>
+                </a>
+                <a
+                  :href="`/uploads/program_studi/dokumen/${activePreviewDoc.file_dokumen}`"
+                  target="_blank"
+                  class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-white/10 hover:bg-white/20 text-slate-200 border border-white/20 transition-all"
+                >
+                  <i class="fas fa-external-link-alt"></i>
+                  <span>Buka di Tab Baru</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </Teleport>
 
   </div>
 </template>

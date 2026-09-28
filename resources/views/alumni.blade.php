@@ -20,6 +20,7 @@
     data-props="{{ json_encode([
         'setting' => $setting ?? null,
         'alumni_sections' => $data ?? [],
+        'alumni_testimonis' => $testimonis ?? [],
     ]) }}"
 >
 </div>
