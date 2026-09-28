@@ -399,13 +399,22 @@
                                             </div>
                                         </div>
 
-                                        <div class="modal-footer border-0 pt-0">
-                                            <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Batal</button>
-                                            <button type="submit" class="btn btn-warning fw-bold rounded-pill px-4 text-dark">
-                                                <i class="fas fa-save me-1"></i>Simpan Perubahan
+                                        <div class="modal-footer border-0 pt-0 d-flex justify-content-between">
+                                            <button type="button" class="btn btn-outline-danger rounded-pill px-3" onclick="if(confirm('Apakah Anda yakin ingin menghapus dokumen {{ $doc->nama_dokumen }}?')) { document.getElementById('deletePpmModalForm{{ $doc->id }}').submit(); }">
+                                                <i class="fas fa-trash me-1"></i>Hapus Dokumen
                                             </button>
+                                            <div class="d-flex gap-2">
+                                                <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Batal</button>
+                                                <button type="submit" class="btn btn-warning fw-bold rounded-pill px-4 text-dark">
+                                                    <i class="fas fa-save me-1"></i>Simpan Perubahan
+                                                </button>
+                                            </div>
                                         </div>
 
+                                    </form>
+                                    <form id="deletePpmModalForm{{ $doc->id }}" method="POST" action="{{ route('admin.ppm.dokumen.destroy', $doc->id) }}" class="d-none">
+                                        @csrf
+                                        @method('DELETE')
                                     </form>
                                 </div>
                             </div>

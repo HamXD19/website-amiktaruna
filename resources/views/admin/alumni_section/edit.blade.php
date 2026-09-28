@@ -198,15 +198,29 @@
                 </div>
 
                 <!-- TOMBOL -->
-                <div class="d-flex gap-2 mt-4 pt-2 border-top">
-                    <button type="submit" class="btn btn-success rounded-pill px-4">
-                        <i class="fas fa-save me-2"></i>Simpan Perubahan
-                    </button>
-                    <a href="/admin/alumni-section" class="btn btn-outline-secondary rounded-pill px-4">
-                        Batal
-                    </a>
+                <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center mt-4 pt-2 border-top">
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-success rounded-pill px-4">
+                            <i class="fas fa-save me-2"></i>Simpan Perubahan
+                        </button>
+                        <a href="/admin/alumni-section" class="btn btn-outline-secondary rounded-pill px-4">
+                            Batal
+                        </a>
+                    </div>
+                    <div>
+                        <button type="button"
+                                class="btn btn-outline-danger rounded-pill px-4"
+                                onclick="if(confirm('Apakah Anda yakin ingin menghapus data alumni section ini?')) { document.getElementById('deleteAlumniSectionForm').submit(); }">
+                            <i class="fas fa-trash me-1"></i> Hapus Data
+                        </button>
+                    </div>
                 </div>
 
+            </form>
+
+            <form id="deleteAlumniSectionForm" action="{{ route('alumni_section.destroy', $edit->id) }}" method="POST" class="d-none">
+                @csrf
+                @method('DELETE')
             </form>
 
         </div>

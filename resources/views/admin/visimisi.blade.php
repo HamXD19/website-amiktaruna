@@ -20,6 +20,15 @@
             <a href="{{ route('admin.visimisi.edit') }}" class="btn btn-warning btn-sm rounded-pill px-3 fw-bold">
                 <i class="fas fa-edit me-1"></i>Edit Visi &amp; Misi
             </a>
+            @if(!empty($data))
+            <form action="{{ route('admin.visimisi.destroy') }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin mengosongkan/menghapus data Visi & Misi?')">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill px-3 fw-bold">
+                    <i class="fas fa-trash-alt me-1"></i>Hapus / Reset
+                </button>
+            </form>
+            @endif
         </div>
     </div>
 

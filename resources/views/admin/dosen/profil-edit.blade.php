@@ -78,12 +78,27 @@
 
 </div>
 
-<button class="btn btn-success">
+<div class="d-flex flex-wrap gap-2 justify-content-between align-items-center mt-4">
+    <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-success rounded-3 px-4">
+            Simpan Profil
+        </button>
+        <a href="{{ route('admin.profil.dosen') }}" class="btn btn-outline-secondary rounded-3 px-4">
+            Kembali
+        </a>
+    </div>
+    <div>
+        <button type="button" class="btn btn-outline-danger rounded-3 px-4" onclick="if(confirm('Apakah Anda yakin ingin menghapus profil dosen ini?')) { document.getElementById('deleteProfilDosenForm').submit(); }">
+            <i class="fas fa-trash me-1"></i> Hapus Profil Dosen
+        </button>
+    </div>
+</div>
 
-Simpan Profil
+</form>
 
-</button>
-
+<form id="deleteProfilDosenForm" action="{{ route('admin.profil.dosen.destroy', $dosen->id) }}" method="POST" class="d-none">
+    @csrf
+    @method('DELETE')
 </form>
 
 </div>

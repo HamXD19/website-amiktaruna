@@ -179,14 +179,26 @@
                     </div>
                 </div>
 
-                <div class="d-flex align-items-center gap-3 mt-4 pt-3 border-top">
-                    <button type="submit" class="btn btn-success px-4 py-2 rounded-pill fw-bold shadow-xs">
-                        <i class="fas fa-save me-1"></i> Simpan Perubahan
-                    </button>
-                    <a href="{{ route('program-studi.index') }}" class="btn btn-light px-4 py-2 rounded-pill">
-                        Batal
-                    </a>
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mt-4 pt-3 border-top">
+                    <div class="d-flex align-items-center gap-2">
+                        <button type="submit" class="btn btn-success px-4 py-2 rounded-pill fw-bold shadow-xs">
+                            <i class="fas fa-save me-1"></i> Simpan Perubahan
+                        </button>
+                        <a href="{{ route('program-studi.index') }}" class="btn btn-light px-4 py-2 rounded-pill">
+                            Batal
+                        </a>
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-outline-danger px-4 py-2 rounded-pill fw-bold" onclick="if(confirm('Apakah Anda yakin ingin menghapus program studi {{ $program->nama_prodi }} beserta seluruh berkasnya?')) { document.getElementById('deleteProdiForm').submit(); }">
+                            <i class="fas fa-trash-alt me-1"></i> Hapus Program Studi
+                        </button>
+                    </div>
                 </div>
+            </form>
+
+            <form id="deleteProdiForm" action="{{ route('program-studi.destroy', $program->id) }}" method="POST" class="d-none">
+                @csrf
+                @method('DELETE')
             </form>
         </div>
     </div>

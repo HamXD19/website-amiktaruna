@@ -198,6 +198,9 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
 
         Route::post('/visimisi/update', [VisiMisiController::class, 'update'])
             ->name('admin.visimisi.update');
+
+        Route::delete('/visimisi', [VisiMisiController::class, 'destroy'])
+            ->name('admin.visimisi.destroy');
     });
 
     /*

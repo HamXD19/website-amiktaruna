@@ -133,10 +133,27 @@
                 </div>
 
                 <!-- BUTTON -->
-                <button class="btn btn-primary px-4">
-                    💾 Update Layanan
-                </button>
+                <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center">
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary px-4">
+                            💾 Update Layanan
+                        </button>
+                        <a href="/admin/layanan" class="btn btn-outline-secondary px-4">
+                            Batal
+                        </a>
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-outline-danger px-4" onclick="if(confirm('Apakah Anda yakin ingin menghapus layanan ini?')) { document.getElementById('deleteLayananForm').submit(); }">
+                            🗑 Hapus Layanan
+                        </button>
+                    </div>
+                </div>
 
+            </form>
+
+            <form id="deleteLayananForm" action="/admin/layanan/{{ $layanan->id }}" method="POST" class="d-none">
+                @csrf
+                @method('DELETE')
             </form>
 
         </div>

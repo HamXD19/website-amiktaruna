@@ -44,16 +44,32 @@
                 </div>
 
                 <!-- BUTTON -->
-                <div class="d-flex gap-2 justify-content-end">
-                    <a href="{{ route('admin.visimisi') }}" class="btn btn-light rounded-pill px-4 fw-bold">
-                        Batal
-                    </a>
-                    <button type="submit" class="btn btn-success rounded-pill px-4 fw-bold shadow-sm">
-                        <i class="fas fa-save me-1"></i>Simpan Perubahan
-                    </button>
+                <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center">
+                    <div>
+                        @if(!empty($data))
+                        <button type="button" class="btn btn-outline-danger rounded-pill px-4 fw-bold" onclick="if(confirm('Apakah Anda yakin ingin mengosongkan/menghapus data Visi & Misi?')) { document.getElementById('deleteVisiMisiForm').submit(); }">
+                            <i class="fas fa-trash-alt me-1"></i>Hapus Data
+                        </button>
+                        @endif
+                    </div>
+                    <div class="d-flex gap-2">
+                        <a href="{{ route('admin.visimisi') }}" class="btn btn-light rounded-pill px-4 fw-bold">
+                            Batal
+                        </a>
+                        <button type="submit" class="btn btn-success rounded-pill px-4 fw-bold shadow-sm">
+                            <i class="fas fa-save me-1"></i>Simpan Perubahan
+                        </button>
+                    </div>
                 </div>
 
             </form>
+
+            @if(!empty($data))
+            <form id="deleteVisiMisiForm" action="{{ route('admin.visimisi.destroy') }}" method="POST" class="d-none">
+                @csrf
+                @method('DELETE')
+            </form>
+            @endif
 
         </div>
     </div>

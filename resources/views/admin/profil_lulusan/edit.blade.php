@@ -58,12 +58,26 @@
                     </div>
                 </div>
 
-                <div class="d-flex justify-content-end gap-2 mt-4 pt-2">
-                    <a href="{{ route('profil-lulusan.index') }}" class="btn btn-light rounded-pill px-4">Batal</a>
-                    <button type="submit" class="btn btn-warning fw-bold text-dark rounded-pill px-4 shadow-xs">
-                        <i class="fas fa-save me-1"></i>Simpan Perubahan
-                    </button>
+                <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center mt-4 pt-2 border-top">
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-warning fw-bold text-dark rounded-pill px-4 shadow-xs">
+                            <i class="fas fa-save me-1"></i>Simpan Perubahan
+                        </button>
+                        <a href="{{ route('profil-lulusan.index') }}" class="btn btn-light rounded-pill px-4">Batal</a>
+                    </div>
+                    <div>
+                        <button type="button"
+                                class="btn btn-outline-danger rounded-pill px-4"
+                                onclick="if(confirm('Apakah Anda yakin ingin menghapus profil lulusan ini?')) { document.getElementById('deleteProfilLulusanForm').submit(); }">
+                            <i class="fas fa-trash me-1"></i> Hapus Profil
+                        </button>
+                    </div>
                 </div>
+            </form>
+
+            <form id="deleteProfilLulusanForm" action="{{ route('profil-lulusan.destroy', $profil->id) }}" method="POST" class="d-none">
+                @csrf
+                @method('DELETE')
             </form>
         </div>
     </div>

@@ -197,10 +197,8 @@ action="{{ route('fasilitas.destroy',$fasilitas->id) }}">
 @csrf
 @method('DELETE')
 
-<button class="btn btn-danger btn-modern">
-
-Hapus
-
+<button class="btn btn-danger btn-modern" onclick="return confirm('Apakah Anda yakin ingin menghapus fasilitas ini?')">
+    Hapus
 </button>
 
 </form>
@@ -276,12 +274,20 @@ class="form-control rounded-4">{{ $fasilitas->deskripsi }}</textarea>
 
 </div>
 
-<button class="btn btn-warning btn-modern w-100">
+<div class="d-flex gap-2">
+    <button type="submit" class="btn btn-warning btn-modern flex-grow-1">
+        Update
+    </button>
+    <button type="button" class="btn btn-outline-danger btn-modern" onclick="if(confirm('Apakah Anda yakin ingin menghapus fasilitas ini?')) { document.getElementById('deleteFasilitasModalForm{{ $fasilitas->id }}').submit(); }">
+        Hapus
+    </button>
+</div>
 
-Update
+</form>
 
-</button>
-
+<form id="deleteFasilitasModalForm{{ $fasilitas->id }}" action="{{ route('fasilitas.destroy', $fasilitas->id) }}" method="POST" class="d-none">
+    @csrf
+    @method('DELETE')
 </form>
 
 </div>

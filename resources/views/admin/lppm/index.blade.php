@@ -313,13 +313,22 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="modal-footer border-0 pt-0">
-                                                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Batal</button>
-                                                    <button type="submit" class="btn btn-warning fw-bold rounded-pill px-4 text-dark">
-                                                        <i class="fas fa-save me-1"></i>Simpan Perubahan
+                                                <div class="modal-footer border-0 pt-0 d-flex justify-content-between">
+                                                    <button type="button" class="btn btn-outline-danger rounded-pill px-3" onclick="if(confirm('Apakah Anda yakin ingin menghapus portal {{ $portal->nama }}?')) { document.getElementById('deleteLppmPortalModalForm{{ $portal->id }}').submit(); }">
+                                                        <i class="fas fa-trash me-1"></i>Hapus Portal
                                                     </button>
+                                                    <div class="d-flex gap-2">
+                                                        <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Batal</button>
+                                                        <button type="submit" class="btn btn-warning fw-bold rounded-pill px-4 text-dark">
+                                                            <i class="fas fa-save me-1"></i>Simpan Perubahan
+                                                        </button>
+                                                    </div>
                                                 </div>
 
+                                            </form>
+                                            <form id="deleteLppmPortalModalForm{{ $portal->id }}" method="POST" action="{{ route('admin.lppm.portal.destroy', $portal->id) }}" class="d-none">
+                                                @csrf
+                                                @method('DELETE')
                                             </form>
                                         </div>
                                     </div>

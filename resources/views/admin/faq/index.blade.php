@@ -208,10 +208,8 @@ action="{{ route('faq.destroy',$faq->id) }}">
 @csrf
 @method('DELETE')
 
-<button class="btn btn-danger btn-modern">
-
-Hapus
-
+<button class="btn btn-danger btn-modern" onclick="return confirm('Apakah Anda yakin ingin menghapus FAQ ini?')">
+    Hapus
 </button>
 
 </form>
@@ -275,12 +273,20 @@ class="form-control rounded-4">{{ $faq->jawaban }}</textarea>
 
 </div>
 
-<button class="btn btn-warning btn-modern w-100">
+<div class="d-flex gap-2">
+    <button type="submit" class="btn btn-warning btn-modern flex-grow-1">
+        Update FAQ
+    </button>
+    <button type="button" class="btn btn-outline-danger btn-modern" onclick="if(confirm('Apakah Anda yakin ingin menghapus FAQ ini?')) { document.getElementById('deleteFaqModalForm{{ $faq->id }}').submit(); }">
+        Hapus
+    </button>
+</div>
 
-Update FAQ
+</form>
 
-</button>
-
+<form id="deleteFaqModalForm{{ $faq->id }}" action="{{ route('faq.destroy', $faq->id) }}" method="POST" class="d-none">
+    @csrf
+    @method('DELETE')
 </form>
 
 </div>

@@ -162,24 +162,33 @@
                 </div>
 
                 {{-- BUTTON --}}
-                <div class="d-flex gap-2 mt-4">
+                <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center mt-4">
+                    <div class="d-flex gap-2">
+                        <button type="submit"
+                                class="btn btn-success rounded-3 px-4">
+                            Update Data
+                        </button>
 
-                    <button type="submit"
-                            class="btn btn-success rounded-3 px-4">
+                        <a href="/admin/akreditasi"
+                           class="btn btn-secondary rounded-3 px-4">
+                            Kembali
+                        </a>
+                    </div>
 
-                        Update Data
-
-                    </button>
-
-                    <a href="/admin/akreditasi"
-                       class="btn btn-secondary rounded-3 px-4">
-
-                        Kembali
-
-                    </a>
-
+                    <div>
+                        <button type="button"
+                                class="btn btn-outline-danger rounded-3 px-4"
+                                onclick="if(confirm('Apakah Anda yakin ingin menghapus data akreditasi ini?')) { document.getElementById('deleteAkreditasiForm').submit(); }">
+                            <i class="fas fa-trash me-1"></i> Hapus Data
+                        </button>
+                    </div>
                 </div>
 
+            </form>
+
+            <form id="deleteAkreditasiForm" action="{{ route('akreditasi.destroy', $edit->id) }}" method="POST" class="d-none">
+                @csrf
+                @method('DELETE')
             </form>
 
         </div>

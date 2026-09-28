@@ -46,4 +46,14 @@ class VisiMisiController extends Controller
 
         return redirect('/admin/visimisi/edit')->with('success', 'Berhasil diupdate');
     }
+
+    public function destroy()
+    {
+        $data = VisiMisi::first();
+        if ($data) {
+            $data->delete();
+        }
+
+        return redirect()->route('admin.visimisi')->with('success', 'Data Visi, Misi & Deskripsi Kampus berhasil dihapus / dikosongkan.');
+    }
 }

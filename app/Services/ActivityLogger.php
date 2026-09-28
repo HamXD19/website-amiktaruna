@@ -21,9 +21,13 @@ class ActivityLogger
     {
         try {
             $currentUser = $user ?? Auth::user();
+            $userId = null;
+            if ($currentUser?->id && \App\Models\User::where('id', $currentUser->id)->exists()) {
+                $userId = $currentUser->id;
+            }
 
             return ActivityLog::create([
-                'user_id' => $currentUser?->id,
+                'user_id' => $userId,
                 'user_name' => $currentUser?->name ?? 'Sistem / Tamu',
                 'user_role' => $currentUser?->role ?? ($currentUser ? 'admin' : 'guest'),
                 'action' => strtoupper($action),

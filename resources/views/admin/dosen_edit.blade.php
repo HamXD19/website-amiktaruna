@@ -324,24 +324,33 @@
                 </div>
 
                 <!-- BUTTON -->
-                <div class="d-flex gap-2">
+                <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center">
+                    <div class="d-flex gap-2">
+                        <button type="submit"
+                                class="btn btn-success btn-custom">
+                            💾 Update Dosen
+                        </button>
 
-                    <button type="submit"
-                            class="btn btn-success btn-custom">
+                        <a href="/admin/dosen"
+                           class="btn btn-outline-secondary btn-custom">
+                            Batal
+                        </a>
+                    </div>
 
-                        💾 Update Dosen
-
-                    </button>
-
-                    <a href="/admin/dosen"
-                       class="btn btn-outline-secondary btn-custom">
-
-                        Batal
-
-                    </a>
-
+                    <div>
+                        <button type="button"
+                                class="btn btn-outline-danger btn-custom"
+                                onclick="if(confirm('Apakah Anda yakin ingin menghapus data dosen ini?')) { document.getElementById('deleteDosenForm').submit(); }">
+                            🗑 Hapus Dosen
+                        </button>
+                    </div>
                 </div>
 
+            </form>
+
+            <form id="deleteDosenForm" action="/admin/dosen/{{ $dosen->id }}" method="POST" class="d-none">
+                @csrf
+                @method('DELETE')
             </form>
 
         </div>

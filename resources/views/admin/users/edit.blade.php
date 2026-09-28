@@ -123,13 +123,20 @@
 
                     </div>
 
-                    <div class="d-flex gap-2 mt-2">
-                        <button type="submit" class="btn btn-emerald-gradient text-white flex-grow-1 py-2 fw-semibold shadow-sm">
-                            <i class="fas fa-save me-1"></i> Simpan Perubahan
-                        </button>
-                        <a href="{{ route('admin.users.index') }}" class="btn btn-outline-secondary py-2 px-3">
-                            Batal
-                        </a>
+                    <div class="d-flex flex-column gap-2 mt-3 pt-3 border-top">
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-emerald-gradient text-white flex-grow-1 py-2 fw-semibold shadow-sm">
+                                <i class="fas fa-save me-1"></i> Simpan Perubahan
+                            </button>
+                            <a href="{{ route('admin.users.index') }}" class="btn btn-outline-secondary py-2 px-3">
+                                Batal
+                            </a>
+                        </div>
+                        @if($user->id !== Auth::id())
+                            <button type="button" class="btn btn-outline-danger w-100 py-2" onclick="if(confirm('Apakah Anda yakin ingin menghapus akun {{ $user->name }}? Tindakan ini tidak dapat dibatalkan.')) { document.getElementById('deleteUserForm').submit(); }">
+                                <i class="fas fa-trash me-1"></i> Hapus Pengguna Ini
+                            </button>
+                        @endif
                     </div>
 
                 </div>
@@ -201,6 +208,13 @@
 
         </div>
     </form>
+
+    @if($user->id !== Auth::id())
+        <form id="deleteUserForm" action="{{ route('admin.users.destroy', $user->id) }}" method="POST" class="d-none">
+            @csrf
+            @method('DELETE')
+        </form>
+    @endif
 
 </div>
 

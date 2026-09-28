@@ -95,16 +95,30 @@
 
                 <hr class="my-3">
 
-                <div class="d-flex gap-2">
-                    <button type="submit" class="btn btn-success px-4">
-                        ✏️ Update
-                    </button>
-                    <a href="{{ route('beritapmb.index') }}" class="btn btn-outline-secondary">
-                        Batal
-                    </a>
+                <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center">
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-success px-4">
+                            ✏️ Update
+                        </button>
+                        <a href="{{ route('beritapmb.index') }}" class="btn btn-outline-secondary">
+                            Batal
+                        </a>
+                    </div>
+                    <div>
+                        <button type="button"
+                                class="btn btn-outline-danger px-4"
+                                onclick="if(confirm('Apakah Anda yakin ingin menghapus berita PMB ini?')) { document.getElementById('deleteBeritaPmbForm').submit(); }">
+                            <i class="fas fa-trash me-1"></i> Hapus Berita PMB
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
+    </form>
+
+    <form id="deleteBeritaPmbForm" action="{{ route('beritapmb.destroy', $beritapmb->id) }}" method="POST" class="d-none">
+        @csrf
+        @method('DELETE')
     </form>
 </div>
 @endsection

@@ -262,24 +262,32 @@
 
 </div>
                 <!-- BUTTON -->
-                <div class="d-flex gap-2">
+                <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center mt-4 pt-2 border-top">
+                    <div class="d-flex gap-2">
+                        <button type="submit"
+                                class="btn btn-warning rounded-3 px-4 fw-semibold">
+                            💾 Update Berita
+                        </button>
 
-                    <button type="submit"
-                            class="btn btn-warning rounded-3 px-4 fw-semibold">
-
-                        💾 Update Berita
-
-                    </button>
-
-                    <a href="{{ route('berita.index') }}"
-                       class="btn btn-outline-secondary rounded-3 px-4">
-
-                        Batal
-
-                    </a>
-
+                        <a href="{{ route('berita.index') }}"
+                           class="btn btn-outline-secondary rounded-3 px-4">
+                            Batal
+                        </a>
+                    </div>
+                    <div>
+                        <button type="button"
+                                class="btn btn-outline-danger rounded-3 px-4"
+                                onclick="if(confirm('Apakah Anda yakin ingin menghapus berita ini secara permanen?')) { document.getElementById('deleteBeritaForm').submit(); }">
+                            <i class="fas fa-trash me-1"></i> Hapus Berita
+                        </button>
+                    </div>
                 </div>
 
+            </form>
+
+            <form id="deleteBeritaForm" action="{{ route('berita.destroy', $berita->id) }}" method="POST" class="d-none">
+                @csrf
+                @method('DELETE')
             </form>
 
         </div>

@@ -33,13 +33,20 @@
     {{ $d->jabatan }}
 </p>
 
-<a href="{{ route('admin.profil.dosen.edit',$d->id) }}"
-   class="btn btn-success">
+<div class="d-flex justify-content-center gap-2">
+    <a href="{{ route('admin.profil.dosen.edit',$d->id) }}"
+       class="btn btn-success btn-sm rounded-3">
+        Kelola Profil
+    </a>
 
-    Kelola Profil
-
-</a>
-
+    <form method="POST" action="/admin/dosen/{{ $d->id }}" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data dosen {{ $d->nama }}?')">
+        @csrf
+        @method('DELETE')
+        <button type="submit" class="btn btn-outline-danger btn-sm rounded-3">
+            <i class="fas fa-trash-alt"></i> Hapus
+        </button>
+    </form>
+</div>
 </div>
 </div>
 </div>
