@@ -290,17 +290,17 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
 
         Route::get(
             '/program-studi/{id}/profil-lulusan',
-            [ProgramStudiController::class,'profilIndex']
+            [ProfilLulusanController::class, 'index']
         )->name('profil.index');
 
         Route::get(
             '/program-studi/{id}/fasilitas',
-            [ProgramStudiController::class,'fasilitasIndex']
+            [FasilitasProdiController::class, 'index']
         )->name('fasilitas.index');
 
         Route::get(
             '/program-studi/{id}/faq',
-            [ProgramStudiController::class,'faqIndex']
+            [FaqProdiController::class, 'index']
         )->name('faq.index');
 
         Route::post('/fasilitas/store', [FasilitasProdiController::class,'store'])->name('fasilitas.store');
@@ -310,6 +310,10 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         Route::post('/faq/store', [FaqProdiController::class,'store'])->name('faq.store');
         Route::post('/faq/update/{id}', [FaqProdiController::class,'update'])->name('faq.update');
         Route::delete('/faq/delete/{id}', [FaqProdiController::class,'destroy'])->name('faq.destroy');
+
+        Route::post('/profil/store', [ProfilLulusanController::class,'store'])->name('profil.store');
+        Route::post('/profil/update/{id}', [ProfilLulusanController::class,'update'])->name('profil.update');
+        Route::delete('/profil/delete/{id}', [ProfilLulusanController::class,'destroy'])->name('profil.destroy');
 
         Route::get(
             '/program-studi/{program_studi_id}/dokumen',

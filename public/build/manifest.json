@@ -26,7 +26,7 @@
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-DWccSKke.js",
+    "file": "assets/app-DBF1BLk6.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
@@ -64,7 +64,7 @@
     ]
   },
   "resources/js/pages/AkademikPage.vue": {
-    "file": "assets/AkademikPage-50ev-ib_.js",
+    "file": "assets/AkademikPage-Cs3OBseC.js",
     "name": "AkademikPage",
     "src": "resources/js/pages/AkademikPage.vue",
     "isDynamicEntry": true,

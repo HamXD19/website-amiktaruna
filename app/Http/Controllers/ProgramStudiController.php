@@ -16,7 +16,7 @@ class ProgramStudiController extends Controller
 
     public function index()
     {
-        $programs = ProgramStudi::withCount('dokumens')->latest()->get();
+        $programs = ProgramStudi::withCount(['dokumens', 'profilLulusans', 'fasilitas', 'faqs'])->latest()->get();
 
         return view(
             'admin.program_studi.index',
@@ -299,5 +299,26 @@ class ProgramStudiController extends Controller
             'akademik.show',
             compact('program', 'kategoriDokumen')
         );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | SUBMENU REDIRECT SHORTCUTS
+    |--------------------------------------------------------------------------
+    */
+
+    public function profilIndex($id)
+    {
+        return redirect()->route('profil.index', $id);
+    }
+
+    public function fasilitasIndex($id)
+    {
+        return redirect()->route('fasilitas.index', $id);
+    }
+
+    public function faqIndex($id)
+    {
+        return redirect()->route('faq.index', $id);
     }
 }

@@ -259,42 +259,58 @@
                 </div>
                 @endif
                 <div class="p-4 d-flex flex-column flex-grow-1">
-                    <h4 class="fw-bold mb-2">{{ $program->nama_prodi }}</h4>
-                    <p class="text-muted small">{{ $program->tagline ?? '—' }}</p>
-                    <div class="badge-akreditasi align-self-start mb-3">
-                        <i class="fa-regular fa-medal me-1"></i> {{ $program->akreditasi ?? 'Akreditasi' }}
+                    <h4 class="fw-bold mb-1">{{ $program->nama_prodi }}</h4>
+                    <p class="text-muted small mb-2">{{ $program->tagline ?? '—' }}</p>
+                    
+                    <div class="d-flex flex-wrap gap-1 mb-3">
+                        <span class="badge bg-light text-dark border px-2 py-1 small fw-semibold">
+                            <i class="fas fa-graduation-cap text-success me-1"></i> {{ $program->jenjang ?? 'D3' }}
+                        </span>
+                        <span class="badge bg-light text-dark border px-2 py-1 small fw-semibold">
+                            <i class="fas fa-certificate text-success me-1"></i> {{ $program->gelar ?? 'A.Md.' }}
+                        </span>
+                        <span class="badge bg-light text-dark border px-2 py-1 small fw-semibold">
+                            <i class="fas fa-clock text-success me-1"></i> {{ $program->masa_studi ?? '3 Thn' }}
+                        </span>
+                        @if($program->akreditasi)
+                        <span class="badge bg-emerald-50 text-success border border-success-subtle px-2 py-1 small fw-bold">
+                            <i class="fa-regular fa-star me-1"></i> {{ $program->akreditasi }}
+                        </span>
+                        @endif
                     </div>
-                    <p class="text-secondary" style="font-size: 0.9rem;">
-                        {{ Str::limit($program->deskripsi, 100) }}
+
+                    <p class="text-secondary mb-3" style="font-size: 0.88rem; line-height: 1.5;">
+                        {{ Str::limit($program->deskripsi, 110) }}
                     </p>
                     
-                    <div class="d-grid gap-3 mt-auto pt-3">
+                    <div class="d-grid gap-2 mt-auto pt-2">
                         <!-- KELOLA DOKUMEN PRODI (PROFIL LULUSAN, PEDOMAN, KURIKULUM, RPS) -->
-                        <a href="{{ route('program-studi.dokumen.index', $program->id) }}" class="btn btn-modern w-100 text-white shadow-xs" style="background: linear-gradient(135deg, #065f46, #047857); border: none;">
+                        <a href="{{ route('program-studi.dokumen.index', $program->id) }}" class="btn btn-modern w-100 text-white shadow-xs py-2" style="background: linear-gradient(135deg, #065f46, #047857); border: none;">
                             <i class="fa-solid fa-folder-open me-2"></i> Dokumen Akademik
-                            @if(($program->dokumens_count ?? 0) > 0)
-                                <span class="badge bg-white text-success ms-2 rounded-pill fw-bold">{{ $program->dokumens_count }}</span>
-                            @endif
+                            <span class="badge bg-white text-success ms-auto rounded-pill fw-bold">{{ $program->dokumens_count ?? 0 }}</span>
                         </a>
 
                         <!-- EDIT BUTTON -->
-                        <a href="{{ route('program-studi.edit', $program->id) }}" class="btn btn-warning btn-modern w-100">
+                        <a href="{{ route('program-studi.edit', $program->id) }}" class="btn btn-warning btn-modern w-100 py-2">
                             <i class="fa-solid fa-pen-to-square me-2"></i> Edit Program Studi
                         </a>
                         
-                        <!-- SUBMENU (Profil, Fasilitas, FAQ) dengan ikon & label -->
+                        <!-- SUBMENU (Profil, Fasilitas, FAQ) dengan ikon & label & counter badge -->
                         <div class="submenu-grid">
-                            <a href="{{ route('profil.index', $program->id) }}" class="btn btn-success w-100">
+                            <a href="{{ route('profil.index', $program->id) }}" class="btn btn-success w-100 position-relative py-2">
                                 <i class="fa-solid fa-user-graduate"></i>
                                 <span>Profil</span>
+                                <span class="badge bg-white text-success ms-1 rounded-pill fw-bold">{{ $program->profil_lulusans_count ?? 0 }}</span>
                             </a>
-                            <a href="{{ route('fasilitas.index', $program->id) }}" class="btn btn-primary w-100">
+                            <a href="{{ route('fasilitas.index', $program->id) }}" class="btn btn-primary w-100 position-relative py-2">
                                 <i class="fa-solid fa-building"></i>
                                 <span>Fasilitas</span>
+                                <span class="badge bg-white text-primary ms-1 rounded-pill fw-bold">{{ $program->fasilitas_count ?? 0 }}</span>
                             </a>
-                            <a href="{{ route('faq.index', $program->id) }}" class="btn btn-info w-100">
+                            <a href="{{ route('faq.index', $program->id) }}" class="btn btn-info w-100 position-relative py-2">
                                 <i class="fa-solid fa-circle-question"></i>
                                 <span>FAQ</span>
+                                <span class="badge bg-white text-info ms-1 rounded-pill fw-bold">{{ $program->faqs_count ?? 0 }}</span>
                             </a>
                         </div>
                         

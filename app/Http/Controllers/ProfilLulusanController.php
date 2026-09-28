@@ -67,7 +67,7 @@ class ProfilLulusanController extends Controller
 
         $profil->update($data);
 
-        return redirect()->route('profil-lulusan.index')->with('success', 'Profil lulusan berhasil diupdate.');
+        return back()->with('success', 'Profil lulusan berhasil diupdate.');
     }
 
     public function destroy($id)

@@ -148,8 +148,8 @@ const getProgramCode = (namaProdi) => {
                   </div>
 
                   <div class="flex items-center justify-between text-[11px] text-emerald-200/80 border-t border-white/10 pt-3 relative z-10 font-medium">
-                    <span>Gelar A.Md.</span>
-                    <span>3 Tahun (6 Semester)</span>
+                    <span>Gelar {{ prodi.gelar || 'A.Md.' }}</span>
+                    <span>{{ prodi.masa_studi || '3 Tahun (6 Semester)' }}</span>
                   </div>
                 </div>
 
@@ -194,15 +194,15 @@ const getProgramCode = (namaProdi) => {
               <div class="mt-6 pt-6 border-t border-emerald-500/20 w-full grid grid-cols-2 sm:grid-cols-3 gap-4 text-xs text-slate-300">
                 <div>
                   <span class="text-slate-400 block font-mono uppercase text-[10px]">Jenjang</span>
-                  <span class="font-bold text-white">Diploma III (D3)</span>
+                  <span class="font-bold text-white">{{ prodi.jenjang || 'Diploma III (D3)' }}</span>
                 </div>
                 <div>
                   <span class="text-slate-400 block font-mono uppercase text-[10px]">Gelar Lulusan</span>
-                  <span class="font-bold text-emerald-300">A.Md.</span>
+                  <span class="font-bold text-emerald-300">{{ prodi.gelar || 'A.Md.' }}</span>
                 </div>
                 <div class="col-span-2 sm:col-span-1">
                   <span class="text-slate-400 block font-mono uppercase text-[10px]">Waktu Tempuh</span>
-                  <span class="font-bold text-white">6 Semester</span>
+                  <span class="font-bold text-white">{{ prodi.masa_studi || '3 Tahun (6 Semester)' }}</span>
                 </div>
               </div>
 
