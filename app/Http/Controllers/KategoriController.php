@@ -392,7 +392,7 @@ class KategoriController extends Controller
 
         $request->validate([
             'nama' => 'required|string|max:100',
-            'modul' => 'required|string|in:berita,pmb,dokumen,prodi_dokumen,layanan,umum,jabatan',
+            'modul' => 'required|string|in:berita,pmb,dokumen,prodi_dokumen,layanan,umum,jabatan,lppm_dokumen',
             'slug' => 'required|string|max:100|unique:kategoris,slug,'.$id,
             'warna' => 'nullable|string|max:30',
             'ikon' => 'nullable|string|max:50',
