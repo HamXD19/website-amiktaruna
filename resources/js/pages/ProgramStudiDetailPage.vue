@@ -904,10 +904,11 @@ const handleImageError = () => {
     <Teleport to="body">
       <div
         v-if="activePreviewDoc"
-        class="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-5 bg-black/80 backdrop-blur-sm transition-all overflow-y-auto"
+        class="fixed inset-0 flex items-center justify-center p-2 sm:p-4 bg-black/80 backdrop-blur-sm transition-all overflow-hidden"
+        style="z-index: 100050 !important;"
         @click.self="closePreviewModal"
       >
-        <div class="bg-slate-900 border border-emerald-500/30 rounded-2xl w-full max-w-5xl h-[88vh] max-h-[88vh] flex flex-col shadow-2xl overflow-hidden my-auto">
+        <div class="bg-slate-900 border border-emerald-500/30 rounded-2xl w-full max-w-5xl h-[calc(100vh-2rem)] max-h-[calc(100vh-2rem)] flex flex-col shadow-2xl overflow-hidden my-auto">
           
           <!-- Modal Header -->
           <div class="px-5 py-3.5 bg-slate-950/90 border-b border-emerald-500/20 flex items-center justify-between gap-4 flex-shrink-0">
@@ -960,9 +961,9 @@ const handleImageError = () => {
 
           <!-- Sub-toolbar Hint & Fullscreen Link -->
           <div class="px-4 py-2 bg-slate-950/80 border-b border-emerald-500/15 text-slate-300 text-xs flex items-center justify-between flex-shrink-0">
-            <span class="flex items-center gap-1.5 text-slate-300">
+            <span class="flex items-center gap-1.5 text-emerald-300">
               <i class="fas fa-info-circle text-emerald-400"></i>
-              <span class="hidden md:inline">Gunakan scroll mouse atau usap layar untuk membaca seluruh halaman dokumen.</span>
+              <span class="hidden md:inline">Klik area dokumen lalu gunakan scroll mouse / usap layar ke bawah untuk membaca seluruh halaman.</span>
               <span class="md:hidden">Usap layar untuk scroll dokumen.</span>
             </span>
             <a
@@ -979,8 +980,8 @@ const handleImageError = () => {
             <!-- If PDF -->
             <iframe
               v-if="!isWordFile(activePreviewDoc.file_dokumen)"
-              :src="`/uploads/program_studi/dokumen/${activePreviewDoc.file_dokumen}#toolbar=1&navpanes=0&scrollbar=1`"
-              class="w-full h-full min-h-[480px] border-0 bg-white block"
+              :src="`/uploads/program_studi/dokumen/${activePreviewDoc.file_dokumen}#view=FitH&zoom=page-width&toolbar=1&navpanes=0&scrollbar=1`"
+              class="w-full h-full min-h-[400px] border-0 bg-white block flex-1"
               title="Pratinjau Dokumen PDF"
               scrolling="yes"
               allow="fullscreen"

@@ -263,9 +263,9 @@
 </div>
 
 <!-- LPPM Pop-up Document Viewer Modal (Dapat Di-scroll Sempurna di Desktop & HP) -->
-<div class="modal fade" id="lppmDocModal" tabindex="-1" aria-labelledby="lppmDocTitle" aria-hidden="true" style="z-index: 1060;">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl" style="max-width: 1100px;">
-        <div class="modal-content rounded-4 border-0 shadow-2xl d-flex flex-column" style="background: #0f172a; border: 1px solid rgba(74, 222, 128, 0.3) !important; height: 88vh; max-height: calc(100vh - 40px);">
+<div class="modal fade modal-doc-viewer" id="lppmDocModal" tabindex="-1" aria-labelledby="lppmDocTitle" aria-hidden="true" style="z-index: 100050 !important;">
+    <div class="modal-dialog modal-xl my-2 my-md-3" style="max-width: 1120px;">
+        <div class="modal-content rounded-4 border-0 shadow-2xl d-flex flex-column" style="background: #0f172a; border: 1px solid rgba(74, 222, 128, 0.3) !important; height: calc(100vh - 2rem); max-height: calc(100vh - 2rem);">
             
             <!-- Modal Header -->
             <div class="modal-header border-0 py-3 px-4 flex-shrink-0" style="background: #022c22; border-bottom: 1px solid rgba(74, 222, 128, 0.2) !important;">
@@ -280,33 +280,33 @@
                     <a id="lppmDocDownload" href="#" download class="btn btn-sm btn-success rounded-pill px-3.5 d-inline-flex align-items-center gap-1.5 fw-bold">
                         <i class="fas fa-download text-xs"></i> Unduh Berkas
                     </a>
-                    <button type="button" class="btn btn-sm btn-outline-secondary rounded-circle text-white" data-bs-dismiss="modal" aria-label="Close" style="width: 32px; height: 32px; padding: 0;">
+                    <button type="button" class="btn btn-sm btn-light rounded-circle text-dark fw-bold d-inline-flex align-items-center justify-content-center shadow-sm" data-bs-dismiss="modal" aria-label="Close" style="width: 34px; height: 34px; padding: 0;">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
             </div>
 
             <!-- Sub-Toolbar Bantuan Scroll & Navigasi -->
-            <div class="px-3 py-2 bg-dark bg-opacity-75 border-bottom border-emerald-500 border-opacity-20 text-slate-300 small d-flex align-items-center justify-content-between flex-shrink-0">
-                <div class="d-flex align-items-center gap-2">
+            <div class="px-3 py-2 bg-dark bg-opacity-75 border-bottom border-emerald-500 border-opacity-20 text-slate-300 small d-flex flex-wrap align-items-center justify-content-between gap-2 flex-shrink-0">
+                <div class="d-flex align-items-center gap-2 text-emerald-300">
                     <i class="fas fa-info-circle text-emerald-400"></i>
-                    <span class="d-none d-md-inline">Gunakan scroll mouse atau usap layar untuk menelusuri seluruh halaman dokumen.</span>
-                    <span class="d-md-none">Usap layar untuk scroll dokumen.</span>
+                    <span class="d-none d-md-inline">Klik area dokumen lalu gunakan scroll mouse / usap layar ke bawah untuk melihat seluruh halaman.</span>
+                    <span class="d-md-none">Usap layar untuk scroll halaman dokumen.</span>
                 </div>
-                <div>
-                    <a id="lppmDocFullTab" href="#" target="_blank" class="text-emerald-400 text-decoration-none fw-semibold small d-inline-flex align-items-center gap-1">
-                        <i class="fas fa-expand-alt"></i> Layar Penuh
+                <div class="d-flex align-items-center gap-2">
+                    <a id="lppmDocFullTab" href="#" target="_blank" class="btn btn-xs btn-outline-success text-emerald-300 rounded-pill px-2.5 py-1 text-decoration-none fw-semibold small d-inline-flex align-items-center gap-1">
+                        <i class="fas fa-external-link-alt"></i> Buka Layar Penuh
                     </a>
                 </div>
             </div>
 
             <!-- Modal Body (Scrollable Container) -->
-            <div class="modal-body p-0 flex-grow-1 position-relative" style="overflow-y: auto; -webkit-overflow-scrolling: touch; background: #020617;">
+            <div class="modal-body p-0 flex-grow-1 position-relative d-flex flex-column" style="background: #020617; overflow: hidden; height: 100%;">
                 <!-- PDF Viewer Frame -->
                 <iframe id="lppmDocIframe" 
                         src="" 
-                        class="w-100 h-100 border-0 bg-white" 
-                        style="display: block; width: 100%; height: 100%; min-height: 480px;" 
+                        class="w-100 flex-grow-1 border-0 bg-white" 
+                        style="display: block; width: 100%; height: 100%; min-height: 400px;" 
                         scrolling="yes" 
                         allow="fullscreen">
                 </iframe>
@@ -491,13 +491,23 @@ function openLppmDocViewer(fileUrl, docTitle, ext) {
         }
         if (iframeEl) {
             iframeEl.style.display = 'block';
-            iframeEl.src = fileUrl + '#toolbar=1&navpanes=0&scrollbar=1';
+            // Set URL hash to fit-width & page-width so it scrolls continuously on both Firefox and Chromium
+            iframeEl.src = fileUrl + '#view=FitH&zoom=page-width&toolbar=1&navpanes=0&scrollbar=1';
         }
     }
 
     const modal = getLppmModal();
     if (modal) {
         modal.show();
+        // Beri fokus ke iframe agar mousewheel langsung aktif menggulir dokumen
+        setTimeout(() => {
+            if (iframeEl && !isWord) {
+                try {
+                    iframeEl.focus();
+                    if (iframeEl.contentWindow) iframeEl.contentWindow.focus();
+                } catch(e) {}
+            }
+        }, 350);
     }
 }
 

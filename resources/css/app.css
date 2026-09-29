@@ -275,6 +275,21 @@ header#navbar-app,
     z-index: 9999 !important;
 }
 
+/* Modals & Popups Priority (Always on top of Navbar & overlays) */
+.modal,
+.modal.fade,
+.modal-doc-viewer,
+#ppmDocModal,
+#lppmDocModal {
+    z-index: 100050 !important;
+}
+
+.modal-backdrop,
+.modal-backdrop.show {
+    z-index: 100040 !important;
+}
+
+
 /* 
    ============================================================
    MOBILE VIEW & BOTTOM NAVIGATION DOCK OPTIMIZATION (PLN SENGKANG STYLE)
