@@ -100,9 +100,18 @@ if ($request->hasFile('file_pdf')) {
         | SIMPAN DB
         |------------------------------------------
         */
+        // Generate slug unik
+        $baseSlug = Str::slug($request->judul);
+        $slug = $baseSlug;
+        $counter = 1;
+        while (Berita::where('slug', $slug)->exists()) {
+            $slug = $baseSlug . '-' . $counter;
+            $counter++;
+        }
+
     $berita = Berita::create([
         'judul'      => $request->judul,
-        'slug'       => Str::slug($request->judul),
+        'slug'       => $slug,
         'penulis'    => $request->penulis,
         'editor'     => $request->editor,
         'kategori'   => $request->kategori,
@@ -242,9 +251,18 @@ if ($request->hasFile('file_pdf')) {
         | UPDATE DB
         |------------------------------------------
         */
+        // Generate slug unik (abaikan berita ini sendiri)
+        $baseSlug = Str::slug($request->judul);
+        $slug = $baseSlug;
+        $counter = 1;
+        while (Berita::where('slug', $slug)->where('id', '!=', $berita->id)->exists()) {
+            $slug = $baseSlug . '-' . $counter;
+            $counter++;
+        }
+
         $berita->update([
             'judul'    => $request->judul,
-            'slug'     => Str::slug($request->judul),
+            'slug'     => $slug,
             'penulis'  => $request->penulis,
             'editor'   => $request->editor,
             'kategori' => $request->kategori,
