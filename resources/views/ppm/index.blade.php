@@ -839,6 +839,10 @@ function togglePpmViewMode() {
 }
 
 function openPpmDocViewer(fileUrl, docTitle, ext) {
+    try {
+        const parsed = new URL(fileUrl, window.location.origin);
+        fileUrl = parsed.pathname + parsed.search;
+    } catch(e) {}
     ppmCurrentFileUrl = fileUrl;
     ppmPdfDoc = null;
     const isWord = ['doc', 'docx'].includes((ext || '').toLowerCase());
@@ -994,10 +998,10 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
 
             <!-- Modal Body (Continuous Canvas & Fallback) -->
-            <div class="modal-body p-0 flex-grow-1 position-relative d-flex flex-column" style="background: #020617; overflow: hidden; height: 100%;">
+            <div class="modal-body p-0 position-relative d-flex flex-column" style="background: #020617; overflow: hidden; flex: 1 1 0%; min-height: 0; max-height: 100%;">
                 
                 <!-- 1. High Performance Continuous Scroll Canvas View (Semua halaman di-scroll mulus) -->
-                <div id="ppmPdfContinuousView" class="w-100 flex-grow-1" style="overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; padding: 24px 12px; background: #0b1329;">
+                <div id="ppmPdfContinuousView" class="w-100" style="flex: 1 1 0%; min-height: 0; height: 100%; max-height: 100%; overflow-y: scroll; overflow-x: hidden; -webkit-overflow-scrolling: touch; padding: 24px 12px; background: #0b1329;">
                     <!-- Loading Indicator -->
                     <div id="ppmPdfLoading" class="text-center py-5 text-emerald-400">
                         <div class="spinner-border spinner-border-sm text-success mb-2" role="status"></div>
@@ -1010,8 +1014,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 <!-- 2. Native Browser PDF Viewer Frame (Fallback / Mode Browser) -->
                 <iframe id="ppmDocIframe" 
                         src="" 
-                        class="d-none w-100 flex-grow-1 border-0 bg-white" 
-                        style="width: 100%; height: 100%; min-height: 400px;" 
+                        class="d-none w-100 border-0 bg-white" 
+                        style="width: 100%; height: 100%; flex: 1 1 0%; min-height: 0;" 
                         scrolling="yes" 
                         allow="fullscreen">
                 </iframe>
