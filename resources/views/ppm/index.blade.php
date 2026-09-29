@@ -645,8 +645,13 @@ document.addEventListener('DOMContentLoaded', function () {
     runFilter(false);
 });
 
-// Pop-up Document Viewer handler
+// Pop-up Document Viewer handler with Continuous Canvas PDF.js Engine
 let ppmDocModalObj = null;
+let ppmPdfDoc = null;
+let ppmCurrentScale = 'fit';
+let ppmCurrentFileUrl = '';
+let ppmRenderToken = 0;
+let ppmIsCanvasMode = true;
 
 function getPpmModal() {
     const modalEl = document.getElementById('ppmDocModal');
@@ -661,11 +666,187 @@ function getPpmModal() {
     return ppmDocModalObj;
 }
 
+function updatePpmZoomText() {
+    const zoomText = document.getElementById('ppmZoomLevel');
+    if (zoomText) {
+        if (ppmCurrentScale === 'fit') {
+            zoomText.textContent = 'Fit';
+        } else {
+            zoomText.textContent = Math.round(ppmCurrentScale * 100) + '%';
+        }
+    }
+}
+
+async function renderPpmPdf() {
+    if (!ppmPdfDoc) return;
+    const token = ++ppmRenderToken;
+    const pagesContainer = document.getElementById('ppmPdfPagesContainer');
+    const loadingEl = document.getElementById('ppmPdfLoading');
+    const wrapper = document.getElementById('ppmPdfContinuousView');
+    if (!pagesContainer || !wrapper) return;
+
+    if (loadingEl) loadingEl.classList.remove('d-none');
+    pagesContainer.innerHTML = '';
+
+    const containerWidth = wrapper.clientWidth || 800;
+    const outputScale = Math.min(window.devicePixelRatio || 1, 2);
+
+    try {
+        for (let pageNum = 1; pageNum <= ppmPdfDoc.numPages; pageNum++) {
+            if (token !== ppmRenderToken) return;
+
+            const page = await ppmPdfDoc.getPage(pageNum);
+            if (token !== ppmRenderToken) return;
+
+            const unscaled = page.getViewport({ scale: 1 });
+            let scale = ppmCurrentScale;
+            if (scale === 'fit' || typeof scale !== 'number') {
+                scale = Math.min(2.5, Math.max(0.5, (containerWidth - 40) / unscaled.width));
+            }
+
+            const viewport = page.getViewport({ scale: scale });
+
+            const pageCard = document.createElement('div');
+            pageCard.className = 'pdf-page-card mb-4 text-center';
+            pageCard.setAttribute('data-page-num', pageNum);
+
+            const canvas = document.createElement('canvas');
+            canvas.className = 'shadow-2xl rounded-2 mx-auto d-block';
+            canvas.style.maxWidth = '100%';
+            canvas.style.height = 'auto';
+            canvas.style.backgroundColor = '#ffffff';
+
+            canvas.width = Math.floor(viewport.width * outputScale);
+            canvas.height = Math.floor(viewport.height * outputScale);
+            canvas.style.width = Math.floor(viewport.width) + 'px';
+
+            const ctx = canvas.getContext('2d', { alpha: false });
+            const transform = outputScale !== 1 ? [outputScale, 0, 0, outputScale, 0, 0] : null;
+
+            pageCard.appendChild(canvas);
+
+            const pageFooter = document.createElement('div');
+            pageFooter.className = 'text-slate-400 small mt-1 font-monospace';
+            pageFooter.textContent = `Halaman ${pageNum} dari ${ppmPdfDoc.numPages}`;
+            pageCard.appendChild(pageFooter);
+
+            pagesContainer.appendChild(pageCard);
+
+            const renderContext = {
+                canvasContext: ctx,
+                transform: transform,
+                viewport: viewport
+            };
+            await page.render(renderContext).promise;
+
+            if (pageNum === 1 && loadingEl) {
+                loadingEl.classList.add('d-none');
+            }
+        }
+    } catch (e) {
+        console.error('Error rendering PDF:', e);
+    } finally {
+        if (loadingEl) loadingEl.classList.add('d-none');
+    }
+}
+
+async function loadPpmPdfWithPdfJs(fileUrl) {
+    const loadingEl = document.getElementById('ppmPdfLoading');
+    const pagesContainer = document.getElementById('ppmPdfPagesContainer');
+    const badge = document.getElementById('ppmCurrentPageBadge');
+    if (loadingEl) loadingEl.classList.remove('d-none');
+    if (pagesContainer) pagesContainer.innerHTML = '';
+    if (badge) badge.textContent = 'Memuat...';
+
+    try {
+        if (!window.pdfjsLib) throw new Error('PDF.js engine not loaded');
+        const loadingTask = window.pdfjsLib.getDocument({
+            url: fileUrl,
+            cMapUrl: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/cmaps/',
+            cMapPacked: true
+        });
+        ppmPdfDoc = await loadingTask.promise;
+        if (badge) badge.textContent = `1 / ${ppmPdfDoc.numPages}`;
+        ppmCurrentScale = 'fit';
+        updatePpmZoomText();
+        await renderPpmPdf();
+    } catch (err) {
+        console.warn('PDF.js render fallback to native iframe viewer:', err);
+        setPpmViewerMode('iframe');
+    }
+}
+
+function ppmZoom(delta) {
+    if (!ppmPdfDoc) return;
+    if (ppmCurrentScale === 'fit') {
+        ppmCurrentScale = 1.0;
+    }
+    let newScale = (typeof ppmCurrentScale === 'number' ? ppmCurrentScale : 1.0) + delta;
+    newScale = Math.min(3.0, Math.max(0.5, newScale));
+    ppmCurrentScale = Math.round(newScale * 100) / 100;
+    updatePpmZoomText();
+    renderPpmPdf();
+}
+
+function ppmFitWidth() {
+    if (!ppmPdfDoc) return;
+    ppmCurrentScale = 'fit';
+    updatePpmZoomText();
+    renderPpmPdf();
+}
+
+function ppmScrollPage(direction) {
+    const wrapper = document.getElementById('ppmPdfContinuousView');
+    if (!wrapper) return;
+    if (direction > 0) {
+        wrapper.scrollBy({ top: wrapper.clientHeight * 0.85, behavior: 'smooth' });
+    } else {
+        wrapper.scrollBy({ top: -wrapper.clientHeight * 0.85, behavior: 'smooth' });
+    }
+}
+
+function setPpmViewerMode(mode) {
+    ppmIsCanvasMode = mode === 'canvas';
+    const canvasWrap = document.getElementById('ppmPdfContinuousView');
+    const iframe = document.getElementById('ppmDocIframe');
+    const modeBtn = document.getElementById('ppmToggleModeBtn');
+    const canvasControls = document.getElementById('ppmCanvasControls');
+
+    if (ppmIsCanvasMode) {
+        if (canvasWrap) canvasWrap.classList.remove('d-none');
+        if (iframe) {
+            iframe.classList.add('d-none');
+            iframe.src = 'about:blank';
+        }
+        if (modeBtn) modeBtn.innerHTML = '<i class="fas fa-desktop"></i> Mode Browser';
+        if (canvasControls) canvasControls.classList.remove('d-none');
+        if (ppmCurrentFileUrl && !ppmPdfDoc) {
+            loadPpmPdfWithPdfJs(ppmCurrentFileUrl);
+        }
+    } else {
+        if (canvasWrap) canvasWrap.classList.add('d-none');
+        if (iframe) {
+            iframe.classList.remove('d-none');
+            iframe.src = ppmCurrentFileUrl + '#view=FitH&zoom=page-width&toolbar=1&navpanes=0&scrollbar=1';
+        }
+        if (modeBtn) modeBtn.innerHTML = '<i class="fas fa-scroll"></i> Mode Kanvas';
+        if (canvasControls) canvasControls.classList.add('d-none');
+    }
+}
+
+function togglePpmViewMode() {
+    setPpmViewerMode(ppmIsCanvasMode ? 'iframe' : 'canvas');
+}
+
 function openPpmDocViewer(fileUrl, docTitle, ext) {
+    ppmCurrentFileUrl = fileUrl;
+    ppmPdfDoc = null;
     const isWord = ['doc', 'docx'].includes((ext || '').toLowerCase());
     const iframeEl = document.getElementById('ppmDocIframe');
+    const canvasWrap = document.getElementById('ppmPdfContinuousView');
     const wordFallbackEl = document.getElementById('ppmDocWordFallback');
     const fullTabBtn = document.getElementById('ppmDocFullTab');
+    const toolbar = document.getElementById('ppmDocToolbar');
     
     document.getElementById('ppmDocTitle').textContent = docTitle;
     document.getElementById('ppmDocBadge').textContent = (ext || 'PDF').toUpperCase();
@@ -674,8 +855,10 @@ function openPpmDocViewer(fileUrl, docTitle, ext) {
     if (fullTabBtn) fullTabBtn.href = fileUrl;
 
     if (isWord) {
+        if (toolbar) toolbar.classList.add('d-none');
+        if (canvasWrap) canvasWrap.classList.add('d-none');
         if (iframeEl) {
-            iframeEl.style.display = 'none';
+            iframeEl.classList.add('d-none');
             iframeEl.src = 'about:blank';
         }
         if (wordFallbackEl) {
@@ -686,29 +869,18 @@ function openPpmDocViewer(fileUrl, docTitle, ext) {
             document.getElementById('ppmWordNewTab').href = fileUrl;
         }
     } else {
+        if (toolbar) toolbar.classList.remove('d-none');
         if (wordFallbackEl) {
             wordFallbackEl.classList.add('d-none');
             wordFallbackEl.classList.remove('d-flex');
         }
-        if (iframeEl) {
-            iframeEl.style.display = 'block';
-            // Set URL hash to fit-width & page-width so it scrolls continuously on both Firefox and Chromium
-            iframeEl.src = fileUrl + '#view=FitH&zoom=page-width&toolbar=1&navpanes=0&scrollbar=1';
-        }
+        setPpmViewerMode('canvas');
+        loadPpmPdfWithPdfJs(fileUrl);
     }
 
     const modal = getPpmModal();
     if (modal) {
         modal.show();
-        // Beri fokus ke iframe agar mousewheel langsung aktif menggulir dokumen
-        setTimeout(() => {
-            if (iframeEl && !isWord) {
-                try {
-                    iframeEl.focus();
-                    if (iframeEl.contentWindow) iframeEl.contentWindow.focus();
-                } catch(e) {}
-            }
-        }, 350);
     }
 }
 
@@ -716,10 +888,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const modalEl = document.getElementById('ppmDocModal');
     if (modalEl) {
         modalEl.addEventListener('hidden.bs.modal', function () {
+            ppmRenderToken++;
             const iframe = document.getElementById('ppmDocIframe');
             if (iframe) iframe.src = 'about:blank';
+            const pagesContainer = document.getElementById('ppmPdfPagesContainer');
+            if (pagesContainer) pagesContainer.innerHTML = '';
+            ppmPdfDoc = null;
 
-            // Bersihkan sisa efek backdrop dan pastikan scroll halaman utama kembali aktif
             setTimeout(function() {
                 document.body.classList.remove('modal-open');
                 document.documentElement.classList.remove('modal-open');
@@ -729,6 +904,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
             }, 80);
         });
+    }
+
+    const scrollWrap = document.getElementById('ppmPdfContinuousView');
+    if (scrollWrap) {
+        scrollWrap.addEventListener('scroll', function() {
+            if (!ppmPdfDoc) return;
+            const cards = scrollWrap.querySelectorAll('.pdf-page-card');
+            const wrapTop = scrollWrap.scrollTop;
+            let current = 1;
+            cards.forEach(card => {
+                if (card.offsetTop - scrollWrap.offsetTop <= wrapTop + 140) {
+                    current = parseInt(card.getAttribute('data-page-num')) || current;
+                }
+            });
+            const badge = document.getElementById('ppmCurrentPageBadge');
+            if (badge) badge.textContent = `${current} / ${ppmPdfDoc.numPages}`;
+        }, { passive: true });
     }
 });
 </script>
@@ -757,32 +949,74 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             </div>
 
-            <!-- Sub-Toolbar Bantuan Scroll & Navigasi -->
-            <div class="px-3 py-2 bg-dark bg-opacity-75 border-bottom border-emerald-500 border-opacity-20 text-slate-300 small d-flex flex-wrap align-items-center justify-content-between gap-2 flex-shrink-0">
-                <div class="d-flex align-items-center gap-2 text-emerald-300">
-                    <i class="fas fa-info-circle text-emerald-400"></i>
-                    <span class="d-none d-md-inline">Klik area dokumen lalu gunakan scroll mouse / usap layar ke bawah untuk melihat seluruh halaman.</span>
-                    <span class="d-md-none">Usap layar untuk scroll halaman dokumen.</span>
+            <!-- Sub-Toolbar Interaktif: Navigasi, Zoom, Mode Kanvas Continuous Scroll -->
+            <div id="ppmDocToolbar" class="px-3 py-2 bg-dark bg-opacity-75 border-bottom border-emerald-500 border-opacity-20 text-slate-300 small d-flex flex-wrap align-items-center justify-content-between gap-2 flex-shrink-0">
+                <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <span class="d-inline-flex align-items-center gap-1.5 text-emerald-300 fw-semibold">
+                        <i class="fas fa-file-alt text-emerald-400"></i>
+                        <span>Hal:</span>
+                        <span id="ppmCurrentPageBadge" class="badge bg-emerald-950 text-emerald-300 border border-emerald-500/40">1 / 1</span>
+                    </span>
+
+                    <!-- Quick Page Scroll Buttons -->
+                    <div class="btn-group btn-group-sm" role="group">
+                        <button type="button" class="btn btn-xs btn-outline-secondary text-white rounded-start-pill px-2" onclick="ppmScrollPage(-1)" title="Gulir ke Atas">
+                            <i class="fas fa-chevron-up"></i>
+                        </button>
+                        <button type="button" class="btn btn-xs btn-outline-secondary text-white rounded-end-pill px-2" onclick="ppmScrollPage(1)" title="Gulir ke Bawah">
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                    </div>
+
+                    <!-- Zoom Controls (Canvas Mode) -->
+                    <div id="ppmCanvasControls" class="d-inline-flex align-items-center gap-1 ms-1">
+                        <button type="button" class="btn btn-xs btn-outline-secondary text-white rounded-circle p-0" style="width: 24px; height: 24px;" onclick="ppmZoom(-0.15)" title="Perkecil">
+                            <i class="fas fa-minus text-[10px]"></i>
+                        </button>
+                        <span id="ppmZoomLevel" class="small text-slate-300 font-monospace px-1">Fit</span>
+                        <button type="button" class="btn btn-xs btn-outline-secondary text-white rounded-circle p-0" style="width: 24px; height: 24px;" onclick="ppmZoom(0.15)" title="Perbesar">
+                            <i class="fas fa-plus text-[10px]"></i>
+                        </button>
+                        <button type="button" class="btn btn-xs btn-outline-secondary text-white rounded-pill px-2 ms-1" onclick="ppmFitWidth()" title="Sesuaikan Lebar">
+                            <i class="fas fa-expand-arrows-alt text-[10px]"></i> Pas Lebar
+                        </button>
+                    </div>
                 </div>
+
                 <div class="d-flex align-items-center gap-2">
+                    <button type="button" id="ppmToggleModeBtn" class="btn btn-xs btn-outline-light text-slate-300 rounded-pill px-2.5 py-1 small d-inline-flex align-items-center gap-1" onclick="togglePpmViewMode()" title="Ganti antara mode kanvas berkelanjutan dan bingkai browser bawaan">
+                        <i class="fas fa-desktop"></i> Mode Browser
+                    </button>
                     <a id="ppmDocFullTab" href="#" target="_blank" class="btn btn-xs btn-outline-success text-emerald-300 rounded-pill px-2.5 py-1 text-decoration-none fw-semibold small d-inline-flex align-items-center gap-1">
-                        <i class="fas fa-external-link-alt"></i> Buka Layar Penuh
+                        <i class="fas fa-external-link-alt"></i> Layar Penuh
                     </a>
                 </div>
             </div>
 
-            <!-- Modal Body (Scrollable Container) -->
+            <!-- Modal Body (Continuous Canvas & Fallback) -->
             <div class="modal-body p-0 flex-grow-1 position-relative d-flex flex-column" style="background: #020617; overflow: hidden; height: 100%;">
-                <!-- PDF Viewer Frame -->
+                
+                <!-- 1. High Performance Continuous Scroll Canvas View (Semua halaman di-scroll mulus) -->
+                <div id="ppmPdfContinuousView" class="w-100 flex-grow-1" style="overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; padding: 24px 12px; background: #0b1329;">
+                    <!-- Loading Indicator -->
+                    <div id="ppmPdfLoading" class="text-center py-5 text-emerald-400">
+                        <div class="spinner-border spinner-border-sm text-success mb-2" role="status"></div>
+                        <div class="small fw-semibold">Memuat halaman dokumen secara interaktif...</div>
+                    </div>
+                    <!-- Canvases Container (Setiap halaman ditumpuk ke bawah, scroll mouse langsung aktif) -->
+                    <div id="ppmPdfPagesContainer" class="d-flex flex-column align-items-center"></div>
+                </div>
+
+                <!-- 2. Native Browser PDF Viewer Frame (Fallback / Mode Browser) -->
                 <iframe id="ppmDocIframe" 
                         src="" 
-                        class="w-100 flex-grow-1 border-0 bg-white" 
-                        style="display: block; width: 100%; height: 100%; min-height: 400px;" 
+                        class="d-none w-100 flex-grow-1 border-0 bg-white" 
+                        style="width: 100%; height: 100%; min-height: 400px;" 
                         scrolling="yes" 
                         allow="fullscreen">
                 </iframe>
 
-                <!-- Word Document Fallback Card -->
+                <!-- 3. Word Document Fallback Card -->
                 <div id="ppmDocWordFallback" class="d-none w-100 h-100 flex-column align-items-center justify-content-center text-center p-4 p-md-5 my-auto" style="min-height: 480px;">
                     <div class="rounded-circle bg-primary bg-opacity-10 text-primary d-inline-flex align-items-center justify-content-center mb-3" style="width: 76px; height: 76px;">
                         <i class="fas fa-file-word fa-3x"></i>
