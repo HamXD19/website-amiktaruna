@@ -25,6 +25,14 @@
     <!-- Unified Design System & Vue App -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+    <!-- Mozilla PDF.js Engine for Continuous Canvas Scrolling -->
+    <script src="/vendor/pdfjs/pdf.min.js"></script>
+    <script>
+        if (window.pdfjsLib) {
+            window.pdfjsLib.GlobalWorkerOptions.workerSrc = "/vendor/pdfjs/pdf.worker.min.js";
+        }
+    </script>
+
     <style>
         :root {
             --green:       #198754;
@@ -506,13 +514,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-<!-- PDF.js Engine for seamless continuous canvas scrolling across all devices -->
-<script src="/vendor/pdfjs/pdf.min.js"></script>
-<script>
-    if (window.pdfjsLib) {
-        window.pdfjsLib.GlobalWorkerOptions.workerSrc = "/vendor/pdfjs/pdf.worker.min.js";
-    }
-</script>
 
 
 <script>

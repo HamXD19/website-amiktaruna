@@ -264,8 +264,8 @@
 
 <!-- LPPM Pop-up Document Viewer Modal (Dapat Di-scroll Sempurna di Desktop & HP) -->
 <div class="modal fade modal-doc-viewer" id="lppmDocModal" tabindex="-1" aria-labelledby="lppmDocTitle" aria-hidden="true" style="z-index: 100050 !important;">
-    <div class="modal-dialog modal-xl my-2 my-md-3" style="max-width: 1120px;">
-        <div class="modal-content rounded-4 border-0 shadow-2xl d-flex flex-column" style="background: #0f172a; border: 1px solid rgba(74, 222, 128, 0.3) !important; height: calc(100vh - 2rem); max-height: calc(100vh - 2rem);">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable my-2 my-md-3" style="max-width: 1140px; height: calc(100% - 2rem); margin: 1rem auto;">
+        <div class="modal-content rounded-4 border-0 shadow-2xl d-flex flex-column" style="background: #0f172a; border: 1px solid rgba(74, 222, 128, 0.3) !important; height: 100%; max-height: 94vh; max-height: 94dvh; overflow: hidden;">
             
             <!-- Modal Header -->
             <div class="modal-header border-0 py-3 px-4 flex-shrink-0" style="background: #022c22; border-bottom: 1px solid rgba(74, 222, 128, 0.2) !important;">
@@ -297,24 +297,24 @@
 
                     <!-- Quick Page Scroll Buttons -->
                     <div class="btn-group btn-group-sm" role="group">
-                        <button type="button" class="btn btn-xs btn-outline-secondary text-white rounded-start-pill px-2" onclick="lppmScrollPage(-1)" title="Gulir ke Atas">
+                        <button type="button" class="btn btn-xs btn-outline-secondary text-white rounded-start-pill px-2.5 py-1" onclick="lppmScrollPage(-1)" title="Gulir Halaman ke Atas">
                             <i class="fas fa-chevron-up"></i>
                         </button>
-                        <button type="button" class="btn btn-xs btn-outline-secondary text-white rounded-end-pill px-2" onclick="lppmScrollPage(1)" title="Gulir ke Bawah">
+                        <button type="button" class="btn btn-xs btn-outline-secondary text-white rounded-end-pill px-2.5 py-1" onclick="lppmScrollPage(1)" title="Gulir Halaman ke Bawah">
                             <i class="fas fa-chevron-down"></i>
                         </button>
                     </div>
 
                     <!-- Zoom Controls (Canvas Mode) -->
                     <div id="lppmCanvasControls" class="d-inline-flex align-items-center gap-1 ms-1">
-                        <button type="button" class="btn btn-xs btn-outline-secondary text-white rounded-circle p-0" style="width: 24px; height: 24px;" onclick="lppmZoom(-0.15)" title="Perkecil">
+                        <button type="button" class="btn btn-xs btn-outline-secondary text-white rounded-circle p-0" style="width: 26px; height: 26px;" onclick="lppmZoom(-0.15)" title="Perkecil">
                             <i class="fas fa-minus text-[10px]"></i>
                         </button>
                         <span id="lppmZoomLevel" class="small text-slate-300 font-monospace px-1">Fit</span>
-                        <button type="button" class="btn btn-xs btn-outline-secondary text-white rounded-circle p-0" style="width: 24px; height: 24px;" onclick="lppmZoom(0.15)" title="Perbesar">
+                        <button type="button" class="btn btn-xs btn-outline-secondary text-white rounded-circle p-0" style="width: 26px; height: 26px;" onclick="lppmZoom(0.15)" title="Perbesar">
                             <i class="fas fa-plus text-[10px]"></i>
                         </button>
-                        <button type="button" class="btn btn-xs btn-outline-secondary text-white rounded-pill px-2 ms-1" onclick="lppmFitWidth()" title="Sesuaikan Lebar">
+                        <button type="button" class="btn btn-xs btn-outline-secondary text-white rounded-pill px-2.5 py-1 ms-1" onclick="lppmFitWidth()" title="Sesuaikan Lebar">
                             <i class="fas fa-expand-arrows-alt text-[10px]"></i> Pas Lebar
                         </button>
                     </div>
@@ -331,24 +331,24 @@
             </div>
 
             <!-- Modal Body (Continuous Canvas & Fallback) -->
-            <div class="modal-body p-0 position-relative d-flex flex-column" style="background: #020617; overflow: hidden; flex: 1 1 0%; min-height: 0; max-height: 100%;">
+            <div class="modal-body p-0 position-relative d-flex flex-column" style="background: #020617; overflow: hidden; flex: 1 1 auto; min-height: 0; max-height: 100%;">
                 
                 <!-- 1. High Performance Continuous Scroll Canvas View (Semua halaman di-scroll mulus) -->
-                <div id="lppmPdfContinuousView" class="w-100" style="flex: 1 1 0%; min-height: 0; height: 100%; max-height: 100%; overflow-y: scroll; overflow-x: hidden; -webkit-overflow-scrolling: touch; padding: 24px 12px; background: #0b1329;">
+                <div id="lppmPdfContinuousView" class="w-100" style="flex: 1 1 auto; min-height: 0; height: 100%; max-height: 100%; overflow-y: scroll; overflow-x: hidden; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; padding: 24px 12px; background: #0b1329;">
                     <!-- Loading Indicator -->
                     <div id="lppmPdfLoading" class="text-center py-5 text-emerald-400">
                         <div class="spinner-border spinner-border-sm text-success mb-2" role="status"></div>
                         <div class="small fw-semibold">Memuat halaman dokumen secara interaktif...</div>
                     </div>
                     <!-- Canvases Container (Setiap halaman ditumpuk ke bawah, scroll mouse langsung aktif) -->
-                    <div id="lppmPdfPagesContainer" class="d-flex flex-column align-items-center"></div>
+                    <div id="lppmPdfPagesContainer" class="d-flex flex-column align-items-center gap-4"></div>
                 </div>
 
                 <!-- 2. Native Browser PDF Viewer Frame (Fallback / Mode Browser) -->
                 <iframe id="lppmDocIframe" 
                         src="" 
                         class="d-none w-100 border-0 bg-white" 
-                        style="width: 100%; height: 100%; flex: 1 1 0%; min-height: 0;" 
+                        style="width: 100%; height: 100%; flex: 1 1 auto; min-height: 0;" 
                         scrolling="yes" 
                         allow="fullscreen">
                 </iframe>
@@ -376,6 +376,16 @@
         </div>
     </div>
 </div>
+
+<script>
+// Pastikan modal langsung dipindahkan ke <body> agar terbebas dari stacking context <main>
+(function() {
+    const modalEl = document.getElementById('lppmDocModal');
+    if (modalEl && modalEl.parentElement !== document.body) {
+        document.body.appendChild(modalEl);
+    }
+})();
+</script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
@@ -497,6 +507,9 @@ let lppmIsCanvasMode = true;
 function getLppmModal() {
     const modalEl = document.getElementById('lppmDocModal');
     if (!modalEl) return null;
+    if (modalEl.parentElement !== document.body) {
+        document.body.appendChild(modalEl);
+    }
     if (!lppmDocModalObj) {
         lppmDocModalObj = bootstrap.Modal.getOrCreateInstance(modalEl, {
             backdrop: true,
@@ -603,8 +616,8 @@ async function loadLppmPdfWithPdfJs(fileUrl) {
         if (!window.pdfjsLib) throw new Error('PDF.js engine not loaded');
         const loadingTask = window.pdfjsLib.getDocument({
             url: fileUrl,
-            cMapUrl: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/cmaps/',
-            cMapPacked: true
+            isEvalSupported: false,
+            useSystemFonts: true
         });
         lppmPdfDoc = await loadingTask.promise;
         if (badge) badge.textContent = `1 / ${lppmPdfDoc.numPages}`;
@@ -639,11 +652,8 @@ function lppmFitWidth() {
 function lppmScrollPage(direction) {
     const wrapper = document.getElementById('lppmPdfContinuousView');
     if (!wrapper) return;
-    if (direction > 0) {
-        wrapper.scrollBy({ top: wrapper.clientHeight * 0.85, behavior: 'smooth' });
-    } else {
-        wrapper.scrollBy({ top: -wrapper.clientHeight * 0.85, behavior: 'smooth' });
-    }
+    const delta = wrapper.clientHeight * 0.85;
+    wrapper.scrollBy({ top: direction * delta, behavior: 'smooth' });
 }
 
 function setLppmViewerMode(mode) {
@@ -731,6 +741,10 @@ function openLppmDocViewer(fileUrl, docTitle, ext) {
 
 document.addEventListener('DOMContentLoaded', function() {
     const modalEl = document.getElementById('lppmDocModal');
+    if (modalEl && modalEl.parentElement !== document.body) {
+        document.body.appendChild(modalEl);
+    }
+
     if (modalEl) {
         modalEl.addEventListener('hidden.bs.modal', function () {
             lppmRenderToken++;
@@ -753,6 +767,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const scrollWrap = document.getElementById('lppmPdfContinuousView');
     if (scrollWrap) {
+        // Explicit active wheel scrolling support
+        scrollWrap.addEventListener('wheel', function(e) {
+            if (Math.abs(e.deltaY) > 0) {
+                scrollWrap.scrollTop += e.deltaY;
+            }
+        }, { passive: true });
+
         scrollWrap.addEventListener('scroll', function() {
             if (!lppmPdfDoc) return;
             const cards = scrollWrap.querySelectorAll('.pdf-page-card');
