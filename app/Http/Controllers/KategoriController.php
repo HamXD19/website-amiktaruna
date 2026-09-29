@@ -8,6 +8,7 @@ use App\Models\Dosen;
 use App\Models\Kategori;
 use App\Models\ProdiDokumen;
 use App\Models\PPMDokumen;
+use App\Models\LPPMDokumen;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -166,6 +167,58 @@ class KategoriController extends Controller
             }
         }
 
+        // Pastikan kategori Dokumen Riset & Pengabdian LPPM tersedia
+        if (Kategori::where('modul', 'lppm_dokumen')->count() === 0) {
+            $lppmDefaults = [
+                [
+                    'nama' => 'Panduan Penelitian',
+                    'slug' => 'panduan-penelitian',
+                    'modul' => 'lppm_dokumen',
+                    'warna' => 'primary',
+                    'ikon' => '🔬',
+                    'keterangan' => 'Buku panduan hibah riset dan penelitian dosen/mahasiswa',
+                    'urutan' => 1,
+                    'is_active' => true,
+                ],
+                [
+                    'nama' => 'Pedoman Pengabdian',
+                    'slug' => 'pedoman-pengabdian',
+                    'modul' => 'lppm_dokumen',
+                    'warna' => 'success',
+                    'ikon' => '🤝',
+                    'keterangan' => 'Pedoman pelaksanaan program pengabdian kepada masyarakat (PkM)',
+                    'urutan' => 2,
+                    'is_active' => true,
+                ],
+                [
+                    'nama' => 'Template Proposal & Laporan',
+                    'slug' => 'template-lppm',
+                    'modul' => 'lppm_dokumen',
+                    'warna' => 'warning',
+                    'ikon' => '📋',
+                    'keterangan' => 'Format template proposal dan laporan kemajuan/akhir riset',
+                    'urutan' => 3,
+                    'is_active' => true,
+                ],
+                [
+                    'nama' => 'Publikasi & Jurnal Ilmiah',
+                    'slug' => 'jurnal-lppm',
+                    'modul' => 'lppm_dokumen',
+                    'warna' => 'info',
+                    'ikon' => '📚',
+                    'keterangan' => 'Panduan penulisan jurnal, prosiding, dan luaran publikasi',
+                    'urutan' => 4,
+                    'is_active' => true,
+                ],
+            ];
+
+            foreach ($lppmDefaults as $ld) {
+                if (!Kategori::where('slug', $ld['slug'])->exists()) {
+                    Kategori::create($ld);
+                }
+            }
+        }
+
         // Pastikan kategori Jabatan Dosen & Tendik tersedia
         static::seedJabatanDefaults();
     }
@@ -208,7 +261,7 @@ class KategoriController extends Controller
     {
         $this->autoSeedDefaults();
 
-        $query = Kategori::withCount(['beritas', 'prodiDokumens', 'ppmDokumens', 'beritaPmbs'])->orderBy('urutan', 'asc')->latest();
+        $query = Kategori::withCount(['beritas', 'prodiDokumens', 'ppmDokumens', 'lppmDokumens', 'beritaPmbs'])->orderBy('urutan', 'asc')->latest();
 
         if ($request->filled('modul') && $request->modul !== 'semua') {
             $query->where('modul', $request->modul);
@@ -234,6 +287,7 @@ class KategoriController extends Controller
                 $used = ($kat->beritas_count ?? 0)
                       + ($kat->prodi_dokumens_count ?? 0)
                       + ($kat->ppm_dokumens_count ?? 0)
+                      + ($kat->lppm_dokumens_count ?? 0)
                       + ($kat->berita_pmbs_count ?? 0);
             }
             $kat->total_used = $used;
@@ -246,6 +300,7 @@ class KategoriController extends Controller
             'berita' => Kategori::where('modul', 'berita')->count(),
             'pmb' => Kategori::where('modul', 'pmb')->count(),
             'dokumen' => Kategori::where('modul', 'dokumen')->count(),
+            'lppm_dokumen' => Kategori::where('modul', 'lppm_dokumen')->count(),
             'prodi_dokumen' => Kategori::where('modul', 'prodi_dokumen')->count(),
             'layanan' => Kategori::where('modul', 'layanan')->count(),
             'jabatan' => Kategori::where('modul', 'jabatan')->count(),
@@ -259,7 +314,7 @@ class KategoriController extends Controller
     {
         $request->validate([
             'nama' => 'required|string|max:100',
-            'modul' => 'required|string|in:berita,pmb,dokumen,prodi_dokumen,layanan,umum,jabatan',
+            'modul' => 'required|string|in:berita,pmb,dokumen,prodi_dokumen,layanan,umum,jabatan,lppm_dokumen',
             'slug' => 'nullable|string|max:100|unique:kategoris,slug',
             'warna' => 'nullable|string|max:30',
             'ikon' => 'nullable|string|max:50',
@@ -392,12 +447,13 @@ class KategoriController extends Controller
         $usedInPMB = BeritaPMB::where('kategori', $kategori->slug)->count();
         $usedInProdiDok = ProdiDokumen::where('kategori', $kategori->slug)->count();
         $usedInPPMDok = PPMDokumen::where('kategori', $kategori->slug)->count();
+        $usedInLPPMDok = LPPMDokumen::where('kategori', $kategori->slug)->count();
         $usedInDosen = 0;
         if ($kategori->modul === 'jabatan') {
             $usedInDosen = Dosen::where('jabatan', 'LIKE', "%{$kategori->nama}%")->count();
         }
 
-        $totalUsed = $usedInBerita + $usedInPMB + $usedInProdiDok + $usedInPPMDok + $usedInDosen;
+        $totalUsed = $usedInBerita + $usedInPMB + $usedInProdiDok + $usedInPPMDok + $usedInLPPMDok + $usedInDosen;
 
         if ($totalUsed > 0) {
             return redirect()->route('admin.kategori.index', ['modul' => $kategori->modul])

@@ -5,11 +5,35 @@ namespace App\Http\Controllers;
 use App\Models\Kategori;
 use App\Models\PPM;
 use App\Models\PPMDokumen;
+use App\Models\PPMPortal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class PPMController extends Controller
 {
+    private function autoSeedPortals($ppm)
+    {
+        if (PPMPortal::count() === 0) {
+            PPMPortal::create([
+                'nama' => $ppm?->nama_portal ?: 'Portal SPMI Kemdikbud',
+                'link' => $ppm?->link_portal ?: 'https://spmi.kemdikbud.go.id/',
+                'logo' => $ppm?->gambar ?: null,
+                'warna' => 'success',
+                'deskripsi' => 'Portal resmi pelaporan dan evaluasi standar Sistem Penjaminan Mutu Internal perguruan tinggi.',
+                'urutan' => 1,
+            ]);
+
+            PPMPortal::create([
+                'nama' => 'Pangkalan Data PDDIKTI',
+                'link' => 'https://pddikti.kemdiktisaintek.go.id/',
+                'logo' => null,
+                'warna' => 'primary',
+                'deskripsi' => 'Layanan pemantauan integritas data akademik dan kepatuhan pelaporan institusi secara nasional.',
+                'urutan' => 2,
+            ]);
+        }
+    }
+
     private function autoSeedDokumen($ppm)
     {
         // 1. Pastikan kategori default dokumen SPMI ada di Master Kategori
@@ -63,6 +87,7 @@ class PPMController extends Controller
     {
         $ppm = PPM::first();
         $this->autoSeedDokumen($ppm);
+        $this->autoSeedPortals($ppm);
 
         $kategoris = Kategori::forModul('dokumen')->active()->orderBy('urutan')->get();
 
@@ -72,19 +97,22 @@ class PPMController extends Controller
             ->orderBy('urutan', 'asc')
             ->latest()
             ->get();
+        $portals = PPMPortal::orderBy('urutan', 'asc')->latest()->get();
 
-        return view('ppm.index', compact('ppm', 'kategoris', 'dokumens'));
+        return view('ppm.index', compact('ppm', 'kategoris', 'dokumens', 'portals'));
     }
 
     public function admin()
     {
         $ppm = PPM::first();
         $this->autoSeedDokumen($ppm);
+        $this->autoSeedPortals($ppm);
 
         $kategoris = Kategori::forModul('dokumen')->active()->orderBy('urutan')->get();
         $dokumens  = PPMDokumen::with('kategoriModel')->orderBy('urutan', 'asc')->latest()->get();
+        $portals   = PPMPortal::orderBy('urutan', 'asc')->latest()->get();
 
-        return view('admin.ppm.index', compact('ppm', 'kategoris', 'dokumens'));
+        return view('admin.ppm.index', compact('ppm', 'kategoris', 'dokumens', 'portals'));
     }
 
     public function store(Request $request)
@@ -231,9 +259,88 @@ class PPMController extends Controller
             $ppm->save();
         }
 
-        // 3. Hapus record dari database
         $dokumen->delete();
 
         return back()->with('success', "Dokumen '{$nama}' dan file di server berhasil dihapus.");
+    }
+
+    public function storePortal(Request $request)
+    {
+        $request->validate([
+            'nama' => 'required|string|max:255',
+            'link' => 'required',
+            'logo' => 'nullable|image|mimes:jpg,jpeg,png,svg,webp|max:5120',
+            'deskripsi' => 'nullable|string',
+            'warna' => 'nullable|string',
+            'urutan' => 'nullable|integer',
+        ]);
+
+        $logo = null;
+        if ($request->hasFile('logo')) {
+            $file = $request->file('logo');
+            $namaFile = time().'_portal_ppm_'.$file->getClientOriginalName();
+            $file->move(public_path('uploads/ppm'), $namaFile);
+            $logo = $namaFile;
+        }
+
+        PPMPortal::create([
+            'nama' => $request->nama,
+            'link' => $request->link,
+            'logo' => $logo,
+            'warna' => $request->warna ?? 'success',
+            'deskripsi' => $request->deskripsi,
+            'urutan' => $request->urutan ?? 0,
+        ]);
+
+        return redirect()->route('admin.ppm', ['tab' => 'portal'])
+            ->with('success', 'Portal Layanan Mutu berhasil ditambahkan');
+    }
+
+    public function updatePortal(Request $request, $id)
+    {
+        $request->validate([
+            'nama' => 'required|string|max:255',
+            'link' => 'required',
+            'logo' => 'nullable|image|mimes:jpg,jpeg,png,svg,webp|max:5120',
+            'deskripsi' => 'nullable|string',
+            'warna' => 'nullable|string',
+            'urutan' => 'nullable|integer',
+        ]);
+
+        $portal = PPMPortal::findOrFail($id);
+
+        if ($request->hasFile('logo')) {
+            if ($portal->logo && file_exists(public_path('uploads/ppm/'.$portal->logo))) {
+                @unlink(public_path('uploads/ppm/'.$portal->logo));
+            }
+            $file = $request->file('logo');
+            $namaFile = time().'_portal_ppm_'.$file->getClientOriginalName();
+            $file->move(public_path('uploads/ppm'), $namaFile);
+            $portal->logo = $namaFile;
+        }
+
+        $portal->nama = $request->nama;
+        $portal->link = $request->link;
+        $portal->warna = $request->warna ?? 'success';
+        $portal->deskripsi = $request->deskripsi;
+        $portal->urutan = $request->urutan ?? 0;
+        $portal->save();
+
+        return redirect()->route('admin.ppm', ['tab' => 'portal'])
+            ->with('success', 'Portal Layanan Mutu berhasil diperbarui');
+    }
+
+    public function destroyPortal($id)
+    {
+        $portal = PPMPortal::findOrFail($id);
+
+        if ($portal->logo && file_exists(public_path('uploads/ppm/'.$portal->logo))) {
+            @unlink(public_path('uploads/ppm/'.$portal->logo));
+        }
+
+        $portal->delete();
+
+        return redirect()->route('admin.ppm', ['tab' => 'portal'])
+            ->with('success', 'Portal Layanan Mutu berhasil dihapus');
     }
 }

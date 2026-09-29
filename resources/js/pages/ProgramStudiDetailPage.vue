@@ -904,13 +904,13 @@ const handleImageError = () => {
     <Teleport to="body">
       <div
         v-if="activePreviewDoc"
-        class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/80 backdrop-blur-sm transition-all"
+        class="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-5 bg-black/80 backdrop-blur-sm transition-all overflow-y-auto"
         @click.self="closePreviewModal"
       >
-        <div class="bg-slate-900 border border-emerald-500/30 rounded-2xl w-full max-w-5xl h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+        <div class="bg-slate-900 border border-emerald-500/30 rounded-2xl w-full max-w-5xl h-[88vh] max-h-[88vh] flex flex-col shadow-2xl overflow-hidden my-auto">
           
           <!-- Modal Header -->
-          <div class="px-5 py-3.5 bg-slate-950/90 border-b border-emerald-500/20 flex items-center justify-between gap-4">
+          <div class="px-5 py-3.5 bg-slate-950/90 border-b border-emerald-500/20 flex items-center justify-between gap-4 flex-shrink-0">
             <div class="min-w-0 flex-1">
               <div class="flex items-center gap-2 mb-1">
                 <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono uppercase bg-emerald-950 text-emerald-400 border border-emerald-500/30 font-bold">
@@ -958,14 +958,32 @@ const handleImageError = () => {
             </div>
           </div>
 
+          <!-- Sub-toolbar Hint & Fullscreen Link -->
+          <div class="px-4 py-2 bg-slate-950/80 border-b border-emerald-500/15 text-slate-300 text-xs flex items-center justify-between flex-shrink-0">
+            <span class="flex items-center gap-1.5 text-slate-300">
+              <i class="fas fa-info-circle text-emerald-400"></i>
+              <span class="hidden md:inline">Gunakan scroll mouse atau usap layar untuk membaca seluruh halaman dokumen.</span>
+              <span class="md:hidden">Usap layar untuk scroll dokumen.</span>
+            </span>
+            <a
+              :href="`/uploads/program_studi/dokumen/${activePreviewDoc.file_dokumen}`"
+              target="_blank"
+              class="text-emerald-400 hover:text-emerald-300 font-semibold inline-flex items-center gap-1"
+            >
+              <i class="fas fa-expand-alt text-[10px]"></i> Layar Penuh
+            </a>
+          </div>
+
           <!-- Modal Body / Iframe Preview -->
-          <div class="flex-1 bg-slate-950 relative flex flex-col items-center justify-center overflow-hidden">
+          <div class="flex-1 bg-slate-950 relative flex flex-col overflow-y-auto" style="-webkit-overflow-scrolling: touch;">
             <!-- If PDF -->
             <iframe
               v-if="!isWordFile(activePreviewDoc.file_dokumen)"
-              :src="`/uploads/program_studi/dokumen/${activePreviewDoc.file_dokumen}#toolbar=1`"
-              class="w-full h-full border-0 bg-white"
+              :src="`/uploads/program_studi/dokumen/${activePreviewDoc.file_dokumen}#toolbar=1&navpanes=0&scrollbar=1`"
+              class="w-full h-full min-h-[480px] border-0 bg-white block"
               title="Pratinjau Dokumen PDF"
+              scrolling="yes"
+              allow="fullscreen"
             ></iframe>
 
             <!-- Fallback if Word document -->

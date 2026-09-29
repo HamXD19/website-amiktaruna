@@ -63,6 +63,64 @@
         background: rgba(74, 222, 128, 0.25);
     }
 
+    /* Grid Card Portal PPM (Like LPPM) */
+    .ppm-grid-card {
+        position: relative;
+        overflow: hidden;
+        border-radius: 28px;
+        background: rgba(8, 38, 24, 0.85);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(74, 222, 128, 0.22);
+        box-shadow: 0 16px 40px -4px rgba(2, 20, 12, 0.5);
+        transition: all 0.35s ease;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .ppm-grid-card:hover {
+        transform: translateY(-8px);
+        background: rgba(14, 56, 36, 0.95);
+        border-color: rgba(74, 222, 128, 0.5);
+        box-shadow: 0 24px 50px -6px rgba(74, 222, 128, 0.2), 0 12px 30px rgba(0,0,0,0.5);
+    }
+
+    .ppm-portal-logo {
+        width: 86px;
+        height: 86px;
+        object-fit: contain;
+        background: #ffffff;
+        border-radius: 22px;
+        padding: 8px;
+        border: 2px solid rgba(74, 222, 128, 0.4);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        transition: transform 0.3s ease;
+    }
+
+    .ppm-grid-card:hover .ppm-portal-logo {
+        transform: scale(1.08) rotate(-2deg);
+        border-color: #4ade80;
+    }
+
+    .ppm-portal-logo-kosong {
+        width: 86px;
+        height: 86px;
+        border-radius: 22px;
+        background: rgba(74, 222, 128, 0.15);
+        border: 2px solid rgba(74, 222, 128, 0.35);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        color: #4ade80;
+        transition: transform 0.3s ease;
+    }
+
+    .ppm-grid-card:hover .ppm-portal-logo-kosong {
+        transform: scale(1.08);
+        background: rgba(74, 222, 128, 0.25);
+    }
+
     /* Section Dokumen di Bawah Portal */
     .ppm-doc-section-card {
         background: rgba(10, 42, 27, 0.85);
@@ -175,7 +233,54 @@
         </div>
     </div>
 
-    {{-- 3. PORTAL UTAMA (DIATAS) --}}
+    {{-- 3. PORTAL LAYANAN PENJAMINAN MUTU (DINAMIS SEPERTI LPPM) --}}
+    @if(isset($portals) && $portals->count() > 0)
+    <div class="row g-4 justify-content-center mb-5" id="portal-layanan-ppm">
+        @foreach($portals as $portal)
+        <div class="col-md-6 col-lg-4">
+            <a href="{{ $portal->link }}"
+               target="_blank"
+               class="text-decoration-none h-100 d-block">
+                <div class="card ppm-grid-card border-0 h-100 text-center p-4">
+                    <!-- LOGO -->
+                    <div class="d-flex justify-content-center align-items-center mb-3">
+                        @if($portal->logo)
+                            @php
+                                $pLogoPath = file_exists(public_path('uploads/ppm/' . $portal->logo)) 
+                                    ? asset('uploads/ppm/' . $portal->logo) 
+                                    : (file_exists(public_path('uploads/' . $portal->logo)) ? asset('uploads/' . $portal->logo) : asset('uploads/ppm/' . $portal->logo));
+                            @endphp
+                            <img src="{{ $pLogoPath }}"
+                                 alt="{{ $portal->nama }}"
+                                 class="ppm-portal-logo">
+                        @else
+                            <div class="ppm-portal-logo-kosong">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                        @endif
+                    </div>
+
+                    <!-- CONTENT -->
+                    <div class="d-flex flex-column flex-grow-1 h-100">
+                        <h5 class="fw-bold text-white mb-2" style="font-size: 1.18rem;">
+                            {{ $portal->nama }}
+                        </h5>
+                        <p class="text-slate-300 small mt-1 flex-grow-1" style="line-height: 1.6;">
+                            {{ $portal->deskripsi ?: 'Portal layanan Sistem Penjaminan Mutu Internal (SPMI) AMIK Taruna.' }}
+                        </p>
+                        <div class="mt-auto pt-3">
+                            <span class="btn btn-{{ $portal->warna ?: 'success' }} rounded-pill px-4 py-2 fw-bold small shadow-sm">
+                                Kunjungi Portal <i class="fas fa-arrow-right ms-1"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        @endforeach
+    </div>
+    @else
+    {{-- FALLBACK PORTAL UTAMA (JIKA BELUM ADA PORTAL DINAMIS) --}}
     <div class="row justify-content-center mb-5">
         <div class="col-lg-10">
             <div class="ppm-portal-featured-card p-4 p-md-5">
@@ -215,6 +320,7 @@
             </div>
         </div>
     </div>
+    @endif
 
     {{-- 4. DAFTAR DOKUMEN MUTU (DI BAWAH PORTAL - MODEL LIST) --}}
     <div class="row justify-content-center mb-5" id="daftar-dokumen">
@@ -540,31 +646,91 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // Pop-up Document Viewer handler
+let ppmDocModalObj = null;
+
+function getPpmModal() {
+    const modalEl = document.getElementById('ppmDocModal');
+    if (!modalEl) return null;
+    if (!ppmDocModalObj) {
+        ppmDocModalObj = bootstrap.Modal.getOrCreateInstance(modalEl, {
+            backdrop: true,
+            keyboard: true,
+            focus: true
+        });
+    }
+    return ppmDocModalObj;
+}
+
 function openPpmDocViewer(fileUrl, docTitle, ext) {
+    const isWord = ['doc', 'docx'].includes((ext || '').toLowerCase());
+    const iframeEl = document.getElementById('ppmDocIframe');
+    const wordFallbackEl = document.getElementById('ppmDocWordFallback');
+    const fullTabBtn = document.getElementById('ppmDocFullTab');
+    
     document.getElementById('ppmDocTitle').textContent = docTitle;
-    document.getElementById('ppmDocBadge').textContent = ext.toUpperCase();
+    document.getElementById('ppmDocBadge').textContent = (ext || 'PDF').toUpperCase();
     document.getElementById('ppmDocDownload').href = fileUrl;
     document.getElementById('ppmDocNewTab').href = fileUrl;
-    document.getElementById('ppmDocIframe').src = fileUrl + '#toolbar=1';
-    const modal = new bootstrap.Modal(document.getElementById('ppmDocModal'));
-    modal.show();
+    if (fullTabBtn) fullTabBtn.href = fileUrl;
+
+    if (isWord) {
+        if (iframeEl) {
+            iframeEl.style.display = 'none';
+            iframeEl.src = 'about:blank';
+        }
+        if (wordFallbackEl) {
+            wordFallbackEl.classList.remove('d-none');
+            wordFallbackEl.classList.add('d-flex');
+            document.getElementById('ppmWordDocTitle').textContent = docTitle;
+            document.getElementById('ppmWordDownload').href = fileUrl;
+            document.getElementById('ppmWordNewTab').href = fileUrl;
+        }
+    } else {
+        if (wordFallbackEl) {
+            wordFallbackEl.classList.add('d-none');
+            wordFallbackEl.classList.remove('d-flex');
+        }
+        if (iframeEl) {
+            iframeEl.style.display = 'block';
+            // Menambahkan parameter toolbar dan scrollbar agar PDF viewer internal browser menampilkan scrollbar
+            iframeEl.src = fileUrl + '#toolbar=1&navpanes=0&scrollbar=1';
+        }
+    }
+
+    const modal = getPpmModal();
+    if (modal) {
+        modal.show();
+    }
 }
 
 document.addEventListener('DOMContentLoaded', function() {
     const modalEl = document.getElementById('ppmDocModal');
     if (modalEl) {
         modalEl.addEventListener('hidden.bs.modal', function () {
-            document.getElementById('ppmDocIframe').src = '';
+            const iframe = document.getElementById('ppmDocIframe');
+            if (iframe) iframe.src = 'about:blank';
+
+            // Bersihkan sisa efek backdrop dan pastikan scroll halaman utama kembali aktif
+            setTimeout(function() {
+                document.body.classList.remove('modal-open');
+                document.documentElement.classList.remove('modal-open');
+                document.body.style.removeProperty('overflow');
+                document.body.style.removeProperty('padding-right');
+                document.documentElement.style.removeProperty('overflow');
+                document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+            }, 80);
         });
     }
 });
 </script>
 
-<!-- SPMI Pop-up Document Viewer Modal -->
-<div class="modal fade" id="ppmDocModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-xl">
-        <div class="modal-content rounded-4 border-0 shadow-lg overflow-hidden" style="background: #0f172a; border: 1px solid rgba(74, 222, 128, 0.3) !important;">
-            <div class="modal-header border-0 py-3 px-4" style="background: #022c22; border-bottom: 1px solid rgba(74, 222, 128, 0.2) !important;">
+<!-- SPMI Pop-up Document Viewer Modal (Dapat Di-scroll Sempurna di Desktop & HP) -->
+<div class="modal fade" id="ppmDocModal" tabindex="-1" aria-labelledby="ppmDocTitle" aria-hidden="true" style="z-index: 1060;">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl" style="max-width: 1100px;">
+        <div class="modal-content rounded-4 border-0 shadow-2xl d-flex flex-column" style="background: #0f172a; border: 1px solid rgba(74, 222, 128, 0.3) !important; height: 88vh; max-height: calc(100vh - 40px);">
+            
+            <!-- Modal Header -->
+            <div class="modal-header border-0 py-3 px-4 flex-shrink-0" style="background: #022c22; border-bottom: 1px solid rgba(74, 222, 128, 0.2) !important;">
                 <div class="d-flex align-items-center gap-2 min-w-0 flex-grow-1">
                     <span id="ppmDocBadge" class="badge rounded-pill text-uppercase font-monospace bg-dark text-emerald-400 border border-success">PDF</span>
                     <h6 class="modal-title fw-bold text-white text-truncate mb-0" id="ppmDocTitle">Pratinjau Dokumen SPMI</h6>
@@ -581,9 +747,52 @@ document.addEventListener('DOMContentLoaded', function() {
                     </button>
                 </div>
             </div>
-            <div class="modal-body p-0" style="height: 75vh; background: #020617;">
-                <iframe id="ppmDocIframe" src="" class="w-100 h-100 border-0 bg-white" title="Pratinjau Dokumen Mutu"></iframe>
+
+            <!-- Sub-Toolbar Bantuan Scroll & Navigasi -->
+            <div class="px-3 py-2 bg-dark bg-opacity-75 border-bottom border-emerald-500 border-opacity-20 text-slate-300 small d-flex align-items-center justify-content-between flex-shrink-0">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="fas fa-info-circle text-emerald-400"></i>
+                    <span class="d-none d-md-inline">Gunakan scroll mouse atau usap layar untuk menelusuri seluruh halaman dokumen.</span>
+                    <span class="d-md-none">Usap layar untuk scroll dokumen.</span>
+                </div>
+                <div>
+                    <a id="ppmDocFullTab" href="#" target="_blank" class="text-emerald-400 text-decoration-none fw-semibold small d-inline-flex align-items-center gap-1">
+                        <i class="fas fa-expand-alt"></i> Layar Penuh
+                    </a>
+                </div>
             </div>
+
+            <!-- Modal Body (Scrollable Container) -->
+            <div class="modal-body p-0 flex-grow-1 position-relative" style="overflow-y: auto; -webkit-overflow-scrolling: touch; background: #020617;">
+                <!-- PDF Viewer Frame -->
+                <iframe id="ppmDocIframe" 
+                        src="" 
+                        class="w-100 h-100 border-0 bg-white" 
+                        style="display: block; width: 100%; height: 100%; min-height: 480px;" 
+                        scrolling="yes" 
+                        allow="fullscreen">
+                </iframe>
+
+                <!-- Word Document Fallback Card -->
+                <div id="ppmDocWordFallback" class="d-none w-100 h-100 flex-column align-items-center justify-content-center text-center p-4 p-md-5 my-auto" style="min-height: 480px;">
+                    <div class="rounded-circle bg-primary bg-opacity-10 text-primary d-inline-flex align-items-center justify-content-center mb-3" style="width: 76px; height: 76px;">
+                        <i class="fas fa-file-word fa-3x"></i>
+                    </div>
+                    <h5 class="fw-bold text-white mb-2" id="ppmWordDocTitle">Dokumen Microsoft Word</h5>
+                    <p class="text-slate-400 small mb-4 mx-auto" style="max-width: 500px; line-height: 1.6;">
+                        Format dokumen Word (.doc / .docx) tidak dapat ditampilkan secara interaktif di dalam bingkai peramban. Silakan unduh atau buka berkas untuk membaca seluruh isinya.
+                    </p>
+                    <div class="d-flex flex-wrap justify-content-center gap-2">
+                        <a id="ppmWordDownload" href="#" download class="btn btn-primary rounded-pill px-4 py-2 fw-bold d-inline-flex align-items-center gap-2">
+                            <i class="fas fa-download"></i> Unduh Berkas Word
+                        </a>
+                        <a id="ppmWordNewTab" href="#" target="_blank" class="btn btn-outline-light rounded-pill px-4 py-2 fw-semibold d-inline-flex align-items-center gap-2">
+                            <i class="fas fa-external-link-alt"></i> Buka Berkas Langsung
+                        </a>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>

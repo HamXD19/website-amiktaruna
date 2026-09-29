@@ -377,6 +377,9 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         Route::post('/ppm/dokumen', [PPMController::class, 'storeDokumen'])->name('admin.ppm.dokumen.store');
         Route::post('/ppm/dokumen/{id}', [PPMController::class, 'updateDokumen'])->name('admin.ppm.dokumen.update');
         Route::delete('/ppm/dokumen/{id}', [PPMController::class, 'destroyDokumen'])->name('admin.ppm.dokumen.destroy');
+        Route::post('/ppm/portal', [PPMController::class, 'storePortal'])->name('admin.ppm.portal.store');
+        Route::post('/ppm/portal/{id}', [PPMController::class, 'updatePortal'])->name('admin.ppm.portal.update');
+        Route::delete('/ppm/portal/{id}', [PPMController::class, 'destroyPortal'])->name('admin.ppm.portal.destroy');
     });
 
     Route::middleware(['menu.permission:lppm'])->group(function () {
@@ -385,6 +388,9 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         Route::post('/lppm/portal', [LPPMController::class, 'storePortal'])->name('admin.lppm.portal.store');
         Route::post('/lppm/portal/{id}', [LPPMController::class, 'updatePortal'])->name('admin.lppm.portal.update');
         Route::delete('/lppm/portal/{id}', [LPPMController::class, 'destroyPortal'])->name('admin.lppm.portal.destroy');
+        Route::post('/lppm/dokumen', [LPPMController::class, 'storeDokumen'])->name('admin.lppm.dokumen.store');
+        Route::post('/lppm/dokumen/{id}', [LPPMController::class, 'updateDokumen'])->name('admin.lppm.dokumen.update');
+        Route::delete('/lppm/dokumen/{id}', [LPPMController::class, 'destroyDokumen'])->name('admin.lppm.dokumen.destroy');
     });
 
     /*

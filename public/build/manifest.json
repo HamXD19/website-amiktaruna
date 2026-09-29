@@ -17,7 +17,7 @@
     "isDynamicEntry": true
   },
   "resources/css/app.css": {
-    "file": "assets/app-Dxt-b1J3.css",
+    "file": "assets/app-TOBLQ2a5.css",
     "name": "app",
     "names": [
       "app.css"
@@ -26,7 +26,7 @@
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-tBlt97AR.js",
+    "file": "assets/app-BEbgBFgg.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
@@ -115,7 +115,7 @@
     ]
   },
   "resources/js/pages/ProgramStudiDetailPage.vue": {
-    "file": "assets/ProgramStudiDetailPage-DyCRZHq-.js",
+    "file": "assets/ProgramStudiDetailPage-C99Ljft2.js",
     "name": "ProgramStudiDetailPage",
     "src": "resources/js/pages/ProgramStudiDetailPage.vue",
     "isDynamicEntry": true,
