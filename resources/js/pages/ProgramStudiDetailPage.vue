@@ -20,7 +20,7 @@ const props = defineProps({
   }
 });
 
-// Pop-up Document Viewer state
+// Pop-up Document Viewer state — untuk dokumen list (ProdiDokumen)
 const activePreviewDoc = ref(null);
 
 const openPreviewModal = (doc) => {
@@ -37,9 +37,30 @@ const closePreviewModal = () => {
   }
 };
 
+// Pop-up untuk file tunggal: kalender akademik & jadwal perkuliahan
+const activePreviewFile = ref(null); // { label, path }
+
+const openPreviewFile = (label, filename) => {
+  activePreviewFile.value = {
+    label,
+    path: `/uploads/program_studi/${filename}`
+  };
+  if (typeof document !== 'undefined') {
+    document.body.style.overflow = 'hidden';
+  }
+};
+
+const closePreviewFile = () => {
+  activePreviewFile.value = null;
+  if (typeof document !== 'undefined') {
+    document.body.style.overflow = '';
+  }
+};
+
 const handleKeydown = (e) => {
-  if (e.key === 'Escape' && activePreviewDoc.value) {
-    closePreviewModal();
+  if (e.key === 'Escape') {
+    if (activePreviewDoc.value) closePreviewModal();
+    if (activePreviewFile.value) closePreviewFile();
   }
 };
 
@@ -757,45 +778,75 @@ const handleImageError = () => {
                 </div>
 
                 <div v-if="dokumensList.length > 0 || program.kalender_akademik || program.jadwal_semester" class="space-y-3">
-                  <!-- Kalender Akademik Download -->
-                  <a
+                  <!-- Kalender Akademik: Lihat + Unduh -->
+                  <div
                     v-if="program.kalender_akademik"
-                    :href="`/uploads/program_studi/${program.kalender_akademik}`"
-                    target="_blank"
-                    download
-                    class="group flex items-center justify-between p-3.5 rounded-xl border border-emerald-500/20 hover:border-emerald-400 hover:bg-emerald-950/60 transition-colors"
+                    class="flex items-center justify-between p-3.5 rounded-xl border border-emerald-500/20 hover:border-emerald-400/60 hover:bg-emerald-950/40 transition-colors group"
                   >
-                    <div class="flex items-center gap-3">
-                      <span class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-300 flex items-center justify-center text-xs font-bold border border-emerald-500/30">
+                    <div class="flex items-center gap-3 min-w-0 flex-1">
+                      <span class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-300 flex items-center justify-center text-xs font-bold border border-emerald-500/30 shrink-0">
                         <i class="fas fa-calendar-alt"></i>
                       </span>
-                      <div>
-                        <span class="text-xs font-bold text-white block group-hover:text-emerald-300">Kalender Akademik</span>
+                      <div class="min-w-0">
+                        <span class="text-xs font-bold text-white block group-hover:text-emerald-300 transition-colors">Kalender Akademik</span>
                         <span class="text-[11px] text-slate-400">Format PDF Resmi</span>
                       </div>
                     </div>
-                    <i class="fas fa-download text-xs text-slate-400 group-hover:text-emerald-300 transition-colors"></i>
-                  </a>
+                    <div class="flex items-center gap-1.5 shrink-0 ml-2">
+                      <button
+                        type="button"
+                        @click="openPreviewFile('Kalender Akademik', program.kalender_akademik)"
+                        class="w-7 h-7 rounded-lg bg-white/10 hover:bg-emerald-500/20 text-slate-300 hover:text-emerald-300 flex items-center justify-center transition-colors cursor-pointer"
+                        title="Lihat Kalender Akademik"
+                      >
+                        <i class="fas fa-eye text-xs"></i>
+                      </button>
+                      <a
+                        :href="`/uploads/program_studi/${program.kalender_akademik}`"
+                        target="_blank"
+                        download
+                        class="w-7 h-7 rounded-lg bg-white/10 hover:bg-emerald-500/20 text-slate-300 hover:text-emerald-300 flex items-center justify-center transition-colors"
+                        title="Unduh Kalender Akademik"
+                      >
+                        <i class="fas fa-download text-xs"></i>
+                      </a>
+                    </div>
+                  </div>
 
-                  <!-- Jadwal Semester Download -->
-                  <a
+                  <!-- Jadwal Perkuliahan: Lihat + Unduh -->
+                  <div
                     v-if="program.jadwal_semester"
-                    :href="`/uploads/program_studi/${program.jadwal_semester}`"
-                    target="_blank"
-                    download
-                    class="group flex items-center justify-between p-3.5 rounded-xl border border-emerald-500/20 hover:border-emerald-400 hover:bg-emerald-950/60 transition-colors"
+                    class="flex items-center justify-between p-3.5 rounded-xl border border-emerald-500/20 hover:border-emerald-400/60 hover:bg-emerald-950/40 transition-colors group"
                   >
-                    <div class="flex items-center gap-3">
-                      <span class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-300 flex items-center justify-center text-xs font-bold border border-emerald-500/30">
+                    <div class="flex items-center gap-3 min-w-0 flex-1">
+                      <span class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-300 flex items-center justify-center text-xs font-bold border border-emerald-500/30 shrink-0">
                         <i class="fas fa-clock"></i>
                       </span>
-                      <div>
-                        <span class="text-xs font-bold text-white block group-hover:text-emerald-300">Jadwal Perkuliahan</span>
+                      <div class="min-w-0">
+                        <span class="text-xs font-bold text-white block group-hover:text-emerald-300 transition-colors">Jadwal Perkuliahan</span>
                         <span class="text-[11px] text-slate-400">Format PDF Resmi</span>
                       </div>
                     </div>
-                    <i class="fas fa-download text-xs text-slate-400 group-hover:text-emerald-300 transition-colors"></i>
-                  </a>
+                    <div class="flex items-center gap-1.5 shrink-0 ml-2">
+                      <button
+                        type="button"
+                        @click="openPreviewFile('Jadwal Perkuliahan', program.jadwal_semester)"
+                        class="w-7 h-7 rounded-lg bg-white/10 hover:bg-emerald-500/20 text-slate-300 hover:text-emerald-300 flex items-center justify-center transition-colors cursor-pointer"
+                        title="Lihat Jadwal Perkuliahan"
+                      >
+                        <i class="fas fa-eye text-xs"></i>
+                      </button>
+                      <a
+                        :href="`/uploads/program_studi/${program.jadwal_semester}`"
+                        target="_blank"
+                        download
+                        class="w-7 h-7 rounded-lg bg-white/10 hover:bg-emerald-500/20 text-slate-300 hover:text-emerald-300 flex items-center justify-center transition-colors"
+                        title="Unduh Jadwal Perkuliahan"
+                      >
+                        <i class="fas fa-download text-xs"></i>
+                      </a>
+                    </div>
+                  </div>
 
                   <!-- List of Quick Prodi Documents -->
                   <div v-if="dokumensList.length > 0" class="pt-2 border-t border-emerald-500/20">
@@ -1015,6 +1066,91 @@ const handleImageError = () => {
                 </a>
               </div>
             </div>
+          </div>
+
+        </div>
+      </div>
+    </Teleport>
+
+    <!-- 7. Pop-up Modal: Kalender Akademik & Jadwal Perkuliahan -->
+    <Teleport to="body">
+      <div
+        v-if="activePreviewFile"
+        class="fixed inset-0 flex items-center justify-center p-2 sm:p-4 bg-black/80 backdrop-blur-sm transition-all overflow-hidden"
+        style="z-index: 100060 !important;"
+        @click.self="closePreviewFile"
+      >
+        <div class="bg-slate-900 border border-emerald-500/30 rounded-2xl w-full max-w-5xl h-[calc(100vh-2rem)] max-h-[calc(100vh-2rem)] flex flex-col shadow-2xl overflow-hidden my-auto">
+
+          <!-- Modal Header -->
+          <div class="px-5 py-3.5 bg-slate-950/90 border-b border-emerald-500/20 flex items-center justify-between gap-4 flex-shrink-0">
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono uppercase bg-emerald-950 text-emerald-400 border border-emerald-500/30 font-bold">
+                  PDF
+                </span>
+                <span class="text-xs text-emerald-300 font-medium">Dokumen Resmi Program Studi</span>
+              </div>
+              <h3 class="text-base font-bold text-white truncate">
+                {{ activePreviewFile.label }}
+              </h3>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="flex items-center gap-2 shrink-0">
+              <a
+                :href="activePreviewFile.path"
+                target="_blank"
+                class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white/10 hover:bg-white/20 text-slate-200 border border-white/20 transition-colors"
+                title="Buka tab baru"
+              >
+                <i class="fas fa-external-link-alt text-[11px]"></i>
+                <span>Tab Baru</span>
+              </a>
+              <a
+                :href="activePreviewFile.path"
+                download
+                class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#16a34a] hover:bg-[#15803d] text-white transition-colors shadow-xs"
+              >
+                <i class="fas fa-download text-[11px]"></i>
+                <span class="hidden sm:inline">Unduh Berkas</span>
+              </a>
+              <button
+                type="button"
+                @click="closePreviewFile"
+                class="w-8 h-8 rounded-lg bg-white/10 hover:bg-rose-500/20 text-slate-300 hover:text-rose-300 flex items-center justify-center transition-colors cursor-pointer"
+                title="Tutup (Esc)"
+              >
+                <i class="fas fa-times text-sm"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Sub-toolbar Hint -->
+          <div class="px-4 py-2 bg-slate-950/80 border-b border-emerald-500/15 text-slate-300 text-xs flex items-center justify-between flex-shrink-0">
+            <span class="flex items-center gap-1.5 text-emerald-300">
+              <i class="fas fa-info-circle text-emerald-400"></i>
+              <span class="hidden md:inline">Klik area dokumen lalu gunakan scroll mouse / usap layar ke bawah untuk membaca seluruh halaman.</span>
+              <span class="md:hidden">Usap layar untuk scroll dokumen.</span>
+            </span>
+            <a
+              :href="activePreviewFile.path"
+              target="_blank"
+              class="text-emerald-400 hover:text-emerald-300 font-semibold inline-flex items-center gap-1"
+            >
+              <i class="fas fa-expand-alt text-[10px]"></i> Layar Penuh
+            </a>
+          </div>
+
+          <!-- Modal Body / Iframe PDF Preview -->
+          <div class="flex-1 bg-slate-950 relative flex flex-col overflow-y-auto" style="-webkit-overflow-scrolling: touch;">
+            <iframe
+              :src="`${activePreviewFile.path}#view=FitH&zoom=page-width&toolbar=1&navpanes=0&scrollbar=1`"
+              class="w-full h-full min-h-[400px] border-0 bg-white block flex-1"
+              title="Pratinjau Dokumen PDF"
+              scrolling="yes"
+              allow="fullscreen"
+            ></iframe>
           </div>
 
         </div>
