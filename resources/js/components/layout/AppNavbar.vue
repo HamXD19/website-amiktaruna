@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onUnmounted, watch } from 'vue';
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
 
 const props = defineProps({
   setting: {
@@ -58,16 +58,18 @@ const toggleMobileGroup = (group) => {
 
 const isGroupActive = (group) => {
   if (!group || !group.items) return false;
-  return group.items.some(item => {
+  const items = Array.isArray(group.items) ? group.items : Object.values(group.items);
+  return items.some(item => {
+    if (!item || !item.href) return false;
     const cleanItemHref = item.href.split('#')[0];
-    const cleanCurrent = props.currentPath.split('#')[0];
+    const cleanCurrent = (props.currentPath || '/').split('#')[0];
     return cleanCurrent === cleanItemHref || (cleanItemHref !== '/' && cleanCurrent.startsWith(cleanItemHref + '/'));
   });
 };
 
 const isItemActive = (item) => {
   if (!item || !item.href) return false;
-  const cleanCurrent = props.currentPath.split('#')[0].split('?')[0];
+  const cleanCurrent = (props.currentPath || '/').split('#')[0].split('?')[0];
   const hash = currentHash.value;
 
   // 1. If item has an anchor hash (e.g. /tentang#visi-misi)
@@ -139,11 +141,31 @@ const defaultNavConfig = {
 };
 
 const navConfig = computed(() => {
-  const custom = props.setting?.nav_menus;
-  if (!custom) return defaultNavConfig;
+  let custom = props.setting?.nav_menus;
+  if (typeof custom === 'string') {
+    try {
+      custom = JSON.parse(custom);
+    } catch (e) {
+      custom = null;
+    }
+  }
+  if (!custom || typeof custom !== 'object') return defaultNavConfig;
+
+  let groups = custom.groups;
+  if (groups && typeof groups === 'object' && !Array.isArray(groups)) {
+    groups = Object.values(groups);
+  }
+
+  if (Array.isArray(groups) && groups.length > 0) {
+    groups = groups.map(g => ({
+      ...g,
+      items: Array.isArray(g.items) ? g.items : (g.items && typeof g.items === 'object' ? Object.values(g.items) : [])
+    }));
+  }
+
   return {
     beranda: custom.beranda || defaultNavConfig.beranda,
-    groups: (custom.groups && custom.groups.length > 0) ? custom.groups : defaultNavConfig.groups
+    groups: (Array.isArray(groups) && groups.length > 0) ? groups : defaultNavConfig.groups
   };
 });
 
