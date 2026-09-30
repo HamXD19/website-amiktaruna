@@ -38,10 +38,19 @@ const isKaprodi = (d) => {
          j.includes('Kepala Program Studi');
 };
 
+// Staf / Staff / Tendik (termasuk Staf UPT, Staf PPM, Staf Perpustakaan, Staf Layanan, dsb.)
+const isStaf = (d) => {
+  const j = d.jabatan || '';
+  if (isDirektur(d) || isWadir(d) || isKaprodi(d)) return false;
+  const hasStaffKeyword = j.includes('Staf') || j.includes('Staff') || j.includes('Tendik') || j.includes('Tenaga Kependidikan');
+  const hasPimpinanKeyword = j.includes('Ketua') || j.includes('Kepala');
+  return hasStaffKeyword && !hasPimpinanKeyword;
+};
+
 // Kepala / Ketua Lembaga, Pusat Penjaminan Mutu (PPM), LPPM, Perpustakaan, Kerjasama
 const isLembagaOrPusat = (d) => {
   const j = d.jabatan || '';
-  if (isKaprodi(d) || isDirektur(d) || isWadir(d)) return false;
+  if (isKaprodi(d) || isDirektur(d) || isWadir(d) || isStaf(d)) return false;
   return j.includes('Ketua Lembaga') ||
          j.includes('Ketua Pusat') ||
          j.includes('Kepala Pusat') ||
@@ -50,23 +59,17 @@ const isLembagaOrPusat = (d) => {
          j.includes('Kepala UPT') ||
          j.includes('Ketua Unit') ||
          j.includes('Kepala Unit') ||
-         j.includes('Penjaminan Mutu') ||
-         j.includes('PPM') ||
-         j.includes('LPPM') ||
-         j.includes('Perpustakaan') ||
-         j.includes('Kerjasama');
+         (j.includes('Penjaminan Mutu') && !isStaf(d)) ||
+         (j.includes('PPM') && !isStaf(d)) ||
+         (j.includes('LPPM') && !isStaf(d)) ||
+         (j.includes('Perpustakaan') && !isStaf(d)) ||
+         (j.includes('Kerjasama') && !isStaf(d));
 };
 
 const isKabag = (d) => {
   const j = d.jabatan || '';
-  if (isLembagaOrPusat(d) || isKaprodi(d) || isDirektur(d) || isWadir(d)) return false;
+  if (isLembagaOrPusat(d) || isKaprodi(d) || isDirektur(d) || isWadir(d) || isStaf(d)) return false;
   return j.includes('Kepala Bagian') || j.includes('Kabag');
-};
-
-const isStaf = (d) => {
-  const j = d.jabatan || '';
-  if (isDirektur(d) || isWadir(d) || isLembagaOrPusat(d) || isKaprodi(d) || isKabag(d)) return false;
-  return j.includes('Staf') || j.includes('Staff') || j.includes('Tendik') || j.includes('Tenaga Kependidikan');
 };
 
 const isDosenPengajar = (d) => {
@@ -86,14 +89,14 @@ const organigramLevels = computed(() => {
   return [
     {
       level: 1,
-      title: 'Pimpinan Utama',
+      title: 'Direktur',
       subtitle: 'Direktur AMIK Taruna Probolinggo',
       badge: 'Level 1',
       items: direktur
     },
     {
       level: 2,
-      title: 'Pimpinan Pembantu',
+      title: 'Wakil Direktur',
       subtitle: 'Wakil Direktur Bidang Akademik, Keuangan & Kemahasiswaan',
       badge: 'Level 2',
       items: wadir

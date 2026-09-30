@@ -26,7 +26,7 @@
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-DE06tJSM.js",
+    "file": "assets/app-Bi62C1Tq.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
@@ -127,7 +127,7 @@
     ]
   },
   "resources/js/pages/TentangPage.vue": {
-    "file": "assets/TentangPage-jQSdEUD_.js",
+    "file": "assets/TentangPage-DalC1hjh.js",
     "name": "TentangPage",
     "src": "resources/js/pages/TentangPage.vue",
     "isDynamicEntry": true,
