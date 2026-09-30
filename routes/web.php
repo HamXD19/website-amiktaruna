@@ -25,6 +25,7 @@ use App\Http\Controllers\PPKSController;
 use App\Http\Controllers\DokumenKampusController;
 use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\Admin\ActivityLogController;
+use App\Http\Controllers\HalamanKustomController;
 /*
 |--------------------------------------------------------------------------
 | FRONTEND
@@ -35,6 +36,8 @@ Route::get('/', [BeritaController::class, 'home']);
 
 Route::get('/berita', [BeritaController::class, 'indexPublic']);
 Route::get('/berita/{slug}', [BeritaController::class, 'showPublic']);
+
+Route::get('/halaman/{slug}', [HalamanKustomController::class, 'showPublic'])->name('halaman.show');
 
 Route::get('/dokumen-kampus', [DokumenKampusController::class, 'index'])->name('dokumen_kampus.index');
 
@@ -237,6 +240,15 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
 
         Route::put('/setting/update', [SettingController::class, 'update'])
             ->name('setting.update');
+
+        Route::post('/halaman-kustom', [HalamanKustomController::class, 'store'])
+            ->name('admin.halaman.store');
+
+        Route::put('/halaman-kustom/{id}', [HalamanKustomController::class, 'update'])
+            ->name('admin.halaman.update');
+
+        Route::delete('/halaman-kustom/{id}', [HalamanKustomController::class, 'destroy'])
+            ->name('admin.halaman.destroy');
     });
 
     /*

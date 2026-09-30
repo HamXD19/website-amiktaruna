@@ -944,9 +944,105 @@
                                 <span>Pengaturan Nama Menu, Sub-Menu &amp; Tambah Sub-Menu</span>
                             </h4>
                             <p class="text-slate-500 small mb-0 mt-1">
-                                Anda dapat mengganti label nama setiap menu utama, mengubah tautan dan nama sub-menu, serta menambah sub-menu baru sesuai kebutuhan institusi.
+                                Anda dapat mengganti label nama setiap menu utama, mengubah tautan dan nama sub-menu, serta menambah sub-menu baru dengan opsi mengisi halaman konten lengkap (seperti di project Kraksaan Wetan).
                             </p>
                         </div>
+                    </div>
+
+                    <!-- FITUR SEPERTI KRAKSAAN WETAN: KELOLA HALAMAN KONTEN SUB-MENU -->
+                    <div class="sub-card mb-4" style="background: linear-gradient(135deg, #f0fdf4, #ecfdf5); border: 1.5px solid #a7f3d0;">
+                        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+                            <div>
+                                <div class="d-inline-flex align-items-center gap-1.5 px-2.5 py-0.5 rounded-pill small fw-bold mb-1" style="background: #dcfce7; color: #166534; font-size: 0.75rem;">
+                                    <i class="fas fa-file-circle-plus"></i> Fitur Seperti Kraksaan Wetan
+                                </div>
+                                <h5 class="fw-bold text-slate-900 mb-0">Halaman Konten Dinamis untuk Sub-Menu</h5>
+                                <p class="text-slate-500 small mb-0 mt-0.5">
+                                    Tambahkan sub-menu baru lengkap dengan opsi mengisi konten artikel, ringkasan, dan foto cover yang otomatis dibuatkan halaman publiknya (<code class="text-emerald-800">/halaman/{slug}</code>).
+                                </p>
+                            </div>
+
+                            <button type="button" class="btn btn-success rounded-pill px-4 py-2.5 fw-bold shadow-xs d-inline-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#modalTambahHalaman">
+                                <i class="fas fa-plus-circle"></i>
+                                <span>+ Tambah Sub-Menu &amp; Tulis Halaman Baru</span>
+                            </button>
+                        </div>
+
+                        <!-- DAFTAR HALAMAN KUSTOM YANG SUDAH DIBUAT -->
+                        @if(isset($halamanList) && $halamanList->count() > 0)
+                            <div class="table-responsive rounded-3 border bg-white mt-3">
+                                <table class="table table-sm align-middle mb-0">
+                                    <thead class="table-light">
+                                        <tr class="small text-slate-600">
+                                            <th width="45" class="text-center">No</th>
+                                            <th width="60" class="text-center">Cover</th>
+                                            <th>Judul Sub-Menu &amp; Slug URL</th>
+                                            <th width="160">Menu Dropdown</th>
+                                            <th width="90" class="text-center">Status</th>
+                                            <th width="160" class="text-center">Aksi Halaman</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($halamanList as $hIdx => $hal)
+                                            <tr>
+                                                <td class="text-center small text-slate-400 fw-bold">{{ $hIdx + 1 }}</td>
+                                                <td class="text-center">
+                                                    @if($hal->gambar)
+                                                        <img src="{{ $hal->gambar_url }}" alt="Cover" class="rounded-2" style="width: 44px; height: 32px; object-fit: cover;">
+                                                    @else
+                                                        <span class="badge bg-light text-muted border" style="font-size: 0.65rem;">No Img</span>
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    <div class="fw-bold text-slate-900">{{ $hal->judul }}</div>
+                                                    <div class="text-emerald-700 font-monospace small">/halaman/{{ $hal->slug }}</div>
+                                                    @if($hal->ringkasan)
+                                                        <div class="text-slate-500 small text-truncate" style="max-width: 320px;">{{ $hal->ringkasan }}</div>
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    @if($hal->kategori == 'profil')
+                                                        <span class="badge rounded-pill px-2.5 py-1" style="background-color: #e0e7ff; color: #4338ca; border: 1px solid #c7d2fe;">Profil</span>
+                                                    @elseif($hal->kategori == 'akademik')
+                                                        <span class="badge rounded-pill px-2.5 py-1" style="background-color: #f3e8ff; color: #7e22ce; border: 1px solid #d8b4fe;">Akademik</span>
+                                                    @elseif($hal->kategori == 'riset')
+                                                        <span class="badge rounded-pill px-2.5 py-1" style="background-color: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd;">Riset &amp; Lembaga</span>
+                                                    @else
+                                                        <span class="badge rounded-pill px-2.5 py-1" style="background-color: #ecfdf5; color: #065f46; border: 1px solid #6ee7b7;">Informasi</span>
+                                                    @endif
+                                                </td>
+                                                <td class="text-center">
+                                                    @if($hal->aktif)
+                                                        <span class="badge bg-success rounded-pill px-2.5 py-1 small">Aktif</span>
+                                                    @else
+                                                        <span class="badge bg-secondary rounded-pill px-2 py-0.5 small">Draft</span>
+                                                    @endif
+                                                </td>
+                                                <td class="text-center">
+                                                    <div class="d-flex justify-content-center gap-1">
+                                                        <a href="{{ url('/halaman/' . $hal->slug) }}" target="_blank" class="btn btn-outline-primary btn-sm rounded-pill p-1 px-2" title="Lihat Halaman Publik">
+                                                            <i class="fas fa-external-link-alt fa-xs"></i>
+                                                        </a>
+                                                        <button type="button" class="btn btn-outline-warning btn-sm rounded-pill p-1 px-2 text-dark" onclick="openEditHalamanModal({{ json_encode($hal) }})" title="Edit Isi Halaman Ini">
+                                                            <i class="fas fa-edit fa-xs"></i>
+                                                        </button>
+                                                        <button type="button" class="btn btn-outline-danger btn-sm rounded-pill p-1 px-2" onclick="confirmDeleteHalaman({{ $hal->id }}, '{{ addslashes($hal->judul) }}')" title="Hapus Halaman &amp; Sub-Menu">
+                                                            <i class="fas fa-trash-can fa-xs"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        @else
+                            <div class="text-center py-4 bg-white rounded-3 border">
+                                <i class="fas fa-file-lines fa-2x text-emerald-400 opacity-60 mb-2"></i>
+                                <div class="fw-bold text-slate-700 small">Belum ada Halaman Konten Kustom</div>
+                                <div class="text-slate-400 small">Klik tombol <strong>"+ Tambah Sub-Menu &amp; Tulis Halaman Baru"</strong> untuk menambahkan sub-menu baru lengkap dengan halaman artikelnya.</div>
+                            </div>
+                        @endif
                     </div>
 
                     <!-- 1. Menu Single: Beranda -->
@@ -986,8 +1082,11 @@
                                         <input type="text" name="nav_menus[groups][{{ $gIdx }}][label]" class="form-control fw-bold" value="{{ $group['label'] }}" placeholder="Nama Menu..." required>
                                     </div>
                                 </div>
-                                <div>
+                                <div class="d-flex align-items-center gap-2">
                                     <span class="badge bg-slate-200 text-slate-700 rounded-pill px-3 py-1 font-monospace small">ID: {{ $group['id'] }}</span>
+                                    <button type="button" class="btn btn-outline-success btn-sm rounded-pill px-3 fw-bold" onclick="openTambahHalamanWithCategory('{{ $group['id'] }}')">
+                                        <i class="fas fa-file-circle-plus me-1"></i>+ Tulis Halaman di {{ $group['label'] }}
+                                    </button>
                                 </div>
                             </div>
 
@@ -1001,15 +1100,30 @@
                                             <th width="240">Tautan / URL <span class="text-danger">*</span></th>
                                             <th>Keterangan Singkat</th>
                                             <th width="160">Target</th>
-                                            <th width="50" class="text-center">Aksi</th>
+                                            <th width="90" class="text-center">Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody class="sub-items-body" data-group-index="{{ $gIdx }}" data-group-id="{{ $group['id'] }}">
                                         @foreach($group['items'] ?? [] as $iIdx => $item)
+                                            @php
+                                                $isHalamanUrl = str_starts_with($item['href'] ?? '', '/halaman/');
+                                                $matchedHalaman = null;
+                                                if ($isHalamanUrl && isset($halamanList)) {
+                                                    $itemSlug = str_replace('/halaman/', '', $item['href']);
+                                                    $matchedHalaman = $halamanList->firstWhere('slug', $itemSlug);
+                                                }
+                                            @endphp
                                             <tr class="sub-item-row">
                                                 <td class="text-center text-slate-400 small fw-bold row-num">{{ $iIdx + 1 }}</td>
                                                 <td>
                                                     <input type="text" name="nav_menus[groups][{{ $gIdx }}][items][{{ $iIdx }}][label]" class="form-control form-control-sm rounded-3" value="{{ $item['label'] }}" placeholder="Label sub menu..." required>
+                                                    @if($isHalamanUrl)
+                                                        <div class="mt-1">
+                                                            <span class="badge rounded-pill" style="background-color: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; font-size: 0.68rem;">
+                                                                <i class="fas fa-file-lines me-1"></i>Halaman Konten
+                                                            </span>
+                                                        </div>
+                                                    @endif
                                                 </td>
                                                 <td>
                                                     <input type="text" name="nav_menus[groups][{{ $gIdx }}][items][{{ $iIdx }}][href]" class="form-control form-control-sm rounded-3 font-monospace" value="{{ $item['href'] }}" placeholder="/halaman atau https://..." required>
@@ -1025,9 +1139,21 @@
                                                     <input type="hidden" name="nav_menus[groups][{{ $gIdx }}][items][{{ $iIdx }}][icon]" value="{{ $item['icon'] ?? 'fas fa-angle-right' }}">
                                                 </td>
                                                 <td class="text-center">
-                                                    <button type="button" class="btn btn-outline-danger btn-sm rounded-pill p-1 px-2 btn-del-submenu" title="Hapus sub-menu ini">
-                                                        <i class="fas fa-trash-can fa-xs"></i>
-                                                    </button>
+                                                    <div class="d-flex justify-content-center align-items-center gap-1">
+                                                        @if($matchedHalaman)
+                                                            <button type="button" class="btn btn-outline-success btn-sm rounded-pill p-1 px-2" onclick="openEditHalamanModal({{ json_encode($matchedHalaman) }})" title="Edit Isi Halaman Ini">
+                                                                <i class="fas fa-pen-to-square fa-xs"></i>
+                                                            </button>
+                                                        @endif
+                                                        @if($isHalamanUrl)
+                                                            <a href="{{ url($item['href']) }}" target="_blank" class="btn btn-outline-info btn-sm rounded-pill p-1 px-2" title="Buka Halaman Publik">
+                                                                <i class="fas fa-external-link-alt fa-xs"></i>
+                                                            </a>
+                                                        @endif
+                                                        <button type="button" class="btn btn-outline-danger btn-sm rounded-pill p-1 px-2 btn-del-submenu" title="Hapus sub-menu ini">
+                                                            <i class="fas fa-trash-can fa-xs"></i>
+                                                        </button>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -1036,9 +1162,12 @@
                             </div>
 
                             <!-- Tombol Tambah Sub-Menu -->
-                            <div class="pt-2">
-                                <button type="button" class="btn btn-outline-success btn-sm rounded-pill px-3 fw-bold btn-add-submenu" data-group-index="{{ $gIdx }}" data-group-id="{{ $group['id'] }}">
-                                    <i class="fas fa-plus-circle me-1"></i>Tambah Sub-Menu di {{ $group['label'] }}
+                            <div class="pt-2 d-flex flex-wrap align-items-center gap-2">
+                                <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill px-3 fw-bold btn-add-submenu" data-group-index="{{ $gIdx }}" data-group-id="{{ $group['id'] }}">
+                                    <i class="fas fa-link me-1"></i>+ Tambah Tautan Biasa
+                                </button>
+                                <button type="button" class="btn btn-outline-success btn-sm rounded-pill px-3 fw-bold" onclick="openTambahHalamanWithCategory('{{ $group['id'] }}')">
+                                    <i class="fas fa-file-circle-plus me-1"></i>+ Tulis Halaman di {{ $group['label'] }}
                                 </button>
                             </div>
                         </div>
@@ -1066,9 +1195,307 @@
 
 </div>
 
+<!-- ========================================================
+     MODAL TAMBAH SUB-MENU & BUAT HALAMAN BARU (KRAKSAAN WETAN STYLE)
+======================================================== -->
+<div class="modal fade" id="modalTambahHalaman" tabindex="-1" aria-labelledby="modalTambahHalamanLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content rounded-4 border-0 shadow-lg overflow-hidden">
+            <form action="{{ route('admin.halaman.store') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+
+                <div class="modal-header bg-emerald-50 border-bottom border-emerald-200 py-3 px-4">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="rounded-3 bg-emerald-600 text-white d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
+                            <i class="fas fa-file-circle-plus"></i>
+                        </div>
+                        <div>
+                            <h5 class="modal-title fw-bold text-slate-900 mb-0" id="modalTambahHalamanLabel">
+                                Tambah Sub-Menu &amp; Tulis Halaman Baru
+                            </h5>
+                            <span class="text-slate-500 small">Konfigurasi sub-menu navigasi sekaligus isi konten halamannya</span>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body p-4 space-y-4">
+                    
+                    <!-- 1. Letak Menu Dropdown Navbar -->
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-slate-700">Letak Menu Dropdown Navbar <span class="text-danger">*</span></label>
+                        <div class="row g-2" id="tambahKategoriOptions">
+                            <div class="col-sm-6 col-md-3">
+                                <label class="d-block p-2.5 rounded-3 border cursor-pointer text-center kat-choice-card" style="background: #f8fafc;">
+                                    <input type="radio" name="kategori" value="profil" class="form-check-input me-1" checked>
+                                    <span class="small fw-bold text-slate-800">Profil</span>
+                                </label>
+                            </div>
+                            <div class="col-sm-6 col-md-3">
+                                <label class="d-block p-2.5 rounded-3 border cursor-pointer text-center kat-choice-card" style="background: #f8fafc;">
+                                    <input type="radio" name="kategori" value="akademik" class="form-check-input me-1">
+                                    <span class="small fw-bold text-slate-800">Akademik</span>
+                                </label>
+                            </div>
+                            <div class="col-sm-6 col-md-3">
+                                <label class="d-block p-2.5 rounded-3 border cursor-pointer text-center kat-choice-card" style="background: #f8fafc;">
+                                    <input type="radio" name="kategori" value="riset" class="form-check-input me-1">
+                                    <span class="small fw-bold text-slate-800">Riset &amp; Lembaga</span>
+                                </label>
+                            </div>
+                            <div class="col-sm-6 col-md-3">
+                                <label class="d-block p-2.5 rounded-3 border cursor-pointer text-center kat-choice-card" style="background: #f8fafc;">
+                                    <input type="radio" name="kategori" value="informasi" class="form-check-input me-1">
+                                    <span class="small fw-bold text-slate-800">Informasi</span>
+                                </label>
+                            </div>
+                        </div>
+                        <small class="text-muted d-block mt-1">Pilih dropdown tempat sub-menu ini akan muncul pada navigasi navbar.</small>
+                    </div>
+
+                    <!-- 2. Nama Sub-Menu & Slug URL -->
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-7">
+                            <label class="form-label small fw-bold text-slate-700">Nama Sub-Menu / Judul Halaman <span class="text-danger">*</span></label>
+                            <input type="text" name="judul" id="tambah_judul" class="form-control rounded-3" placeholder="Contoh: Prestasi Mahasiswa / Mars Kampus" required oninput="generateSlugFromJudul(this.value, 'tambah_slug')">
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-label small fw-bold text-slate-700">Slug URL (/halaman/:slug) <span class="text-danger">*</span></label>
+                            <input type="text" name="slug" id="tambah_slug" class="form-control rounded-3 font-monospace text-emerald-800" placeholder="prestasi-mahasiswa" required>
+                        </div>
+                    </div>
+
+                    <!-- 3. Ringkasan Singkat -->
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-slate-700">Ringkasan Singkat (Opsional)</label>
+                        <input type="text" name="ringkasan" class="form-control rounded-3" placeholder="Ringkasan 1-2 kalimat pengantar untuk pembaca...">
+                        <small class="text-muted d-block mt-1">Ditampilkan sebagai kutipan pengantar beraksen di bagian atas artikel.</small>
+                    </div>
+
+                    <!-- 4. Foto Cover / Gambar Utama -->
+                    <div class="mb-3 p-3 rounded-3 bg-light border">
+                        <label class="form-label small fw-bold text-slate-700 mb-2">Foto Cover / Gambar Utama Halaman</label>
+                        <div class="d-flex flex-column flex-sm-row align-items-center gap-3">
+                            <div id="previewCoverTambah" class="rounded-3 border bg-white d-flex align-items-center justify-content-center overflow-hidden flex-shrink-0" style="width: 110px; height: 75px;">
+                                <span class="text-muted small">Tanpa Foto</span>
+                            </div>
+                            <div class="flex-grow-1 w-100">
+                                <input type="file" name="gambar" class="form-control form-control-sm rounded-3" accept="image/png, image/jpeg, image/jpg, image/webp" onchange="previewImage(this, 'previewCoverTambah')">
+                                <small class="text-muted d-block mt-1">Format: JPG, PNG, WEBP (Maks 10MB). Ditampilkan di atas konten halaman.</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 5. Konten Paragraf & Isi Halaman -->
+                    <div class="mb-3">
+                        <div class="d-flex flex-wrap align-items-center justify-content-between mb-1">
+                            <label class="form-label small fw-bold text-slate-700 mb-0">Konten Paragraf &amp; Isi Halaman <span class="text-danger">*</span></label>
+                            <span class="text-emerald-700 small" style="font-size: 0.76rem;">Gunakan tombol toolbar di bawah untuk format teks</span>
+                        </div>
+
+                        <!-- Formatting Toolbar -->
+                        <div class="d-flex flex-wrap align-items-center gap-1 mb-2 p-1.5 bg-light rounded-3 border">
+                            <button type="button" class="btn btn-sm btn-white border px-2 py-1 fw-bold" onclick="insertFormat('b', 'tambah_konten')" title="Tebal (Bold)"><b>B</b></button>
+                            <button type="button" class="btn btn-sm btn-white border px-2 py-1 fst-italic" onclick="insertFormat('i', 'tambah_konten')" title="Miring (Italic)"><i>I</i></button>
+                            <button type="button" class="btn btn-sm btn-white border px-2 py-1 fw-bold" onclick="insertFormat('h2', 'tambah_konten')" title="Sub-Judul (H2)">H2</button>
+                            <button type="button" class="btn btn-sm btn-white border px-2 py-1 fw-bold" onclick="insertFormat('h3', 'tambah_konten')" title="Poin Judul (H3)">H3</button>
+                            <button type="button" class="btn btn-sm btn-white border px-2 py-1" onclick="insertFormat('ul', 'tambah_konten')" title="Daftar Poin (List Bullet)"><i class="fas fa-list-ul"></i></button>
+                            <button type="button" class="btn btn-sm btn-white border px-2 py-1" onclick="insertFormat('ol', 'tambah_konten')" title="Daftar Nomor (List Number)"><i class="fas fa-list-ol"></i></button>
+                            <button type="button" class="btn btn-sm btn-white border px-2 py-1" onclick="insertFormat('quote', 'tambah_konten')" title="Kutipan (Blockquote)"><i class="fas fa-quote-left"></i></button>
+                            <button type="button" class="btn btn-sm btn-white border px-2 py-1" onclick="insertFormat('table', 'tambah_konten')" title="Tabel Konten"><i class="fas fa-table"></i></button>
+                            <button type="button" class="btn btn-sm btn-white border px-2 py-1" onclick="insertFormat('link', 'tambah_konten')" title="Tautan Link"><i class="fas fa-link"></i></button>
+                        </div>
+
+                        <textarea name="konten" id="tambah_konten" rows="8" class="form-control rounded-3" placeholder="Tuliskan isi informasi lengkap untuk halaman ini (paragraf, poin penting, tabel atau deskripsi)..." style="font-size: 0.9rem; line-height: 1.6;"></textarea>
+                    </div>
+
+                    <!-- 6. Opsi Status & Urutan -->
+                    <div class="row g-3 align-items-center pt-2 border-top">
+                        <div class="col-md-7">
+                            <div class="form-check form-switch mb-1">
+                                <input class="form-check-input" type="checkbox" name="tambah_ke_navbar" id="tambahNavbarSwitch" value="1" checked style="cursor: pointer;">
+                                <label class="form-check-label small fw-bold text-slate-800" for="tambahNavbarSwitch">
+                                    Otomatis Pasang di Menu Navigasi Navbar
+                                </label>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="aktif" id="tambahAktifSwitch" value="1" checked style="cursor: pointer;">
+                                <label class="form-check-label small fw-bold text-slate-800" for="tambahAktifSwitch">
+                                    Publikasikan Halaman Ini (Status Aktif)
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-5 d-flex align-items-center justify-content-md-end gap-2">
+                            <span class="small fw-bold text-slate-700">Urutan Tampil:</span>
+                            <input type="number" name="urutan" class="form-control form-control-sm text-center rounded-3" style="width: 80px;" value="{{ (isset($halamanList) ? $halamanList->count() : 0) + 1 }}" min="0">
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer bg-light border-top py-3 px-4 d-flex justify-content-between">
+                    <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-success fw-bold rounded-pill px-5 shadow-xs d-inline-flex align-items-center gap-2">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Terbitkan Halaman &amp; Pasang di Menu</span>
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================
+     MODAL EDIT HALAMAN KUSTOM
+======================================================== -->
+<div class="modal fade" id="modalEditHalaman" tabindex="-1" aria-labelledby="modalEditHalamanLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content rounded-4 border-0 shadow-lg overflow-hidden">
+            <form id="formEditHalaman" action="" method="POST" enctype="multipart/form-data">
+                @csrf
+                @method('PUT')
+
+                <div class="modal-header bg-emerald-50 border-bottom border-emerald-200 py-3 px-4">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="rounded-3 bg-emerald-600 text-white d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
+                            <i class="fas fa-edit"></i>
+                        </div>
+                        <div>
+                            <h5 class="modal-title fw-bold text-slate-900 mb-0" id="modalEditHalamanLabel">
+                                Edit Isi Sub-Menu &amp; Halaman Konten
+                            </h5>
+                            <span class="text-slate-500 small">Perbarui judul, tata letak menu dropdown, atau isi konten artikel</span>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body p-4 space-y-4">
+                    
+                    <!-- 1. Letak Menu Dropdown Navbar -->
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-slate-700">Letak Menu Dropdown Navbar <span class="text-danger">*</span></label>
+                        <select name="kategori" id="edit_kategori" class="form-select rounded-3" required>
+                            <option value="profil">Dropdown Profil</option>
+                            <option value="akademik">Dropdown Akademik</option>
+                            <option value="riset">Dropdown Riset &amp; Lembaga</option>
+                            <option value="informasi">Dropdown Informasi</option>
+                        </select>
+                    </div>
+
+                    <!-- 2. Nama Sub-Menu & Slug URL -->
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-7">
+                            <label class="form-label small fw-bold text-slate-700">Nama Sub-Menu / Judul Halaman <span class="text-danger">*</span></label>
+                            <input type="text" name="judul" id="edit_judul" class="form-control rounded-3" required>
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-label small fw-bold text-slate-700">Slug URL (/halaman/:slug) <span class="text-danger">*</span></label>
+                            <input type="text" name="slug" id="edit_slug" class="form-control rounded-3 font-monospace text-emerald-800" required>
+                        </div>
+                    </div>
+
+                    <!-- 3. Ringkasan Singkat -->
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-slate-700">Ringkasan Singkat (Opsional)</label>
+                        <input type="text" name="ringkasan" id="edit_ringkasan" class="form-control rounded-3">
+                    </div>
+
+                    <!-- 4. Foto Cover / Gambar Utama -->
+                    <div class="mb-3 p-3 rounded-3 bg-light border">
+                        <label class="form-label small fw-bold text-slate-700 mb-2">Foto Cover / Gambar Utama Halaman</label>
+                        <div class="d-flex flex-column flex-sm-row align-items-center gap-3">
+                            <div id="previewCoverEdit" class="rounded-3 border bg-white d-flex align-items-center justify-content-center overflow-hidden flex-shrink-0" style="width: 110px; height: 75px;">
+                                <span class="text-muted small">Tanpa Foto</span>
+                            </div>
+                            <div class="flex-grow-1 w-100">
+                                <input type="file" name="gambar" class="form-control form-control-sm rounded-3 mb-2" accept="image/png, image/jpeg, image/jpg, image/webp" onchange="previewImage(this, 'previewCoverEdit')">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="hapus_gambar" id="hapusGambarCheckbox" value="1">
+                                    <label class="form-check-label small text-danger" for="hapusGambarCheckbox">
+                                        Hapus gambar cover yang ada
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 5. Konten Paragraf & Isi Halaman -->
+                    <div class="mb-3">
+                        <div class="d-flex flex-wrap align-items-center justify-content-between mb-1">
+                            <label class="form-label small fw-bold text-slate-700 mb-0">Konten Paragraf &amp; Isi Halaman</label>
+                            <span class="text-emerald-700 small" style="font-size: 0.76rem;">Gunakan tombol toolbar di bawah untuk format teks</span>
+                        </div>
+
+                        <!-- Formatting Toolbar -->
+                        <div class="d-flex flex-wrap align-items-center gap-1 mb-2 p-1.5 bg-light rounded-3 border">
+                            <button type="button" class="btn btn-sm btn-white border px-2 py-1 fw-bold" onclick="insertFormat('b', 'edit_konten')" title="Tebal (Bold)"><b>B</b></button>
+                            <button type="button" class="btn btn-sm btn-white border px-2 py-1 fst-italic" onclick="insertFormat('i', 'edit_konten')" title="Miring (Italic)"><i>I</i></button>
+                            <button type="button" class="btn btn-sm btn-white border px-2 py-1 fw-bold" onclick="insertFormat('h2', 'edit_konten')" title="Sub-Judul (H2)">H2</button>
+                            <button type="button" class="btn btn-sm btn-white border px-2 py-1 fw-bold" onclick="insertFormat('h3', 'edit_konten')" title="Poin Judul (H3)">H3</button>
+                            <button type="button" class="btn btn-sm btn-white border px-2 py-1" onclick="insertFormat('ul', 'edit_konten')" title="Daftar Poin (List Bullet)"><i class="fas fa-list-ul"></i></button>
+                            <button type="button" class="btn btn-sm btn-white border px-2 py-1" onclick="insertFormat('ol', 'edit_konten')" title="Daftar Nomor (List Number)"><i class="fas fa-list-ol"></i></button>
+                            <button type="button" class="btn btn-sm btn-white border px-2 py-1" onclick="insertFormat('quote', 'edit_konten')" title="Kutipan (Blockquote)"><i class="fas fa-quote-left"></i></button>
+                            <button type="button" class="btn btn-sm btn-white border px-2 py-1" onclick="insertFormat('table', 'edit_konten')" title="Tabel Konten"><i class="fas fa-table"></i></button>
+                            <button type="button" class="btn btn-sm btn-white border px-2 py-1" onclick="insertFormat('link', 'edit_konten')" title="Tautan Link"><i class="fas fa-link"></i></button>
+                        </div>
+
+                        <textarea name="konten" id="edit_konten" rows="8" class="form-control rounded-3" style="font-size: 0.9rem; line-height: 1.6;"></textarea>
+                    </div>
+
+                    <!-- 6. Opsi Status & Urutan -->
+                    <div class="row g-3 align-items-center pt-2 border-top">
+                        <div class="col-md-7">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="aktif" id="edit_aktif" value="1" style="cursor: pointer;">
+                                <label class="form-check-label small fw-bold text-slate-800" for="edit_aktif">
+                                    Publikasikan Halaman Ini (Status Aktif)
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-5 d-flex align-items-center justify-content-md-end gap-2">
+                            <span class="small fw-bold text-slate-700">Urutan Tampil:</span>
+                            <input type="number" name="urutan" id="edit_urutan" class="form-control form-control-sm text-center rounded-3" style="width: 80px;" min="0">
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer bg-light border-top py-3 px-4 d-flex justify-content-between">
+                    <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-warning text-dark fw-bold rounded-pill px-5 shadow-xs d-inline-flex align-items-center gap-2">
+                        <i class="fas fa-save"></i>
+                        <span>Simpan Perubahan Halaman</span>
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Form Tersembunyi Hapus Halaman -->
+<form id="formDeleteHalaman" action="" method="POST" class="d-none">
+    @csrf
+    @method('DELETE')
+</form>
+
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    // Otomatis aktifkan tab menu jika URL hash adalah #tab-navmenu
+    if (window.location.hash === '#tab-navmenu') {
+        const tabBtn = document.getElementById('tab-btn-navmenu');
+        if (tabBtn) {
+            const trigger = new bootstrap.Tab(tabBtn);
+            trigger.show();
+            setTimeout(() => {
+                tabBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 200);
+        }
+    }
+
     // Tambah baris sub-menu baru secara dinamis
     document.querySelectorAll('.btn-add-submenu').forEach(btn => {
         btn.addEventListener('click', function () {
@@ -1134,6 +1561,157 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
+
+// Helper: Auto generate slug dari judul
+function generateSlugFromJudul(text, targetId) {
+    const slug = text.toLowerCase()
+        .trim()
+        .replace(/[^\w\s-]/g, '')
+        .replace(/[\s_-]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+    const target = document.getElementById(targetId);
+    if (target) {
+        target.value = slug;
+    }
+}
+
+// Helper: Live preview foto cover
+function previewImage(input, previewContainerId) {
+    const container = document.getElementById(previewContainerId);
+    if (!container) return;
+
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            container.innerHTML = `<img src="${e.target.result}" alt="Preview" style="width: 100%; height: 100%; object-fit: cover;">`;
+        };
+        reader.readAsDataURL(input.files[0]);
+    } else {
+        container.innerHTML = `<span class="text-muted small">Tanpa Foto</span>`;
+    }
+}
+
+// Helper: Insert formatted markup to textarea
+function insertFormat(type, textareaId) {
+    const textarea = document.getElementById(textareaId);
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const text = textarea.value;
+    const selected = text.substring(start, end);
+
+    let replacement = '';
+    switch (type) {
+        case 'b':
+            replacement = selected ? `<strong>${selected}</strong>` : '<strong>Teks Tebal</strong>';
+            break;
+        case 'i':
+            replacement = selected ? `<em>${selected}</em>` : '<em>Teks Miring</em>';
+            break;
+        case 'h2':
+            replacement = selected ? `<h2>${selected}</h2>\n` : '<h2>Sub Judul Halaman</h2>\n';
+            break;
+        case 'h3':
+            replacement = selected ? `<h3>${selected}</h3>\n` : '<h3>Poin Penting</h3>\n';
+            break;
+        case 'ul':
+            replacement = `<ul>\n  <li>Poin pertama</li>\n  <li>Poin kedua</li>\n</ul>\n`;
+            break;
+        case 'ol':
+            replacement = `<ol>\n  <li>Langkah pertama</li>\n  <li>Langkah kedua</li>\n</ol>\n`;
+            break;
+        case 'quote':
+            replacement = `<blockquote>"${selected || 'Kutipan penting institusi...'}"</blockquote>\n`;
+            break;
+        case 'table':
+            replacement = `<table class="table table-bordered">\n  <thead>\n    <tr><th>Kolom 1</th><th>Kolom 2</th></tr>\n  </thead>\n  <tbody>\n    <tr><td>Data A</td><td>Data B</td></tr>\n  </tbody>\n</table>\n`;
+            break;
+        case 'link':
+            replacement = `<a href="https://..." target="_blank">${selected || 'Klik di sini'}</a>`;
+            break;
+        default:
+            replacement = selected;
+    }
+
+    textarea.value = text.substring(0, start) + replacement + text.substring(end);
+    textarea.focus();
+    textarea.setSelectionRange(start + replacement.length, start + replacement.length);
+}
+
+// Buka modal tambah dengan pre-selected category
+function openTambahHalamanWithCategory(catId) {
+    const radio = document.querySelector(`input[name="kategori"][value="${catId}"]`);
+    if (radio) radio.checked = true;
+
+    const modalEl = document.getElementById('modalTambahHalaman');
+    if (modalEl) {
+        const modal = new bootstrap.Modal(modalEl);
+        modal.show();
+    }
+}
+
+// Buka modal edit halaman
+function openEditHalamanModal(hal) {
+    const form = document.getElementById('formEditHalaman');
+    if (!form || !hal) return;
+
+    form.action = `/admin/halaman-kustom/${hal.id}`;
+    document.getElementById('edit_judul').value = hal.judul || '';
+    document.getElementById('edit_slug').value = hal.slug || '';
+    document.getElementById('edit_kategori').value = hal.kategori || 'profil';
+    document.getElementById('edit_ringkasan').value = hal.ringkasan || '';
+    document.getElementById('edit_konten').value = hal.konten || '';
+    document.getElementById('edit_urutan').value = hal.urutan || 0;
+    document.getElementById('edit_aktif').checked = Boolean(hal.aktif);
+
+    const prevContainer = document.getElementById('previewCoverEdit');
+    if (prevContainer) {
+        if (hal.gambar) {
+            const imgUrl = (hal.gambar.startsWith('http')) ? hal.gambar : `/uploads/${hal.gambar}`;
+            prevContainer.innerHTML = `<img src="${imgUrl}" alt="Cover" style="width: 100%; height: 100%; object-fit: cover;">`;
+        } else {
+            prevContainer.innerHTML = `<span class="text-muted small">Tanpa Foto</span>`;
+        }
+    }
+
+    const hapusBox = document.getElementById('hapusGambarCheckbox');
+    if (hapusBox) hapusBox.checked = false;
+
+    const modalEl = document.getElementById('modalEditHalaman');
+    if (modalEl) {
+        const modal = new bootstrap.Modal(modalEl);
+        modal.show();
+    }
+}
+
+// Konfirmasi hapus halaman kustom
+function confirmDeleteHalaman(id, title) {
+    Swal.fire({
+        title: 'Hapus Halaman & Sub-Menu?',
+        html: `Apakah Anda yakin ingin menghapus halaman <strong>"${title}"</strong>?<br><span class="text-muted small">Tautan ke halaman ini juga akan otomatis dilepas dari navigasi navbar.</span>`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc2626',
+        cancelButtonColor: '#64748b',
+        confirmButtonText: '<i class="fas fa-trash-can me-1"></i> Ya, Hapus!',
+        cancelButtonText: 'Batal',
+        reverseButtons: true,
+        customClass: {
+            popup: 'rounded-4 shadow-lg border-0',
+            confirmButton: 'btn btn-danger rounded-pill px-4 me-2',
+            cancelButton: 'btn btn-light rounded-pill px-4'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const form = document.getElementById('formDeleteHalaman');
+            if (form) {
+                form.action = `/admin/halaman-kustom/${id}`;
+                form.submit();
+            }
+        }
+    });
+}
 </script>
 @endpush
 

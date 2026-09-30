@@ -69,7 +69,8 @@ class SettingController extends Controller
         }
         $navMenus = $setting->nav_menus;
         $allDosen = Dosen::orderBy('level_organigram')->orderBy('nama')->get();
-        return view('admin.setting.edit', compact('setting', 'allDosen', 'navMenus'));
+        $halamanList = \App\Models\HalamanKustom::orderBy('urutan')->orderByDesc('id')->get();
+        return view('admin.setting.edit', compact('setting', 'allDosen', 'navMenus', 'halamanList'));
     }
 
     public function update(Request $request)
