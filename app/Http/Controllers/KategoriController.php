@@ -278,33 +278,63 @@ class KategoriController extends Controller
 
     public static function seedJabatanDefaults()
     {
-        if (Kategori::where('modul', 'jabatan')->count() === 0) {
-            $jabatanDefaults = [
-                ['nama' => 'Direktur AMIK Taruna', 'slug' => 'direktur-amik-taruna', 'modul' => 'jabatan', 'warna' => 'success', 'ikon' => '👔', 'keterangan' => 'Pimpinan Utama AMIK Taruna', 'urutan' => 1, 'is_active' => true],
-                ['nama' => 'Wakil Direktur I Bidang Akademik', 'slug' => 'wakil-direktur-i', 'modul' => 'jabatan', 'warna' => 'primary', 'ikon' => '🎓', 'keterangan' => 'Pimpinan Bidang Kurikulum & Akademik', 'urutan' => 2, 'is_active' => true],
-                ['nama' => 'Wakil Direktur II Bidang Administrasi & Keuangan', 'slug' => 'wakil-direktur-ii', 'modul' => 'jabatan', 'warna' => 'primary', 'ikon' => '💼', 'keterangan' => 'Pimpinan Bidang Keuangan & SDM', 'urutan' => 3, 'is_active' => true],
-                ['nama' => 'Wakil Direktur III Bidang Kemahasiswaan & Alumni', 'slug' => 'wakil-direktur-iii', 'modul' => 'jabatan', 'warna' => 'primary', 'ikon' => '🤝', 'keterangan' => 'Pimpinan Bidang Kemahasiswaan & Kerjasama', 'urutan' => 4, 'is_active' => true],
-                ['nama' => 'Ketua Lembaga Penelitian & Pengabdian Masyarakat', 'slug' => 'ketua-lppm', 'modul' => 'jabatan', 'warna' => 'info', 'ikon' => '🔬', 'keterangan' => 'Kepala LPPM Kampus', 'urutan' => 5, 'is_active' => true],
-                ['nama' => 'Ketua Pusat Penjaminan Mutu', 'slug' => 'ketua-ppm', 'modul' => 'jabatan', 'warna' => 'warning', 'ikon' => '🛡️', 'keterangan' => 'Kepala Penjaminan Mutu Internal (PPM)', 'urutan' => 6, 'is_active' => true],
-                ['nama' => 'Ketua UPT Perpustakaan & Kearsipan', 'slug' => 'ketua-perpustakaan', 'modul' => 'jabatan', 'warna' => 'info', 'ikon' => '📚', 'keterangan' => 'Kepala Unit Perpustakaan', 'urutan' => 7, 'is_active' => true],
-                ['nama' => 'Ketua Unit Kerjasama & Pengembangan Institusi', 'slug' => 'ketua-kerjasama', 'modul' => 'jabatan', 'warna' => 'info', 'ikon' => '🌐', 'keterangan' => 'Kepala Hubungan Kerjasama Institusi', 'urutan' => 8, 'is_active' => true],
-                ['nama' => 'Ketua Program Studi Teknologi Informasi', 'slug' => 'kaprodi-ti', 'modul' => 'jabatan', 'warna' => 'success', 'ikon' => '💻', 'keterangan' => 'Kaprodi D3 Teknologi Informasi', 'urutan' => 9, 'is_active' => true],
-                ['nama' => 'Ketua Program Studi Sistem Informasi Akuntansi', 'slug' => 'kaprodi-sia', 'modul' => 'jabatan', 'warna' => 'success', 'ikon' => '📊', 'keterangan' => 'Kaprodi D3 Sistem Informasi Akuntansi', 'urutan' => 10, 'is_active' => true],
-                ['nama' => 'Ketua Program Studi Sistem Informasi', 'slug' => 'kaprodi-si', 'modul' => 'jabatan', 'warna' => 'success', 'ikon' => '🖥️', 'keterangan' => 'Kaprodi D3 Sistem Informasi', 'urutan' => 11, 'is_active' => true],
-                ['nama' => 'Kepala Bagian Administrasi Umum & Keuangan', 'slug' => 'kabag-keuangan', 'modul' => 'jabatan', 'warna' => 'secondary', 'ikon' => '🏢', 'keterangan' => 'Kabag Administrasi Umum & Keuangan', 'urutan' => 12, 'is_active' => true],
-                ['nama' => 'Kepala Bagian Administrasi Akademik', 'slug' => 'kabag-akademik', 'modul' => 'jabatan', 'warna' => 'secondary', 'ikon' => '📋', 'keterangan' => 'Kabag Administrasi Akademik (BAAK)', 'urutan' => 13, 'is_active' => true],
-                ['nama' => 'Staff Pusat Penjaminan Mutu', 'slug' => 'staf-ppm', 'modul' => 'jabatan', 'warna' => 'secondary', 'ikon' => '👤', 'keterangan' => 'Staf Pelaksana PPM', 'urutan' => 14, 'is_active' => true],
-                ['nama' => 'Staf Administrasi Umum & Keuangan', 'slug' => 'staf-keuangan', 'modul' => 'jabatan', 'warna' => 'secondary', 'ikon' => '👤', 'keterangan' => 'Staf Keuangan & Umum', 'urutan' => 15, 'is_active' => true],
-                ['nama' => 'Staf Administrasi Akademik', 'slug' => 'staf-akademik', 'modul' => 'jabatan', 'warna' => 'secondary', 'ikon' => '👤', 'keterangan' => 'Staf Akademik Kampus', 'urutan' => 16, 'is_active' => true],
-                ['nama' => 'Staf SI, Humas & Layanan', 'slug' => 'staf-humas', 'modul' => 'jabatan', 'warna' => 'secondary', 'ikon' => '👤', 'keterangan' => 'Staf Humas & IT Layanan', 'urutan' => 17, 'is_active' => true],
-                ['nama' => 'Staf Alumni & Pusat Karir', 'slug' => 'staf-alumni', 'modul' => 'jabatan', 'warna' => 'secondary', 'ikon' => '👤', 'keterangan' => 'Staf CDC & Alumni', 'urutan' => 18, 'is_active' => true],
-                ['nama' => 'Staf Perpustakaan & Kearsipan', 'slug' => 'staf-perpustakaan', 'modul' => 'jabatan', 'warna' => 'secondary', 'ikon' => '👤', 'keterangan' => 'Staf Perpustakaan Kampus', 'urutan' => 19, 'is_active' => true],
-                ['nama' => 'Dosen', 'slug' => 'dosen', 'modul' => 'jabatan', 'warna' => 'secondary', 'ikon' => '👨‍🏫', 'keterangan' => 'Dosen / Tenaga Pendidik', 'urutan' => 20, 'is_active' => true],
-            ];
+        $jabatanDefaults = [
+            ['nama' => 'Direktur AMIK Taruna', 'slug' => 'direktur-amik-taruna', 'modul' => 'jabatan', 'level_organigram' => 1, 'warna' => 'success', 'ikon' => '👔', 'keterangan' => 'Pimpinan Utama AMIK Taruna', 'urutan' => 1, 'is_active' => true],
+            ['nama' => 'Wakil Direktur I Bidang Akademik', 'slug' => 'wakil-direktur-i', 'modul' => 'jabatan', 'level_organigram' => 2, 'warna' => 'primary', 'ikon' => '🎓', 'keterangan' => 'Pimpinan Bidang Kurikulum & Akademik', 'urutan' => 2, 'is_active' => true],
+            ['nama' => 'Wakil Direktur II Bidang Administrasi & Keuangan', 'slug' => 'wakil-direktur-ii', 'modul' => 'jabatan', 'level_organigram' => 2, 'warna' => 'primary', 'ikon' => '💼', 'keterangan' => 'Pimpinan Bidang Keuangan & SDM', 'urutan' => 3, 'is_active' => true],
+            ['nama' => 'Wakil Direktur III Bidang Kemahasiswaan & Alumni', 'slug' => 'wakil-direktur-iii', 'modul' => 'jabatan', 'level_organigram' => 2, 'warna' => 'primary', 'ikon' => '🤝', 'keterangan' => 'Pimpinan Bidang Kemahasiswaan & Kerjasama', 'urutan' => 4, 'is_active' => true],
+            ['nama' => 'Ketua Lembaga Penelitian & Pengabdian Masyarakat', 'slug' => 'ketua-lppm', 'modul' => 'jabatan', 'level_organigram' => 3, 'warna' => 'info', 'ikon' => '🔬', 'keterangan' => 'Kepala LPPM Kampus', 'urutan' => 5, 'is_active' => true],
+            ['nama' => 'Ketua Pusat Penjaminan Mutu', 'slug' => 'ketua-ppm', 'modul' => 'jabatan', 'level_organigram' => 3, 'warna' => 'warning', 'ikon' => '🛡️', 'keterangan' => 'Kepala Penjaminan Mutu Internal (PPM)', 'urutan' => 6, 'is_active' => true],
+            ['nama' => 'Ketua UPT Perpustakaan & Kearsipan', 'slug' => 'ketua-perpustakaan', 'modul' => 'jabatan', 'level_organigram' => 3, 'warna' => 'info', 'ikon' => '📚', 'keterangan' => 'Kepala Unit Perpustakaan', 'urutan' => 7, 'is_active' => true],
+            ['nama' => 'Ketua Unit Kerjasama & Pengembangan Institusi', 'slug' => 'ketua-kerjasama', 'modul' => 'jabatan', 'level_organigram' => 3, 'warna' => 'info', 'ikon' => '🌐', 'keterangan' => 'Kepala Hubungan Kerjasama Institusi', 'urutan' => 8, 'is_active' => true],
+            ['nama' => 'Ketua Program Studi Teknologi Informasi', 'slug' => 'kaprodi-ti', 'modul' => 'jabatan', 'level_organigram' => 4, 'warna' => 'success', 'ikon' => '💻', 'keterangan' => 'Kaprodi D3 Teknologi Informasi', 'urutan' => 9, 'is_active' => true],
+            ['nama' => 'Ketua Program Studi Sistem Informasi Akuntansi', 'slug' => 'kaprodi-sia', 'modul' => 'jabatan', 'level_organigram' => 4, 'warna' => 'success', 'ikon' => '📊', 'keterangan' => 'Kaprodi D3 Sistem Informasi Akuntansi', 'urutan' => 10, 'is_active' => true],
+            ['nama' => 'Ketua Program Studi Sistem Informasi', 'slug' => 'kaprodi-si', 'modul' => 'jabatan', 'level_organigram' => 4, 'warna' => 'success', 'ikon' => '🖥️', 'keterangan' => 'Kaprodi D3 Sistem Informasi', 'urutan' => 11, 'is_active' => true],
+            ['nama' => 'Kepala Bagian Administrasi Umum & Keuangan', 'slug' => 'kabag-keuangan', 'modul' => 'jabatan', 'level_organigram' => 5, 'warna' => 'secondary', 'ikon' => '🏢', 'keterangan' => 'Kabag Administrasi Umum & Keuangan', 'urutan' => 12, 'is_active' => true],
+            ['nama' => 'Kepala Bagian Administrasi Akademik', 'slug' => 'kabag-akademik', 'modul' => 'jabatan', 'level_organigram' => 5, 'warna' => 'secondary', 'ikon' => '📋', 'keterangan' => 'Kabag Administrasi Akademik (BAAK)', 'urutan' => 13, 'is_active' => true],
+            ['nama' => 'Staff Pusat Penjaminan Mutu', 'slug' => 'staf-ppm', 'modul' => 'jabatan', 'level_organigram' => 6, 'warna' => 'secondary', 'ikon' => '👤', 'keterangan' => 'Staf Pelaksana PPM', 'urutan' => 14, 'is_active' => true],
+            ['nama' => 'Staf Administrasi Umum & Keuangan', 'slug' => 'staf-keuangan', 'modul' => 'jabatan', 'level_organigram' => 6, 'warna' => 'secondary', 'ikon' => '👤', 'keterangan' => 'Staf Keuangan & Umum', 'urutan' => 15, 'is_active' => true],
+            ['nama' => 'Staf Administrasi Akademik', 'slug' => 'staf-akademik', 'modul' => 'jabatan', 'level_organigram' => 6, 'warna' => 'secondary', 'ikon' => '👤', 'keterangan' => 'Staf Akademik Kampus', 'urutan' => 16, 'is_active' => true],
+            ['nama' => 'Staf SI, Humas & Layanan', 'slug' => 'staf-humas', 'modul' => 'jabatan', 'level_organigram' => 6, 'warna' => 'secondary', 'ikon' => '👤', 'keterangan' => 'Staf Humas & IT Layanan', 'urutan' => 17, 'is_active' => true],
+            ['nama' => 'Staf Alumni & Pusat Karir', 'slug' => 'staf-alumni', 'modul' => 'jabatan', 'level_organigram' => 6, 'warna' => 'secondary', 'ikon' => '👤', 'keterangan' => 'Staf CDC & Alumni', 'urutan' => 18, 'is_active' => true],
+            ['nama' => 'Staf Perpustakaan & Kearsipan', 'slug' => 'staf-perpustakaan', 'modul' => 'jabatan', 'level_organigram' => 6, 'warna' => 'secondary', 'ikon' => '👤', 'keterangan' => 'Staf Perpustakaan Kampus', 'urutan' => 19, 'is_active' => true],
+            ['nama' => 'Dosen', 'slug' => 'dosen', 'modul' => 'jabatan', 'level_organigram' => 7, 'warna' => 'secondary', 'ikon' => '👨‍🏫', 'keterangan' => 'Dosen / Tenaga Pendidik', 'urutan' => 20, 'is_active' => true],
+        ];
 
-            foreach ($jabatanDefaults as $jd) {
-                if (!Kategori::where('slug', $jd['slug'])->where('modul', 'jabatan')->exists()) {
-                    Kategori::create($jd);
+        foreach ($jabatanDefaults as $jd) {
+            $existing = Kategori::where('slug', $jd['slug'])->where('modul', 'jabatan')->first();
+            if (!$existing) {
+                Kategori::create($jd);
+            } elseif ($existing->level_organigram === null && isset($jd['level_organigram'])) {
+                $existing->update(['level_organigram' => $jd['level_organigram']]);
+            }
+        }
+
+        // Sinkronisasi otomatis level_organigram untuk jabatan lain berdasarkan pola nama jika masih null
+        $levelMap = [
+            'direktur' => 1,
+            'wakil direktur' => 2,
+            'wadir' => 2,
+            'lembaga' => 3,
+            'lppm' => 3,
+            'ppm' => 3,
+            'perpustakaan' => 3,
+            'kerjasama' => 3,
+            'kaprodi' => 4,
+            'program studi' => 4,
+            'kabag' => 5,
+            'kepala bagian' => 5,
+            'staff' => 6,
+            'staf' => 6,
+            'dosen' => 7,
+        ];
+
+        foreach (Kategori::where('modul', 'jabatan')->whereNull('level_organigram')->get() as $k) {
+            $lower = strtolower($k->nama . ' ' . $k->slug);
+            foreach ($levelMap as $key => $lvl) {
+                if (str_contains($lower, $key)) {
+                    $k->update(['level_organigram' => $lvl]);
+                    break;
                 }
             }
         }
@@ -370,6 +400,7 @@ class KategoriController extends Controller
         $request->validate([
             'nama' => 'required|string|max:100',
             'modul' => 'required|string|in:berita,pmb,dokumen,prodi_dokumen,layanan,umum,jabatan,lppm_dokumen,dokumen_kampus',
+            'level_organigram' => 'nullable|integer|min:1|max:7',
             'slug' => 'nullable|string|max:100|unique:kategoris,slug',
             'warna' => 'nullable|string|max:30',
             'ikon' => 'nullable|string|max:50',
@@ -393,6 +424,7 @@ class KategoriController extends Controller
             'nama' => $request->nama,
             'slug' => $slug,
             'modul' => $request->modul,
+            'level_organigram' => $request->filled('level_organigram') ? (int) $request->level_organigram : null,
             'warna' => $request->warna ?: 'success',
             'ikon' => $request->ikon ?: '📌',
             'keterangan' => $request->keterangan,
@@ -408,6 +440,7 @@ class KategoriController extends Controller
     {
         $request->validate([
             'nama' => 'required|string|max:100',
+            'level_organigram' => 'nullable|integer|min:1|max:7',
         ]);
 
         $nama = trim($request->nama);
@@ -423,6 +456,7 @@ class KategoriController extends Controller
                 'nama' => $nama,
                 'slug' => $slug ?: 'jabatan-' . time(),
                 'modul' => 'jabatan',
+                'level_organigram' => $request->filled('level_organigram') ? (int) $request->level_organigram : 6,
                 'warna' => 'primary',
                 'ikon' => '👔',
                 'keterangan' => 'Jabatan Dosen & Sivitas Akademika',
@@ -448,6 +482,7 @@ class KategoriController extends Controller
         $request->validate([
             'nama' => 'required|string|max:100',
             'modul' => 'required|string|in:berita,pmb,dokumen,prodi_dokumen,layanan,umum,jabatan,lppm_dokumen,dokumen_kampus',
+            'level_organigram' => 'nullable|integer|min:1|max:7',
             'slug' => 'required|string|max:100|unique:kategoris,slug,'.$id,
             'warna' => 'nullable|string|max:30',
             'ikon' => 'nullable|string|max:50',
@@ -483,6 +518,7 @@ class KategoriController extends Controller
             'nama' => $request->nama,
             'slug' => $newSlug,
             'modul' => $request->modul,
+            'level_organigram' => $request->filled('level_organigram') ? (int) $request->level_organigram : null,
             'warna' => $request->warna ?: 'success',
             'ikon' => $request->ikon ?: '📌',
             'keterangan' => $request->keterangan,

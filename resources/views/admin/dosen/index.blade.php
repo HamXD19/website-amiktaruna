@@ -162,12 +162,13 @@
                                 Tingkat Organigram / Bagan
                             </label>
                             <select name="level_organigram" class="form-select" required>
-                                <option value="1">Level 1 - Pimpinan Utama (Direktur)</option>
+                                <option value="1">Level 1 - Direktur (Pimpinan Utama)</option>
                                 <option value="2">Level 2 - Wakil Direktur (Wadir I, II, III)</option>
-                                <option value="3">Level 3 - Lembaga, Pusat & Kaprodi</option>
-                                <option value="4">Level 4 - Kepala Bagian (Kabag)</option>
-                                <option value="5">Level 5 - Staf & Tenaga Kependidikan</option>
-                                <option value="6" selected>Level 6 - Dosen Pengajar Lainnya</option>
+                                <option value="3">Level 3 - Lembaga, Pusat & Unit Penunjang (PPM, LPPM, Perpustakaan, Kerjasama)</option>
+                                <option value="4">Level 4 - Ketua Program Studi (Kaprodi)</option>
+                                <option value="5">Level 5 - Kepala Bagian (Kabag)</option>
+                                <option value="6">Level 6 - Staf & Tenaga Kependidikan</option>
+                                <option value="7" selected>Level 7 - Dosen Pengajar Lainnya</option>
                             </select>
                             <small class="text-muted d-block mt-1">Menentukan posisi bagan struktur di halaman Tentang Kampus.</small>
                         </div>

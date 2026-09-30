@@ -21,4 +21,9 @@ class Dosen extends Model
         'linkedin'
 
     ];
+
+    public static function getOrganigramLevels(): array
+    {
+        return Kategori::getOrganigramLevels();
+    }
 } 

@@ -339,7 +339,7 @@
                         <!-- MODUL / FITUR -->
                         <div class="mb-3">
                             <label class="form-label small fw-bold text-slate-700">Modul / Fitur Target <span class="text-danger">*</span></label>
-                            <select name="modul" class="form-select rounded-3" required>
+                            <select name="modul" id="createModulSelect" class="form-select rounded-3" required onchange="toggleLevelOrganigram(this.value, 'createLevelWrapper')">
                                 <option value="berita" {{ request('modul') == 'berita' ? 'selected' : '' }}>📰 Berita Kampus</option>
                                 <option value="pmb" {{ request('modul') == 'pmb' ? 'selected' : '' }}>📢 Berita &amp; Informasi PMB</option>
                                 <option value="dokumen_kampus" {{ request('modul') == 'dokumen_kampus' ? 'selected' : '' }}>📜 Dokumen Kampus (Statuta, SK, Renstra)</option>
@@ -351,6 +351,25 @@
                                 <option value="umum" {{ request('modul') == 'umum' ? 'selected' : '' }}>🌐 Umum (Bisa Dipakai di Semua)</option>
                             </select>
                             <small class="text-slate-400 mt-1 d-block">Pilih modul tempat kategori ini akan muncul.</small>
+                        </div>
+
+                        <!-- TINGKAT ORGANIGRAM (UNTUK MODUL JABATAN) -->
+                        <div class="mb-3" id="createLevelWrapper">
+                            <label class="form-label small fw-bold text-slate-700 d-flex justify-content-between align-items-center">
+                                <span>Tingkat Organigram / Bagan</span>
+                                <span class="badge rounded-pill" style="background-color: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; font-size: 0.68rem;">Modul Jabatan</span>
+                            </label>
+                            <select name="level_organigram" class="form-select rounded-3">
+                                <option value="">-- Bukan Jabatan / Default --</option>
+                                <option value="1">Level 1 - Direktur (Pimpinan Utama)</option>
+                                <option value="2">Level 2 - Wakil Direktur (Wadir I, II, III)</option>
+                                <option value="3">Level 3 - Lembaga, Pusat & Unit Penunjang (PPM, LPPM, Perpustakaan, Kerjasama)</option>
+                                <option value="4">Level 4 - Ketua Program Studi (Kaprodi)</option>
+                                <option value="5">Level 5 - Kepala Bagian (Kabag)</option>
+                                <option value="6">Level 6 - Staf & Tenaga Kependidikan</option>
+                                <option value="7">Level 7 - Dosen Pengajar Lainnya</option>
+                            </select>
+                            <small class="text-slate-400 mt-1 d-block">Posisi urutan hirarki dalam struktur bagan organisasi profil kampus.</small>
                         </div>
 
                         <!-- SLUG / IDENTIFIER -->
@@ -584,9 +603,18 @@
                                                 <i class="fas fa-user-graduate me-1"></i>Layanan
                                             </span>
                                         @elseif($kat->modul == 'jabatan')
-                                            <span class="badge rounded-pill px-2.5 py-1" style="background-color: #ecfdf5; color: #065f46; border: 1px solid #6ee7b7;">
-                                                <i class="fas fa-user-tie me-1"></i>Jabatan
-                                            </span>
+                                            <div>
+                                                <span class="badge rounded-pill px-2.5 py-1" style="background-color: #ecfdf5; color: #065f46; border: 1px solid #6ee7b7;">
+                                                    <i class="fas fa-user-tie me-1"></i>Jabatan
+                                                </span>
+                                                @if($kat->level_organigram)
+                                                    <div class="mt-1">
+                                                        <span class="badge rounded-pill px-2 py-0.5" style="background-color: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; font-size: 0.72rem; font-weight: 600;" title="{{ \App\Models\Kategori::getOrganigramLevels()[$kat->level_organigram] ?? 'Level ' . $kat->level_organigram }}">
+                                                            <i class="fas fa-sitemap me-1"></i>Level {{ $kat->level_organigram }}
+                                                        </span>
+                                                    </div>
+                                                @endif
+                                            </div>
                                         @else
                                             <span class="badge rounded-pill px-2.5 py-1" style="background-color: #f1f5f9; color: #475569; border: 1px solid #cbd5e1;">
                                                 Umum
@@ -597,11 +625,11 @@
                                     <!-- JUMLAH PEMAKAIAN -->
                                     <td class="text-center">
                                         @if($usageCount > 0)
-                                            <span class="badge bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-pill px-2.5 py-1 fw-bold" title="Digunakan oleh {{ $usageCount }} data aktif">
-                                                <i class="fas fa-check-circle me-1 text-emerald-600"></i>{{ $usageCount }}
+                                            <span class="badge rounded-pill px-2.5 py-1 fw-bold" style="background-color: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; font-size: 0.85rem;" title="Digunakan oleh {{ $usageCount }} data aktif">
+                                                <i class="fas fa-check-circle me-1" style="color: #059669;"></i>{{ $usageCount }}
                                             </span>
                                         @else
-                                            <span class="badge bg-light text-slate-400 border rounded-pill px-2.5 py-1" title="Belum ada data">
+                                            <span class="badge rounded-pill px-2.5 py-1 fw-bold" style="background-color: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; font-size: 0.82rem;" title="Belum ada data">
                                                 0
                                             </span>
                                         @endif
@@ -739,6 +767,24 @@
                             </select>
                         </div>
 
+                        <div class="col-12" id="editLevelWrapper{{ $kat->id }}">
+                            <label class="form-label small fw-bold text-slate-700 d-flex justify-content-between align-items-center">
+                                <span>Tingkat Organigram / Bagan</span>
+                                <span class="badge rounded-pill" style="background-color: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; font-size: 0.68rem;">Modul Jabatan</span>
+                            </label>
+                            <select name="level_organigram" class="form-select rounded-3">
+                                <option value="" {{ is_null($kat->level_organigram) ? 'selected' : '' }}>-- Bukan Jabatan / Default --</option>
+                                <option value="1" {{ $kat->level_organigram == 1 ? 'selected' : '' }}>Level 1 - Direktur (Pimpinan Utama)</option>
+                                <option value="2" {{ $kat->level_organigram == 2 ? 'selected' : '' }}>Level 2 - Wakil Direktur (Wadir I, II, III)</option>
+                                <option value="3" {{ $kat->level_organigram == 3 ? 'selected' : '' }}>Level 3 - Lembaga, Pusat & Unit Penunjang (PPM, LPPM, Perpustakaan, Kerjasama)</option>
+                                <option value="4" {{ $kat->level_organigram == 4 ? 'selected' : '' }}>Level 4 - Ketua Program Studi (Kaprodi)</option>
+                                <option value="5" {{ $kat->level_organigram == 5 ? 'selected' : '' }}>Level 5 - Kepala Bagian (Kabag)</option>
+                                <option value="6" {{ $kat->level_organigram == 6 ? 'selected' : '' }}>Level 6 - Staf & Tenaga Kependidikan</option>
+                                <option value="7" {{ $kat->level_organigram == 7 ? 'selected' : '' }}>Level 7 - Dosen Pengajar Lainnya</option>
+                            </select>
+                            <small class="text-slate-400 mt-1 d-block">Urutan tingkatan bagan organisasi dosen/sivitas di halaman Tentang Kampus.</small>
+                        </div>
+
                         <div class="col-md-8">
                             <label class="form-label small fw-bold text-slate-700">Warna Aksen</label>
                             <select name="warna" class="form-select rounded-3">
@@ -851,5 +897,29 @@
             }
         });
     }
+
+    function toggleLevelOrganigram(modul, targetId) {
+        const el = document.getElementById(targetId);
+        if (!el) return;
+        if (modul === 'jabatan') {
+            el.style.backgroundColor = '#f0fdf4';
+            el.style.padding = '10px';
+            el.style.borderRadius = '12px';
+            el.style.border = '1px solid #86efac';
+            el.style.transition = 'all 0.3s ease';
+        } else {
+            el.style.backgroundColor = 'transparent';
+            el.style.padding = '0';
+            el.style.border = 'none';
+        }
+    }
+
+    // Inisialisasi awal saat load
+    document.addEventListener('DOMContentLoaded', function() {
+        const createModul = document.getElementById('createModulSelect');
+        if (createModul) {
+            toggleLevelOrganigram(createModul.value, 'createLevelWrapper');
+        }
+    });
 </script>
 @endpush

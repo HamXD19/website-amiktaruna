@@ -77,7 +77,7 @@ class DosenController extends Controller
         $request->validate([
             'nama'             => 'required|string|max:255',
             'jabatan'          => 'required|array',
-            'level_organigram' => 'nullable|integer|between:1,6',
+            'level_organigram' => 'nullable|integer|between:1,7',
             'foto'             => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120'
         ]);
 
@@ -137,7 +137,7 @@ class DosenController extends Controller
         $request->validate([
             'nama'             => 'required|string|max:255',
             'jabatan'          => 'required|array',
-            'level_organigram' => 'nullable|integer|between:1,6',
+            'level_organigram' => 'nullable|integer|between:1,7',
             'foto'             => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120'
         ]);
 

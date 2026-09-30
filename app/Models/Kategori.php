@@ -12,6 +12,7 @@ class Kategori extends Model
         'nama',
         'slug',
         'modul',
+        'level_organigram',
         'warna',
         'ikon',
         'keterangan',
@@ -22,6 +23,7 @@ class Kategori extends Model
     protected $casts = [
         'is_active' => 'boolean',
         'urutan' => 'integer',
+        'level_organigram' => 'integer',
     ];
 
     public function scopeActive($query)
@@ -65,5 +67,18 @@ class Kategori extends Model
     public function dokumenKampuses()
     {
         return $this->hasMany(DokumenKampus::class, 'kategori', 'slug');
+    }
+
+    public static function getOrganigramLevels(): array
+    {
+        return [
+            1 => 'Level 1 - Direktur (Pimpinan Utama)',
+            2 => 'Level 2 - Wakil Direktur (Wadir I, II, III)',
+            3 => 'Level 3 - Lembaga, Pusat & Unit Penunjang (PPM, LPPM, Perpustakaan, Kerjasama)',
+            4 => 'Level 4 - Ketua Program Studi (Kaprodi)',
+            5 => 'Level 5 - Kepala Bagian (Kabag)',
+            6 => 'Level 6 - Staf & Tenaga Kependidikan',
+            7 => 'Level 7 - Dosen Pengajar Lainnya',
+        ];
     }
 }
