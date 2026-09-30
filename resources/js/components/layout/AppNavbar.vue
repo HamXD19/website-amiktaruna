@@ -90,49 +90,65 @@ const isItemActive = (item) => {
   return false;
 };
 
-const navGroups = [
-  {
-    label: 'Profil',
-    id: 'profil',
-    icon: 'fas fa-university',
-    items: [
-      { label: 'Tentang AMIK Taruna', href: '/tentang', desc: 'Sejarah, legalitas, dan komitmen mutu', icon: 'fas fa-info-circle' },
-      { label: 'Visi & Misi', href: '/tentang#visi-misi', desc: 'Arah haluan dan target capaian kampus', icon: 'fas fa-bullseye' },
-      { label: 'Pimpinan & Dosen', href: '/tentang#struktur', desc: 'Tenaga pendidik profesional dan pimpinan', icon: 'fas fa-chalkboard-teacher' },
-      { label: 'Akreditasi Kampus', href: '/tentang#akreditasi', desc: 'Status akreditasi resmi institusi', icon: 'fas fa-award' },
-    ]
-  },
-  {
-    label: 'Akademik',
-    id: 'akademik',
-    icon: 'fas fa-graduation-cap',
-    items: [
-      { label: 'Program Studi', href: '/akademik', desc: 'Pilihan prodi vokasi teknologi informasi', icon: 'fas fa-laptop-code' },
-      { label: 'Layanan Mahasiswa', href: '/mahasiswa', desc: 'Fasilitas dan administrasi sivitas', icon: 'fas fa-user-graduate' },
-      { label: 'Tracer Study Alumni', href: '/alumni', desc: 'Jaringan dan rekam jejak lulusan', icon: 'fas fa-user-check' },
-    ]
-  },
-  {
-    label: 'Riset & Lembaga',
-    id: 'riset',
-    icon: 'fas fa-flask',
-    items: [
-      { label: 'LPPM', href: '/lppm', desc: 'Lembaga Penelitian & Pengabdian Masyarakat', icon: 'fas fa-microscope' },
-      { label: 'PPM', href: '/ppm', desc: 'Pusat Penjaminan Mutu Internal', icon: 'fas fa-shield-alt' },
-    ]
-  },
-  {
-    label: 'Informasi',
-    id: 'informasi',
-    icon: 'fas fa-newspaper',
-    items: [
-      { label: 'Penerimaan Mahasiswa Baru (PMB)', href: '/pmb', desc: 'Informasi jalur seleksi & pendaftaran mahasiswa baru', icon: 'fas fa-user-plus' },
-      { label: 'Berita & Agenda', href: '/berita', desc: 'Kabar kegiatan dan pengumuman resmi', icon: 'far fa-newspaper' },
-      { label: 'Layanan PPKS (Kekerasan Seksual)', href: '/ppks', desc: 'Form pelaporan rahasia & warta edukasi PPKS', icon: 'fas fa-shield-alt' },
-      { label: 'Kritik & Saran', href: '/kritik-saran', desc: 'Kanal aspirasi perbaikan layanan', icon: 'fas fa-comment-dots' },
-    ]
-  }
-];
+const defaultNavConfig = {
+  beranda: { label: 'Beranda', href: '/' },
+  groups: [
+    {
+      label: 'Profil',
+      id: 'profil',
+      icon: 'fas fa-university',
+      items: [
+        { label: 'Tentang AMIK Taruna', href: '/tentang', desc: 'Sejarah, legalitas, dan komitmen mutu', icon: 'fas fa-info-circle', target: '_self' },
+        { label: 'Visi & Misi', href: '/tentang#visi-misi', desc: 'Arah haluan dan target capaian kampus', icon: 'fas fa-bullseye', target: '_self' },
+        { label: 'Pimpinan & Dosen', href: '/tentang#struktur', desc: 'Tenaga pendidik profesional dan pimpinan', icon: 'fas fa-chalkboard-teacher', target: '_self' },
+        { label: 'Akreditasi Kampus', href: '/tentang#akreditasi', desc: 'Status akreditasi resmi institusi', icon: 'fas fa-award', target: '_self' },
+        { label: 'Dokumen Kampus', href: '/dokumen-kampus', desc: 'Statuta, renstra, dan regulasi resmi institusi', icon: 'fas fa-file-contract', target: '_self' },
+      ]
+    },
+    {
+      label: 'Akademik',
+      id: 'akademik',
+      icon: 'fas fa-graduation-cap',
+      items: [
+        { label: 'Program Studi', href: '/akademik', desc: 'Pilihan prodi vokasi teknologi informasi', icon: 'fas fa-laptop-code', target: '_self' },
+        { label: 'Layanan Mahasiswa', href: '/mahasiswa', desc: 'Fasilitas dan administrasi sivitas', icon: 'fas fa-user-graduate', target: '_self' },
+        { label: 'Tracer Study Alumni', href: '/alumni', desc: 'Jaringan dan rekam jejak lulusan', icon: 'fas fa-user-check', target: '_self' },
+      ]
+    },
+    {
+      label: 'Riset & Lembaga',
+      id: 'riset',
+      icon: 'fas fa-flask',
+      items: [
+        { label: 'LPPM', href: '/lppm', desc: 'Lembaga Penelitian & Pengabdian Masyarakat', icon: 'fas fa-microscope', target: '_self' },
+        { label: 'PPM', href: '/ppm', desc: 'Pusat Penjaminan Mutu Internal', icon: 'fas fa-shield-alt', target: '_self' },
+      ]
+    },
+    {
+      label: 'Informasi',
+      id: 'informasi',
+      icon: 'fas fa-newspaper',
+      items: [
+        { label: 'Penerimaan Mahasiswa Baru (PMB)', href: '/pmb', desc: 'Informasi jalur seleksi & pendaftaran mahasiswa baru', icon: 'fas fa-user-plus', target: '_self' },
+        { label: 'Berita & Agenda', href: '/berita', desc: 'Kabar kegiatan dan pengumuman resmi', icon: 'far fa-newspaper', target: '_self' },
+        { label: 'Layanan PPKS (Kekerasan Seksual)', href: '/ppks', desc: 'Form pelaporan rahasia & warta edukasi PPKS', icon: 'fas fa-shield-alt', target: '_self' },
+        { label: 'Kritik & Saran', href: '/kritik-saran', desc: 'Kanal aspirasi perbaikan layanan', icon: 'fas fa-comment-dots', target: '_self' },
+      ]
+    }
+  ]
+};
+
+const navConfig = computed(() => {
+  const custom = props.setting?.nav_menus;
+  if (!custom) return defaultNavConfig;
+  return {
+    beranda: custom.beranda || defaultNavConfig.beranda,
+    groups: (custom.groups && custom.groups.length > 0) ? custom.groups : defaultNavConfig.groups
+  };
+});
+
+const berandaItem = computed(() => navConfig.value.beranda || defaultNavConfig.beranda);
+const navGroups = computed(() => navConfig.value.groups);
 </script>
 
 <template>
@@ -175,11 +191,11 @@ const navGroups = [
         <!-- Desktop Navigation -->
         <nav class="hidden lg:flex items-center gap-1.5" aria-label="Main Navigation">
           <a
-            href="/"
+            :href="berandaItem.href || '/'"
             class="px-3.5 py-2 text-sm font-semibold rounded-lg transition-colors"
-            :class="currentPath === '/' ? 'text-emerald-300 bg-emerald-950/70 border border-emerald-500/30' : 'text-slate-300 hover:text-emerald-300 hover:bg-emerald-950/40'"
+            :class="currentPath === (berandaItem.href || '/') ? 'text-emerald-300 bg-emerald-950/70 border border-emerald-500/30' : 'text-slate-300 hover:text-emerald-300 hover:bg-emerald-950/40'"
           >
-            Beranda
+            {{ berandaItem.label || 'Beranda' }}
           </a>
 
           <!-- Dropdown Menus -->
@@ -229,16 +245,20 @@ const navGroups = [
                   v-for="item in group.items"
                   :key="item.href"
                   :href="item.href"
+                  :target="item.target || '_self'"
+                  :rel="item.target === '_blank' ? 'noopener noreferrer' : undefined"
                   class="block px-3.5 py-2.5 rounded-lg transition-colors group"
                   :class="isItemActive(item) ? 'bg-emerald-900/50 text-emerald-300 font-semibold border border-emerald-500/30' : 'hover:bg-emerald-950/60 border border-transparent'"
                 >
                   <div class="flex items-center justify-between">
-                    <p class="text-sm font-semibold transition-colors" :class="isItemActive(item) ? 'text-emerald-300' : 'text-slate-200 group-hover:text-emerald-300'">
-                      {{ item.label }}
+                    <p class="text-sm font-semibold transition-colors d-flex items-center gap-1.5" :class="isItemActive(item) ? 'text-emerald-300' : 'text-slate-200 group-hover:text-emerald-300'">
+                      <i v-if="item.icon" :class="item.icon" class="text-emerald-400 text-xs w-4"></i>
+                      <span>{{ item.label }}</span>
+                      <svg v-if="item.target === '_blank'" class="w-3 h-3 text-slate-400 ms-1 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
                     </p>
-                    <span v-if="isItemActive(item)" class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                    <span v-if="isItemActive(item)" class="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0"></span>
                   </div>
-                  <p class="text-xs text-slate-400 mt-0.5 leading-snug">
+                  <p v-if="item.desc" class="text-xs text-slate-400 mt-0.5 leading-snug">
                     {{ item.desc }}
                   </p>
                 </a>
@@ -404,13 +424,13 @@ const navGroups = [
 
             <div class="space-y-1.5">
               <a
-                href="/"
+                :href="berandaItem.href || '/'"
                 class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition font-semibold text-sm"
-                :class="currentPath === '/' ? 'bg-emerald-900/60 text-emerald-300 border border-emerald-500/40 font-bold' : 'text-slate-200 hover:bg-emerald-950/60'"
+                :class="currentPath === (berandaItem.href || '/') ? 'bg-emerald-900/60 text-emerald-300 border border-emerald-500/40 font-bold' : 'text-slate-200 hover:bg-emerald-950/60'"
                 @click="mobileMenuOpen = false"
               >
                 <i class="fas fa-home text-emerald-400 w-4 text-center"></i>
-                <span>Beranda</span>
+                <span>{{ berandaItem.label || 'Beranda' }}</span>
               </a>
 
               <div
@@ -424,7 +444,7 @@ const navGroups = [
                   @click="toggleMobileGroup(group.id)"
                 >
                   <div class="flex items-center gap-2.5">
-                    <i :class="group.icon" class="text-emerald-400 w-4 text-center text-xs"></i>
+                    <i :class="group.icon || 'fas fa-bars'" class="text-emerald-400 w-4 text-center text-xs"></i>
                     <span>{{ group.label }}</span>
                   </div>
                   <i
@@ -441,17 +461,19 @@ const navGroups = [
                     v-for="item in group.items"
                     :key="'mob-item-' + item.href"
                     :href="item.href"
+                    :target="item.target || '_self'"
+                    :rel="item.target === '_blank' ? 'noopener noreferrer' : undefined"
                     class="flex items-start gap-2.5 px-3 py-2 rounded-lg text-xs transition"
                     :class="isItemActive(item) ? 'bg-emerald-900/50 text-emerald-300 font-semibold border border-emerald-500/30' : 'text-slate-300 hover:text-emerald-300 hover:bg-emerald-950/50 border border-transparent'"
                     @click="mobileMenuOpen = false"
                   >
-                    <i :class="item.icon" class="text-emerald-400 mt-0.5 text-xs w-3.5 text-center shrink-0"></i>
+                    <i :class="item.icon || 'fas fa-angle-right'" class="text-emerald-400 mt-0.5 text-xs w-3.5 text-center shrink-0"></i>
                     <div class="flex-1 min-w-0">
                       <div class="flex items-center justify-between">
                         <span class="block font-medium" :class="isItemActive(item) ? 'text-emerald-300' : 'text-slate-200'">{{ item.label }}</span>
                         <span v-if="isItemActive(item)" class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
                       </div>
-                      <span class="block text-[10px] text-slate-400 leading-snug">{{ item.desc }}</span>
+                      <span v-if="item.desc" class="block text-[10px] text-slate-400 leading-snug">{{ item.desc }}</span>
                     </div>
                   </a>
                 </div>

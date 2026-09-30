@@ -78,6 +78,11 @@ class UserManagementController extends Controller
                 'icon' => 'fas fa-microscope',
                 'desc' => 'Pengabdian masyarakat, penelitian dosen, dan jurnal'
             ],
+            'dokumen_kampus' => [
+                'label' => 'Dokumen Kampus',
+                'icon' => 'fas fa-file-contract',
+                'desc' => 'Arsip statuta, renstra, SK direktur, dan regulasi kampus'
+            ],
             'visimisi' => [
                 'label' => 'Visi & Misi',
                 'icon' => 'fas fa-bullseye',

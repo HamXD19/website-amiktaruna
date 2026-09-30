@@ -22,6 +22,7 @@ use App\Http\Controllers\KritikSaranController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\ProdiDokumenController;
 use App\Http\Controllers\PPKSController;
+use App\Http\Controllers\DokumenKampusController;
 use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\Admin\ActivityLogController;
 /*
@@ -34,6 +35,8 @@ Route::get('/', [BeritaController::class, 'home']);
 
 Route::get('/berita', [BeritaController::class, 'indexPublic']);
 Route::get('/berita/{slug}', [BeritaController::class, 'showPublic']);
+
+Route::get('/dokumen-kampus', [DokumenKampusController::class, 'index'])->name('dokumen_kampus.index');
 
 Route::get('/alumni', [AlumniSectionController::class, 'alumni'])
     ->name('alumni');
@@ -391,6 +394,18 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         Route::post('/lppm/dokumen', [LPPMController::class, 'storeDokumen'])->name('admin.lppm.dokumen.store');
         Route::post('/lppm/dokumen/{id}', [LPPMController::class, 'updateDokumen'])->name('admin.lppm.dokumen.update');
         Route::delete('/lppm/dokumen/{id}', [LPPMController::class, 'destroyDokumen'])->name('admin.lppm.dokumen.destroy');
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | DOKUMEN KAMPUS & REGULASI
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware(['menu.permission:dokumen_kampus'])->group(function () {
+        Route::get('/dokumen-kampus', [DokumenKampusController::class, 'admin'])->name('admin.dokumen_kampus');
+        Route::post('/dokumen-kampus/dokumen', [DokumenKampusController::class, 'storeDokumen'])->name('admin.dokumen_kampus.storeDokumen');
+        Route::post('/dokumen-kampus/dokumen/{id}', [DokumenKampusController::class, 'updateDokumen'])->name('admin.dokumen_kampus.updateDokumen');
+        Route::delete('/dokumen-kampus/dokumen/{id}', [DokumenKampusController::class, 'destroyDokumen'])->name('admin.dokumen_kampus.destroyDokumen');
     });
 
     /*

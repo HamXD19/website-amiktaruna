@@ -94,6 +94,7 @@ class Setting extends Model
         'akademik_values',
         'alumni_pillars',
         'pmb_pillars',
+        'nav_menus',
     ];
 
     protected $casts = [
@@ -107,5 +108,6 @@ class Setting extends Model
         'akademik_values' => 'array',
         'alumni_pillars' => 'array',
         'pmb_pillars' => 'array',
+        'nav_menus' => 'array',
     ];
 }

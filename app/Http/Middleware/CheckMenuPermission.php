@@ -31,7 +31,22 @@ class CheckMenuPermission
         // Implied permissions: 'kategori' is automatically granted to users
         // who have access to any module that uses categories (berita, lppm, ppm, etc.)
         if ($menuKey === 'kategori') {
-            $relatedMenus = ['berita', 'beritapmb', 'lppm', 'ppm', 'program_studi', 'kategori'];
+            $relatedMenus = ['berita', 'beritapmb', 'lppm', 'ppm', 'dokumen_kampus', 'program_studi', 'kategori'];
+            $hasRelated = false;
+            foreach ($relatedMenus as $related) {
+                if ($user->hasPermission($related)) {
+                    $hasRelated = true;
+                    break;
+                }
+            }
+            if ($hasRelated) {
+                return $next($request);
+            }
+        }
+
+        // Implied permissions: 'dokumen_kampus' automatically accessible if user has ppm, lppm, setting, or visimisi
+        if ($menuKey === 'dokumen_kampus') {
+            $relatedMenus = ['dokumen_kampus', 'ppm', 'lppm', 'setting', 'visimisi'];
             $hasRelated = false;
             foreach ($relatedMenus as $related) {
                 if ($user->hasPermission($related)) {

@@ -218,6 +218,10 @@
                 <i class="fas fa-map-location-dot"></i>
                 <span>5. Kontak, Peta &amp; Footer</span>
             </button>
+            <button class="cms-tab-btn" id="tab-btn-navmenu" data-bs-toggle="pill" data-bs-target="#tab-navmenu" type="button" role="tab">
+                <i class="fas fa-bars-staggered"></i>
+                <span>6. Kelola Menu &amp; Sub-Menu</span>
+            </button>
         </div>
 
         <!-- TAB PANES -->
@@ -922,6 +926,127 @@
                 </div>
             </div>
 
+            <!-- ============================================================ -->
+            <!-- TAB 6: KELOLA MENU & SUB-MENU (REFERENSI KRAKSAAN WETAN)     -->
+            <!-- ============================================================ -->
+            @php
+                $navData = $navMenus ?? ($setting->nav_menus ?? \App\Http\Controllers\SettingController::getDefaultNavMenus());
+                $berandaNav = $navData['beranda'] ?? ['label' => 'Beranda', 'href' => '/'];
+                $navGroupsList = $navData['groups'] ?? [];
+            @endphp
+            <div class="tab-pane fade" id="tab-navmenu" role="tabpanel">
+                <div class="card-setting-pane">
+
+                    <div class="section-divider">
+                        <div>
+                            <h4 class="section-title">
+                                <i class="fas fa-bars-staggered"></i>
+                                <span>Pengaturan Nama Menu, Sub-Menu &amp; Tambah Sub-Menu</span>
+                            </h4>
+                            <p class="text-slate-500 small mb-0 mt-1">
+                                Anda dapat mengganti label nama setiap menu utama, mengubah tautan dan nama sub-menu, serta menambah sub-menu baru sesuai kebutuhan institusi.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- 1. Menu Single: Beranda -->
+                    <div class="sub-card mb-4">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <h5 class="fw-bold text-slate-800 mb-0 d-flex align-items-center gap-2">
+                                <i class="fas fa-home text-emerald-600"></i>
+                                <span>Menu Utama Beranda</span>
+                            </h5>
+                            <span class="badge bg-emerald-100 text-emerald-800 rounded-pill px-3 py-1 small">Single Link</span>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Label Nama Menu Beranda</label>
+                                <input type="text" name="nav_menus[beranda][label]" class="form-control" value="{{ $berandaNav['label'] ?? 'Beranda' }}" placeholder="Beranda" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Tautan / URL</label>
+                                <input type="text" name="nav_menus[beranda][href]" class="form-control" value="{{ $berandaNav['href'] ?? '/' }}" placeholder="/">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. Dropdown Group Menus -->
+                    @foreach($navGroupsList as $gIdx => $group)
+                        <div class="sub-card mb-4" id="group-card-{{ $group['id'] }}">
+                            <input type="hidden" name="nav_menus[groups][{{ $gIdx }}][id]" value="{{ $group['id'] }}">
+                            <input type="hidden" name="nav_menus[groups][{{ $gIdx }}][icon]" value="{{ $group['icon'] ?? 'fas fa-bars' }}">
+
+                            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3 pb-2 border-bottom">
+                                <div class="d-flex align-items-center gap-2 flex-grow-1" style="max-width: 450px;">
+                                    <div class="rounded-3 bg-emerald-100 text-emerald-700 d-flex align-items-center justify-center fs-5 flex-shrink-0" style="width: 38px; height: 38px;">
+                                        <i class="{{ $group['icon'] ?? 'fas fa-bars' }}"></i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <label class="form-label mb-1">Nama Grup Menu</label>
+                                        <input type="text" name="nav_menus[groups][{{ $gIdx }}][label]" class="form-control fw-bold" value="{{ $group['label'] }}" placeholder="Nama Menu..." required>
+                                    </div>
+                                </div>
+                                <div>
+                                    <span class="badge bg-slate-200 text-slate-700 rounded-pill px-3 py-1 font-monospace small">ID: {{ $group['id'] }}</span>
+                                </div>
+                            </div>
+
+                            <!-- Tabel Sub Menu -->
+                            <div class="table-responsive mb-2">
+                                <table class="table table-sm align-middle mb-0" id="table-sub-{{ $group['id'] }}">
+                                    <thead class="table-light">
+                                        <tr class="small text-slate-600">
+                                            <th width="35" class="text-center">#</th>
+                                            <th width="240">Nama Sub-Menu <span class="text-danger">*</span></th>
+                                            <th width="240">Tautan / URL <span class="text-danger">*</span></th>
+                                            <th>Keterangan Singkat</th>
+                                            <th width="160">Target</th>
+                                            <th width="50" class="text-center">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="sub-items-body" data-group-index="{{ $gIdx }}" data-group-id="{{ $group['id'] }}">
+                                        @foreach($group['items'] ?? [] as $iIdx => $item)
+                                            <tr class="sub-item-row">
+                                                <td class="text-center text-slate-400 small fw-bold row-num">{{ $iIdx + 1 }}</td>
+                                                <td>
+                                                    <input type="text" name="nav_menus[groups][{{ $gIdx }}][items][{{ $iIdx }}][label]" class="form-control form-control-sm rounded-3" value="{{ $item['label'] }}" placeholder="Label sub menu..." required>
+                                                </td>
+                                                <td>
+                                                    <input type="text" name="nav_menus[groups][{{ $gIdx }}][items][{{ $iIdx }}][href]" class="form-control form-control-sm rounded-3 font-monospace" value="{{ $item['href'] }}" placeholder="/halaman atau https://..." required>
+                                                </td>
+                                                <td>
+                                                    <input type="text" name="nav_menus[groups][{{ $gIdx }}][items][{{ $iIdx }}][desc]" class="form-control form-control-sm rounded-3" value="{{ $item['desc'] ?? '' }}" placeholder="Keterangan singkat...">
+                                                </td>
+                                                <td>
+                                                    <select name="nav_menus[groups][{{ $gIdx }}][items][{{ $iIdx }}][target]" class="form-select form-select-sm rounded-3">
+                                                        <option value="_self" {{ ($item['target'] ?? '_self') === '_self' ? 'selected' : '' }}>Tab Sama (_self)</option>
+                                                        <option value="_blank" {{ ($item['target'] ?? '_self') === '_blank' ? 'selected' : '' }}>Tab Baru (_blank)</option>
+                                                    </select>
+                                                    <input type="hidden" name="nav_menus[groups][{{ $gIdx }}][items][{{ $iIdx }}][icon]" value="{{ $item['icon'] ?? 'fas fa-angle-right' }}">
+                                                </td>
+                                                <td class="text-center">
+                                                    <button type="button" class="btn btn-outline-danger btn-sm rounded-pill p-1 px-2 btn-del-submenu" title="Hapus sub-menu ini">
+                                                        <i class="fas fa-trash-can fa-xs"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Tombol Tambah Sub-Menu -->
+                            <div class="pt-2">
+                                <button type="button" class="btn btn-outline-success btn-sm rounded-pill px-3 fw-bold btn-add-submenu" data-group-index="{{ $gIdx }}" data-group-id="{{ $group['id'] }}">
+                                    <i class="fas fa-plus-circle me-1"></i>Tambah Sub-Menu di {{ $group['label'] }}
+                                </button>
+                            </div>
+                        </div>
+                    @endforeach
+
+                </div>
+            </div>
+
         </div>
 
         <!-- STICKY BOTTOM SAVE ACTION BAR -->
@@ -940,5 +1065,76 @@
     </form>
 
 </div>
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Tambah baris sub-menu baru secara dinamis
+    document.querySelectorAll('.btn-add-submenu').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const gIdx = this.getAttribute('data-group-index');
+            const gId = this.getAttribute('data-group-id');
+            const tbody = document.querySelector(`.sub-items-body[data-group-id="${gId}"]`);
+            if (!tbody) return;
+
+            const currentCount = tbody.querySelectorAll('.sub-item-row').length;
+            const newIndex = currentCount;
+
+            const tr = document.createElement('tr');
+            tr.className = 'sub-item-row';
+            tr.innerHTML = `
+                <td class="text-center text-slate-400 small fw-bold row-num">${newIndex + 1}</td>
+                <td>
+                    <input type="text" name="nav_menus[groups][${gIdx}][items][${newIndex}][label]" class="form-control form-control-sm rounded-3" placeholder="Nama sub-menu baru..." required>
+                </td>
+                <td>
+                    <input type="text" name="nav_menus[groups][${gIdx}][items][${newIndex}][href]" class="form-control form-control-sm rounded-3 font-monospace" placeholder="/contoh atau https://..." required>
+                </td>
+                <td>
+                    <input type="text" name="nav_menus[groups][${gIdx}][items][${newIndex}][desc]" class="form-control form-control-sm rounded-3" placeholder="Keterangan singkat...">
+                </td>
+                <td>
+                    <select name="nav_menus[groups][${gIdx}][items][${newIndex}][target]" class="form-select form-select-sm rounded-3">
+                        <option value="_self" selected>Tab Sama (_self)</option>
+                        <option value="_blank">Tab Baru (_blank)</option>
+                    </select>
+                    <input type="hidden" name="nav_menus[groups][${gIdx}][items][${newIndex}][icon]" value="fas fa-angle-right">
+                </td>
+                <td class="text-center">
+                    <button type="button" class="btn btn-outline-danger btn-sm rounded-pill p-1 px-2 btn-del-submenu" title="Hapus sub-menu ini">
+                        <i class="fas fa-trash-can fa-xs"></i>
+                    </button>
+                </td>
+            `;
+
+            tbody.appendChild(tr);
+
+            tr.querySelector('.btn-del-submenu').addEventListener('click', function () {
+                tr.remove();
+                renumberRows(tbody);
+            });
+        });
+    });
+
+    // Event listener hapus baris sub-menu awal
+    document.querySelectorAll('.btn-del-submenu').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const tr = this.closest('.sub-item-row');
+            const tbody = tr.closest('.sub-items-body');
+            tr.remove();
+            renumberRows(tbody);
+        });
+    });
+
+    function renumberRows(tbody) {
+        if (!tbody) return;
+        tbody.querySelectorAll('.sub-item-row').forEach((row, idx) => {
+            const numEl = row.querySelector('.row-num');
+            if (numEl) numEl.innerText = idx + 1;
+        });
+    }
+});
+</script>
+@endpush
 
 @endsection

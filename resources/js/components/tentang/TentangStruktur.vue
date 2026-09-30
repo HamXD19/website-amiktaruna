@@ -20,33 +20,68 @@ const formatJabatan = (jabatanStr) => {
 };
 
 // Classification helpers
-const getLevel = (d) => {
-  if (d.level_organigram && Number(d.level_organigram) >= 1 && Number(d.level_organigram) <= 6) {
-    return Number(d.level_organigram);
-  }
+const isDirektur = (d) => {
   const j = d.jabatan || '';
-  if (j.includes('Direktur AMIK Taruna') && !j.includes('Wakil Direktur')) return 1;
-  if (j.includes('Wakil Direktur')) return 2;
-  if (
-    j.includes('Ketua Lembaga') ||
-    j.includes('Ketua Pusat') ||
-    j.includes('Ketua UPT') ||
-    j.includes('Ketua Unit') ||
-    j.includes('Ketua Program Studi')
-  ) return 3;
-  if (j.includes('Kepala Bagian')) return 4;
-  if (j.includes('Staf') || j.includes('Staff')) return 5;
-  return 6;
+  return (j.includes('Direktur AMIK Taruna') || j.includes('Direktur')) && !j.includes('Wakil Direktur');
 };
 
-// Organigram Levels (Top-down structure)
+const isWadir = (d) => {
+  const j = d.jabatan || '';
+  return j.includes('Wakil Direktur');
+};
+
+// Ketua Program Studi (Kaprodi)
+const isKaprodi = (d) => {
+  const j = d.jabatan || '';
+  return j.includes('Ketua Program Studi') ||
+         j.includes('Kaprodi') ||
+         j.includes('Kepala Program Studi');
+};
+
+// Kepala / Ketua Lembaga, Pusat Penjaminan Mutu (PPM), LPPM, Perpustakaan, Kerjasama
+const isLembagaOrPusat = (d) => {
+  const j = d.jabatan || '';
+  if (isKaprodi(d) || isDirektur(d) || isWadir(d)) return false;
+  return j.includes('Ketua Lembaga') ||
+         j.includes('Ketua Pusat') ||
+         j.includes('Kepala Pusat') ||
+         j.includes('Kepala Lembaga') ||
+         j.includes('Ketua UPT') ||
+         j.includes('Kepala UPT') ||
+         j.includes('Ketua Unit') ||
+         j.includes('Kepala Unit') ||
+         j.includes('Penjaminan Mutu') ||
+         j.includes('PPM') ||
+         j.includes('LPPM') ||
+         j.includes('Perpustakaan') ||
+         j.includes('Kerjasama');
+};
+
+const isKabag = (d) => {
+  const j = d.jabatan || '';
+  if (isLembagaOrPusat(d) || isKaprodi(d) || isDirektur(d) || isWadir(d)) return false;
+  return j.includes('Kepala Bagian') || j.includes('Kabag');
+};
+
+const isStaf = (d) => {
+  const j = d.jabatan || '';
+  if (isDirektur(d) || isWadir(d) || isLembagaOrPusat(d) || isKaprodi(d) || isKabag(d)) return false;
+  return j.includes('Staf') || j.includes('Staff') || j.includes('Tendik') || j.includes('Tenaga Kependidikan');
+};
+
+const isDosenPengajar = (d) => {
+  return !isDirektur(d) && !isWadir(d) && !isLembagaOrPusat(d) && !isKaprodi(d) && !isKabag(d) && !isStaf(d);
+};
+
+// Organigram Levels (Top-down structure: Lembaga/Pusat & Kaprodi terpisah)
 const organigramLevels = computed(() => {
-  const direktur = props.dosen.filter(d => getLevel(d) === 1);
-  const wadir = props.dosen.filter(d => getLevel(d) === 2).sort((a, b) => (a.jabatan || '').localeCompare(b.jabatan || ''));
-  const kaprodiUnit = props.dosen.filter(d => getLevel(d) === 3);
-  const kabag = props.dosen.filter(d => getLevel(d) === 4);
-  const staf = props.dosen.filter(d => getLevel(d) === 5);
-  const dosenLain = props.dosen.filter(d => getLevel(d) === 6);
+  const direktur = props.dosen.filter(isDirektur);
+  const wadir = props.dosen.filter(isWadir).sort((a, b) => (a.jabatan || '').localeCompare(b.jabatan || ''));
+  const lembagaPusat = props.dosen.filter(isLembagaOrPusat);
+  const kaprodiList = props.dosen.filter(isKaprodi);
+  const kabag = props.dosen.filter(isKabag);
+  const staf = props.dosen.filter(isStaf);
+  const dosenLain = props.dosen.filter(isDosenPengajar);
 
   return [
     {
@@ -65,30 +100,37 @@ const organigramLevels = computed(() => {
     },
     {
       level: 3,
-      title: 'Lembaga, Pusat & Ketua Program Studi',
-      subtitle: 'Pelaksana Akademik, Penjaminan Mutu, LPPM & Kaprodi',
+      title: 'Lembaga, Pusat & Unit Penunjang',
+      subtitle: 'Kepala Pusat Penjaminan Mutu (PPM), Ketua LPPM, UPT Perpustakaan & Kerjasama',
       badge: 'Level 3',
-      items: kaprodiUnit
+      items: lembagaPusat
     },
     {
       level: 4,
-      title: 'Kepala Bagian (Kabag)',
-      subtitle: 'Pelaksana Teknis Administrasi Akademik & Umum',
+      title: 'Ketua Program Studi (Kaprodi)',
+      subtitle: 'Pimpinan & Pelaksana Kurikulum Keilmuan Program Studi Vokasi',
       badge: 'Level 4',
-      items: kabag
+      items: kaprodiList
     },
     {
       level: 5,
-      title: 'Staf Administrasi & Layanan',
-      subtitle: 'Tenaga Kependidikan, Layanan Informasi & Perpustakaan',
+      title: 'Kepala Bagian (Kabag)',
+      subtitle: 'Pelaksana Teknis Administrasi Akademik & Umum',
       badge: 'Level 5',
-      items: staf
+      items: kabag
     },
     {
       level: 6,
+      title: 'Staf Administrasi & Layanan',
+      subtitle: 'Tenaga Kependidikan, Layanan Informasi & Perpustakaan',
+      badge: 'Level 6',
+      items: staf
+    },
+    {
+      level: 7,
       title: 'Dosen Pengajar',
       subtitle: 'Tenaga Pendidik Sivitas Akademika AMIK Taruna',
-      badge: 'Level 6',
+      badge: 'Level 7',
       items: dosenLain
     }
   ].filter(lvl => lvl.items.length > 0);
@@ -105,7 +147,8 @@ const getInitials = (nama) => {
 const filteredList = computed(() => {
   if (activeTab.value === 'all') return props.dosen;
   if (activeTab.value === 'pimpinan') return props.dosen.filter(d => isDirektur(d) || isWadir(d));
-  if (activeTab.value === 'kaprodi') return props.dosen.filter(isKaprodiOrUnit);
+  if (activeTab.value === 'lembaga') return props.dosen.filter(isLembagaOrPusat);
+  if (activeTab.value === 'kaprodi') return props.dosen.filter(isKaprodi);
   if (activeTab.value === 'kabag') return props.dosen.filter(isKabag);
   if (activeTab.value === 'dosen') return props.dosen.filter(isDosenPengajar);
   if (activeTab.value === 'staf') return props.dosen.filter(isStaf);
@@ -116,7 +159,8 @@ const filteredList = computed(() => {
 const counts = computed(() => ({
   all: props.dosen.length,
   pimpinan: props.dosen.filter(d => isDirektur(d) || isWadir(d)).length,
-  kaprodi: props.dosen.filter(isKaprodiOrUnit).length,
+  lembaga: props.dosen.filter(isLembagaOrPusat).length,
+  kaprodi: props.dosen.filter(isKaprodi).length,
   kabag: props.dosen.filter(isKabag).length,
   dosen: props.dosen.filter(isDosenPengajar).length,
   staf: props.dosen.filter(isStaf).length
@@ -312,11 +356,19 @@ const counts = computed(() => ({
           </button>
           <button
             type="button"
+            @click="activeTab = 'lembaga'"
+            class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all"
+            :class="activeTab === 'lembaga' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-300 hover:text-white hover:bg-white/10'"
+          >
+            Lembaga &amp; Pusat ({{ counts.lembaga }})
+          </button>
+          <button
+            type="button"
             @click="activeTab = 'kaprodi'"
             class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all"
             :class="activeTab === 'kaprodi' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-300 hover:text-white hover:bg-white/10'"
           >
-            Lembaga &amp; Kaprodi ({{ counts.kaprodi }})
+            Ketua Program Studi ({{ counts.kaprodi }})
           </button>
           <button
             type="button"
@@ -396,10 +448,16 @@ const counts = computed(() => ({
                   Wadir
                 </span>
                 <span
-                  v-else-if="isKaprodiOrUnit(person)"
+                  v-else-if="isLembagaOrPusat(person)"
                   class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-emerald-900/90 text-white backdrop-blur-xs border border-emerald-500/30"
                 >
-                  Kaprodi / Unit
+                  Lembaga / Unit
+                </span>
+                <span
+                  v-else-if="isKaprodi(person)"
+                  class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-emerald-900/90 text-white backdrop-blur-xs border border-emerald-500/30"
+                >
+                  Kaprodi
                 </span>
               </div>
 

@@ -128,6 +128,7 @@
                                 <option value="berita" {{ request('modul') == 'berita' ? 'selected' : '' }}>Berita Kampus</option>
                                 <option value="pmb" {{ request('modul') == 'pmb' ? 'selected' : '' }}>Berita & Informasi PMB</option>
                                 <option value="dokumen" {{ request('modul') == 'dokumen' ? 'selected' : '' }}>Dokumen Mutu (PPM / SPMI)</option>
+                                <option value="dokumen_kampus" {{ request('modul') == 'dokumen_kampus' ? 'selected' : '' }}>Dokumen Kampus (Statuta, SK, Renstra)</option>
                                 <option value="lppm_dokumen" {{ request('modul') == 'lppm_dokumen' ? 'selected' : '' }}>Dokumen LPPM (Penelitian &amp; PkM)</option>
                                 <option value="prodi_dokumen" {{ request('modul') == 'prodi_dokumen' ? 'selected' : '' }}>Dokumen Prodi (Profil, RPS, Kurikulum)</option>
                                 <option value="layanan" {{ request('modul') == 'layanan' ? 'selected' : '' }}>Layanan Akademik</option>
@@ -227,6 +228,10 @@
                             <a href="{{ route('admin.kategori.index', ['modul' => 'dokumen', 'search' => request('search')]) }}" 
                                class="btn btn-sm rounded-pill kat-tab-btn {{ $currentModul == 'dokumen' ? 'btn-success fw-bold shadow-xs' : 'btn-light text-slate-600' }}">
                                 Mutu ({{ $stats['dokumen'] }})
+                            </a>
+                            <a href="{{ route('admin.kategori.index', ['modul' => 'dokumen_kampus', 'search' => request('search')]) }}" 
+                               class="btn btn-sm rounded-pill kat-tab-btn {{ $currentModul == 'dokumen_kampus' ? 'btn-success fw-bold shadow-xs' : 'btn-light text-slate-600' }}">
+                                Dokumen Kampus ({{ $stats['dokumen_kampus'] }})
                             </a>
                             <a href="{{ route('admin.kategori.index', ['modul' => 'lppm_dokumen', 'search' => request('search')]) }}" 
                                class="btn btn-sm rounded-pill kat-tab-btn {{ $currentModul == 'lppm_dokumen' ? 'btn-success fw-bold shadow-xs' : 'btn-light text-slate-600' }}">
@@ -460,6 +465,7 @@
                                 <option value="berita" {{ $kat->modul == 'berita' ? 'selected' : '' }}>Berita Kampus</option>
                                 <option value="pmb" {{ $kat->modul == 'pmb' ? 'selected' : '' }}>Berita & Informasi PMB</option>
                                 <option value="dokumen" {{ $kat->modul == 'dokumen' ? 'selected' : '' }}>Dokumen Mutu (PPM / SPMI)</option>
+                                <option value="dokumen_kampus" {{ $kat->modul == 'dokumen_kampus' ? 'selected' : '' }}>Dokumen Kampus (Statuta, SK, Renstra)</option>
                                 <option value="lppm_dokumen" {{ $kat->modul == 'lppm_dokumen' ? 'selected' : '' }}>Dokumen LPPM (Penelitian &amp; PkM)</option>
                                 <option value="prodi_dokumen" {{ $kat->modul == 'prodi_dokumen' ? 'selected' : '' }}>Dokumen Prodi (Profil, RPS, Kurikulum)</option>
                                 <option value="layanan" {{ $kat->modul == 'layanan' ? 'selected' : '' }}>Layanan Akademik</option>

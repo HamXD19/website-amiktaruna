@@ -61,4 +61,9 @@ class Kategori extends Model
     {
         return $this->hasMany(LPPMDokumen::class, 'kategori', 'slug');
     }
+
+    public function dokumenKampuses()
+    {
+        return $this->hasMany(DokumenKampus::class, 'kategori', 'slug');
+    }
 }

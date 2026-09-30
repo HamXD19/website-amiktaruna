@@ -564,6 +564,13 @@
                         <span>Riset &amp; LPPM</span>
                     </a>
                 @endif
+
+                @if($authUser->hasPermission('dokumen_kampus') || $authUser->hasPermission('ppm') || $authUser->hasPermission('setting'))
+                    <a href="{{ route('admin.dokumen_kampus') }}" class="admin-nav-item {{ request()->routeIs('admin.dokumen_kampus*') ? 'active' : '' }}">
+                        <i class="fas fa-file-contract"></i>
+                        <span>Dokumen Kampus</span>
+                    </a>
+                @endif
             @endif
 
             <!-- SECTION: PROFIL & PENGATURAN -->
@@ -573,6 +580,7 @@
                     $authUser->hasPermission('alumni') ||
                     $authUser->hasPermission('kritiksaran') ||
                     $authUser->hasPermission('ppks') ||
+                    $authUser->hasPermission('dokumen_kampus') ||
                     $authUser->hasPermission('setting')
                 );
             @endphp

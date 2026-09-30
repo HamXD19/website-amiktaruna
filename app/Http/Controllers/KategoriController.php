@@ -9,6 +9,7 @@ use App\Models\Kategori;
 use App\Models\ProdiDokumen;
 use App\Models\PPMDokumen;
 use App\Models\LPPMDokumen;
+use App\Models\DokumenKampus;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -219,6 +220,58 @@ class KategoriController extends Controller
             }
         }
 
+        // Pastikan kategori Dokumen Kampus (Statuta, Renstra, SK Direktur, Pedoman, Laporan Tahunan) tersedia
+        if (Kategori::where('modul', 'dokumen_kampus')->count() === 0) {
+            $kampusDefaults = [
+                [
+                    'nama' => 'Statuta & Renstra Kampus',
+                    'slug' => 'statuta-renstra',
+                    'modul' => 'dokumen_kampus',
+                    'warna' => 'primary',
+                    'ikon' => '📜',
+                    'keterangan' => 'Statuta institusi, rencana strategis, dan rencana operasional kampus',
+                    'urutan' => 1,
+                    'is_active' => true,
+                ],
+                [
+                    'nama' => 'SK & Kebijakan Direktur',
+                    'slug' => 'sk-direktur',
+                    'modul' => 'dokumen_kampus',
+                    'warna' => 'danger',
+                    'ikon' => '⚖️',
+                    'keterangan' => 'Surat keputusan direktur dan ketetapan pimpinan perguruan tinggi',
+                    'urutan' => 2,
+                    'is_active' => true,
+                ],
+                [
+                    'nama' => 'Pedoman & Standar Pelayanan',
+                    'slug' => 'pedoman-standar',
+                    'modul' => 'dokumen_kampus',
+                    'warna' => 'warning',
+                    'ikon' => '📋',
+                    'keterangan' => 'Buku pedoman tata pamong, kode etik, dan standar pelayanan umum',
+                    'urutan' => 3,
+                    'is_active' => true,
+                ],
+                [
+                    'nama' => 'Laporan Tahunan & Kinerja',
+                    'slug' => 'laporan-tahunan',
+                    'modul' => 'dokumen_kampus',
+                    'warna' => 'success',
+                    'ikon' => '📊',
+                    'keterangan' => 'Laporan akuntabilitas tahunan dan capaian kinerja institusi',
+                    'urutan' => 4,
+                    'is_active' => true,
+                ],
+            ];
+
+            foreach ($kampusDefaults as $kd) {
+                if (!Kategori::where('slug', $kd['slug'])->exists()) {
+                    Kategori::create($kd);
+                }
+            }
+        }
+
         // Pastikan kategori Jabatan Dosen & Tendik tersedia
         static::seedJabatanDefaults();
     }
@@ -261,7 +314,7 @@ class KategoriController extends Controller
     {
         $this->autoSeedDefaults();
 
-        $query = Kategori::withCount(['beritas', 'prodiDokumens', 'ppmDokumens', 'lppmDokumens', 'beritaPmbs'])->orderBy('urutan', 'asc')->latest();
+        $query = Kategori::withCount(['beritas', 'prodiDokumens', 'ppmDokumens', 'lppmDokumens', 'dokumenKampuses', 'beritaPmbs'])->orderBy('urutan', 'asc')->latest();
 
         if ($request->filled('modul') && $request->modul !== 'semua') {
             $query->where('modul', $request->modul);
@@ -288,6 +341,7 @@ class KategoriController extends Controller
                       + ($kat->prodi_dokumens_count ?? 0)
                       + ($kat->ppm_dokumens_count ?? 0)
                       + ($kat->lppm_dokumens_count ?? 0)
+                      + ($kat->dokumen_kampuses_count ?? 0)
                       + ($kat->berita_pmbs_count ?? 0);
             }
             $kat->total_used = $used;
@@ -300,6 +354,7 @@ class KategoriController extends Controller
             'berita' => Kategori::where('modul', 'berita')->count(),
             'pmb' => Kategori::where('modul', 'pmb')->count(),
             'dokumen' => Kategori::where('modul', 'dokumen')->count(),
+            'dokumen_kampus' => Kategori::where('modul', 'dokumen_kampus')->count(),
             'lppm_dokumen' => Kategori::where('modul', 'lppm_dokumen')->count(),
             'prodi_dokumen' => Kategori::where('modul', 'prodi_dokumen')->count(),
             'layanan' => Kategori::where('modul', 'layanan')->count(),
@@ -314,7 +369,7 @@ class KategoriController extends Controller
     {
         $request->validate([
             'nama' => 'required|string|max:100',
-            'modul' => 'required|string|in:berita,pmb,dokumen,prodi_dokumen,layanan,umum,jabatan,lppm_dokumen',
+            'modul' => 'required|string|in:berita,pmb,dokumen,prodi_dokumen,layanan,umum,jabatan,lppm_dokumen,dokumen_kampus',
             'slug' => 'nullable|string|max:100|unique:kategoris,slug',
             'warna' => 'nullable|string|max:30',
             'ikon' => 'nullable|string|max:50',
@@ -392,7 +447,7 @@ class KategoriController extends Controller
 
         $request->validate([
             'nama' => 'required|string|max:100',
-            'modul' => 'required|string|in:berita,pmb,dokumen,prodi_dokumen,layanan,umum,jabatan,lppm_dokumen',
+            'modul' => 'required|string|in:berita,pmb,dokumen,prodi_dokumen,layanan,umum,jabatan,lppm_dokumen,dokumen_kampus',
             'slug' => 'required|string|max:100|unique:kategoris,slug,'.$id,
             'warna' => 'nullable|string|max:30',
             'ikon' => 'nullable|string|max:50',
@@ -408,6 +463,7 @@ class KategoriController extends Controller
             Berita::where('kategori', $oldSlug)->update(['kategori' => $newSlug]);
             ProdiDokumen::where('kategori', $oldSlug)->update(['kategori' => $newSlug]);
             PPMDokumen::where('kategori', $oldSlug)->update(['kategori' => $newSlug]);
+            DokumenKampus::where('kategori', $oldSlug)->update(['kategori' => $newSlug]);
         }
 
         // Jika nama jabatan dosen berubah, update di data dosen
@@ -448,12 +504,13 @@ class KategoriController extends Controller
         $usedInProdiDok = ProdiDokumen::where('kategori', $kategori->slug)->count();
         $usedInPPMDok = PPMDokumen::where('kategori', $kategori->slug)->count();
         $usedInLPPMDok = LPPMDokumen::where('kategori', $kategori->slug)->count();
+        $usedInDokumenKampus = DokumenKampus::where('kategori', $kategori->slug)->count();
         $usedInDosen = 0;
         if ($kategori->modul === 'jabatan') {
             $usedInDosen = Dosen::where('jabatan', 'LIKE', "%{$kategori->nama}%")->count();
         }
 
-        $totalUsed = $usedInBerita + $usedInPMB + $usedInProdiDok + $usedInPPMDok + $usedInLPPMDok + $usedInDosen;
+        $totalUsed = $usedInBerita + $usedInPMB + $usedInProdiDok + $usedInPPMDok + $usedInLPPMDok + $usedInDokumenKampus + $usedInDosen;
 
         if ($totalUsed > 0) {
             return redirect()->route('admin.kategori.index', ['modul' => $kategori->modul])
