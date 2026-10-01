@@ -529,66 +529,80 @@ const navGroups = computed(() => navConfig.value.groups);
       </aside>
     </transition>
 
-    <!-- MOBILE BOTTOM NAVIGATION DOCK (App-like, exactly like PLN Sengkang) -->
+    <!-- MOBILE BOTTOM NAVIGATION DOCK (App-like, 100% Symmetrical Grid) -->
     <nav
-      class="lg:hidden fixed bottom-0 left-0 right-0 z-[9990] bg-[#031d11]/95 backdrop-blur-xl border-t border-emerald-500/20 shadow-[0_-10px_30px_rgba(0,0,0,0.6)] px-2 py-1 flex items-center justify-around text-[10px]"
+      class="lg:hidden fixed bottom-0 left-0 right-0 z-[9990] bg-[#031d11]/95 backdrop-blur-xl border-t border-emerald-500/20 shadow-[0_-10px_30px_rgba(0,0,0,0.6)] h-16 grid grid-cols-5 items-center select-none text-[10px]"
+      style="padding-bottom: env(safe-area-inset-bottom, 0px);"
     >
       <!-- 1. Beranda -->
       <a
         href="/"
-        class="flex flex-col items-center py-1 px-2.5 rounded-xl transition-all duration-150 active:scale-95"
+        class="flex flex-col items-center justify-end h-full w-full pb-2 text-center transition-all duration-150 active:scale-95"
         :class="currentPath === '/' ? 'text-emerald-300 font-bold' : 'text-slate-400 hover:text-emerald-300'"
       >
-        <i class="fas fa-home text-base mb-0.5"></i>
-        <span>Beranda</span>
+        <div class="h-5 flex items-center justify-center mb-1">
+          <i class="fas fa-home text-[17px]"></i>
+        </div>
+        <span class="text-[10px] leading-tight font-medium tracking-tight truncate max-w-full">Beranda</span>
       </a>
 
       <!-- 2. Layanan Mahasiswa -->
       <a
         href="/mahasiswa"
-        class="flex flex-col items-center py-1 px-2 rounded-xl transition-all duration-150 active:scale-95"
+        class="flex flex-col items-center justify-end h-full w-full pb-2 text-center transition-all duration-150 active:scale-95"
         :class="currentPath.startsWith('/mahasiswa') ? 'text-emerald-300 font-bold' : 'text-slate-400 hover:text-emerald-300'"
       >
-        <i class="fas fa-graduation-cap text-base mb-0.5"></i>
-        <span>Layanan Mhs</span>
+        <div class="h-5 flex items-center justify-center mb-1">
+          <i class="fas fa-graduation-cap text-[17px]"></i>
+        </div>
+        <span class="text-[10px] leading-tight font-medium tracking-tight truncate max-w-full">Layanan Mhs</span>
       </a>
 
-      <!-- 3. PMB (Elevated Floating Center Button) -->
+      <!-- 3. PMB (Elevated Floating Center Button - Exactly Centered at 50%) -->
       <a
         href="/pmb"
-        class="flex flex-col items-center py-0.5 px-3 transition-all duration-150 active:scale-90 relative -top-3"
+        class="relative flex flex-col items-center justify-end h-full w-full pb-2 text-center transition-all duration-150 active:scale-95 group"
       >
         <div
-          class="w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition-transform"
+          class="absolute -top-5 left-1/2 -translate-x-1/2 w-12 h-12 rounded-full flex items-center justify-center shadow-[0_6px_20px_rgba(16,185,129,0.35)] transition-transform group-hover:scale-105"
           :class="currentPath.startsWith('/pmb')
-            ? 'bg-emerald-400 text-[#031d11] ring-4 ring-emerald-500/30 shadow-emerald-500/40'
-            : 'bg-gradient-to-tr from-emerald-600 to-emerald-400 text-white shadow-emerald-500/30 border-2 border-[#031d11]'"
+            ? 'bg-emerald-400 text-[#031d11] ring-4 ring-emerald-500/30 shadow-emerald-500/40 border-2 border-emerald-300'
+            : 'bg-gradient-to-tr from-emerald-600 to-emerald-400 text-white shadow-emerald-500/30 border-2 border-[#031d11] group-hover:brightness-110'"
         >
           <i class="fas fa-user-graduate text-base"></i>
         </div>
-        <span class="text-[10px] font-extrabold text-emerald-300 mt-0.5">PMB</span>
+        <span
+          class="text-[10px] leading-tight font-extrabold tracking-tight"
+          :class="currentPath.startsWith('/pmb') ? 'text-emerald-300' : 'text-emerald-400 group-hover:text-emerald-300'"
+        >
+          PMB
+        </span>
       </a>
 
       <!-- 4. Berita -->
       <a
         href="/berita"
-        class="flex flex-col items-center py-1 px-2.5 rounded-xl transition-all duration-150 active:scale-95"
+        class="flex flex-col items-center justify-end h-full w-full pb-2 text-center transition-all duration-150 active:scale-95"
         :class="currentPath.startsWith('/berita') ? 'text-emerald-300 font-bold' : 'text-slate-400 hover:text-emerald-300'"
       >
-        <i class="far fa-newspaper text-base mb-0.5"></i>
-        <span>Berita</span>
+        <div class="h-5 flex items-center justify-center mb-1">
+          <i class="far fa-newspaper text-[17px]"></i>
+        </div>
+        <span class="text-[10px] leading-tight font-medium tracking-tight truncate max-w-full">Berita</span>
       </a>
 
       <!-- 5. Menu Drawer -->
       <button
         type="button"
-        class="flex flex-col items-center py-1 px-2.5 rounded-xl transition-all duration-150 active:scale-95"
+        class="flex flex-col items-center justify-end h-full w-full pb-2 text-center transition-all duration-150 active:scale-95"
         :class="mobileMenuOpen ? 'text-emerald-300 font-bold' : 'text-slate-400 hover:text-emerald-300'"
         @click="mobileMenuOpen = !mobileMenuOpen"
         aria-label="Buka Menu"
       >
-        <i class="fas fa-th-large text-base mb-0.5"></i>
-        <span>Menu</span>
+        <div class="h-5 flex items-center justify-center mb-1">
+          <i class="fas fa-th-large text-[17px]"></i>
+        </div>
+        <span class="text-[10px] leading-tight font-medium tracking-tight truncate max-w-full">Menu</span>
       </button>
     </nav>
   </Teleport>

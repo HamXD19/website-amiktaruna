@@ -17,7 +17,7 @@
     "isDynamicEntry": true
   },
   "resources/css/app.css": {
-    "file": "assets/app-C-hcHQQm.css",
+    "file": "assets/app-B_wkiYZt.css",
     "name": "app",
     "names": [
       "app.css"
@@ -26,7 +26,7 @@
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-Bi62C1Tq.js",
+    "file": "assets/app-pX51dNaj.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
@@ -55,7 +55,7 @@
     ]
   },
   "resources/js/components/layout/AppNavbar.vue": {
-    "file": "assets/AppNavbar-CPICttQv.js",
+    "file": "assets/AppNavbar-DxhRr75j.js",
     "name": "AppNavbar",
     "src": "resources/js/components/layout/AppNavbar.vue",
     "isDynamicEntry": true,
@@ -64,7 +64,7 @@
     ]
   },
   "resources/js/pages/AkademikPage.vue": {
-    "file": "assets/AkademikPage-umckeaje.js",
+    "file": "assets/AkademikPage-B5PJBq0x.js",
     "name": "AkademikPage",
     "src": "resources/js/pages/AkademikPage.vue",
     "isDynamicEntry": true,
@@ -76,7 +76,7 @@
     ]
   },
   "resources/js/pages/AlumniPage.vue": {
-    "file": "assets/AlumniPage-DXzZcRtS.js",
+    "file": "assets/AlumniPage-DhJk_o3X.js",
     "name": "AlumniPage",
     "src": "resources/js/pages/AlumniPage.vue",
     "isDynamicEntry": true,
@@ -88,7 +88,7 @@
     ]
   },
   "resources/js/pages/BeritaDetailPage.vue": {
-    "file": "assets/BeritaDetailPage-DbmaJEV1.js",
+    "file": "assets/BeritaDetailPage-d4d1k-za.js",
     "name": "BeritaDetailPage",
     "src": "resources/js/pages/BeritaDetailPage.vue",
     "isDynamicEntry": true,
@@ -100,7 +100,7 @@
     ]
   },
   "resources/js/pages/HomePage.vue": {
-    "file": "assets/HomePage-DAHQQxt0.js",
+    "file": "assets/HomePage-BTpd0jtM.js",
     "name": "HomePage",
     "src": "resources/js/pages/HomePage.vue",
     "isDynamicEntry": true,
@@ -115,7 +115,7 @@
     ]
   },
   "resources/js/pages/ProgramStudiDetailPage.vue": {
-    "file": "assets/ProgramStudiDetailPage-BJmg77Cb.js",
+    "file": "assets/ProgramStudiDetailPage-9EQMFAg8.js",
     "name": "ProgramStudiDetailPage",
     "src": "resources/js/pages/ProgramStudiDetailPage.vue",
     "isDynamicEntry": true,
@@ -127,7 +127,7 @@
     ]
   },
   "resources/js/pages/TentangPage.vue": {
-    "file": "assets/TentangPage-DalC1hjh.js",
+    "file": "assets/TentangPage-BN9Ra6CM.js",
     "name": "TentangPage",
     "src": "resources/js/pages/TentangPage.vue",
     "isDynamicEntry": true,
