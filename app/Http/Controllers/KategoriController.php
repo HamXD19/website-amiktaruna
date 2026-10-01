@@ -343,6 +343,7 @@ class KategoriController extends Controller
     public function index(Request $request)
     {
         $this->autoSeedDefaults();
+        Kategori::seedOrganigramDefaults();
 
         $query = Kategori::withCount(['beritas', 'prodiDokumens', 'ppmDokumens', 'lppmDokumens', 'dokumenKampuses', 'beritaPmbs'])->orderBy('urutan', 'asc')->latest();
 
@@ -366,6 +367,8 @@ class KategoriController extends Controller
             $used = 0;
             if ($kat->modul === 'jabatan') {
                 $used = Dosen::where('jabatan', 'LIKE', "%{$kat->nama}%")->count();
+            } elseif ($kat->modul === 'organigram') {
+                $used = Dosen::where('level_organigram', $kat->level_organigram)->count();
             } else {
                 $used = ($kat->beritas_count ?? 0)
                       + ($kat->prodi_dokumens_count ?? 0)
@@ -389,6 +392,7 @@ class KategoriController extends Controller
             'prodi_dokumen' => Kategori::where('modul', 'prodi_dokumen')->count(),
             'layanan' => Kategori::where('modul', 'layanan')->count(),
             'jabatan' => Kategori::where('modul', 'jabatan')->count(),
+            'organigram' => Kategori::where('modul', 'organigram')->count(),
             'umum' => Kategori::where('modul', 'umum')->count(),
         ];
 
@@ -399,8 +403,8 @@ class KategoriController extends Controller
     {
         $request->validate([
             'nama' => 'required|string|max:100',
-            'modul' => 'required|string|in:berita,pmb,dokumen,prodi_dokumen,layanan,umum,jabatan,lppm_dokumen,dokumen_kampus',
-            'level_organigram' => 'nullable|integer|min:1|max:7',
+            'modul' => 'required|string|in:berita,pmb,dokumen,prodi_dokumen,layanan,umum,jabatan,lppm_dokumen,dokumen_kampus,organigram',
+            'level_organigram' => 'nullable|integer|min:1|max:99',
             'slug' => 'nullable|string|max:100|unique:kategoris,slug',
             'warna' => 'nullable|string|max:30',
             'ikon' => 'nullable|string|max:50',
@@ -420,20 +424,27 @@ class KategoriController extends Controller
             $counter++;
         }
 
+        $level = null;
+        if ($request->filled('level_organigram')) {
+            $level = (int) $request->level_organigram;
+        } elseif ($request->modul === 'organigram') {
+            $level = $request->filled('urutan') ? (int) $request->urutan : ((Kategori::where('modul', 'organigram')->max('level_organigram') ?? 0) + 1);
+        }
+
         Kategori::create([
             'nama' => $request->nama,
             'slug' => $slug,
             'modul' => $request->modul,
-            'level_organigram' => $request->filled('level_organigram') ? (int) $request->level_organigram : null,
+            'level_organigram' => $level,
             'warna' => $request->warna ?: 'success',
-            'ikon' => $request->ikon ?: '📌',
+            'ikon' => $request->ikon ?: ($request->modul === 'organigram' ? '🏛️' : '📌'),
             'keterangan' => $request->keterangan,
-            'urutan' => $request->urutan ?: 0,
+            'urutan' => $request->urutan ?: ($level ?: 0),
             'is_active' => $request->has('is_active') ? (bool) $request->is_active : true,
         ]);
 
         return redirect()->route('admin.kategori.index', ['modul' => $request->modul])
-            ->with('success', "Kategori '{$request->nama}' berhasil ditambahkan.");
+            ->with('success', "Kategori / Tingkat '{$request->nama}' berhasil ditambahkan.");
     }
 
     public function storeAjax(Request $request)
@@ -481,8 +492,8 @@ class KategoriController extends Controller
 
         $request->validate([
             'nama' => 'required|string|max:100',
-            'modul' => 'required|string|in:berita,pmb,dokumen,prodi_dokumen,layanan,umum,jabatan,lppm_dokumen,dokumen_kampus',
-            'level_organigram' => 'nullable|integer|min:1|max:7',
+            'modul' => 'required|string|in:berita,pmb,dokumen,prodi_dokumen,layanan,umum,jabatan,lppm_dokumen,dokumen_kampus,organigram',
+            'level_organigram' => 'nullable|integer|min:1|max:99',
             'slug' => 'required|string|max:100|unique:kategoris,slug,'.$id,
             'warna' => 'nullable|string|max:30',
             'ikon' => 'nullable|string|max:50',
@@ -514,20 +525,27 @@ class KategoriController extends Controller
             }
         }
 
+        $level = null;
+        if ($request->filled('level_organigram')) {
+            $level = (int) $request->level_organigram;
+        } elseif ($request->modul === 'organigram') {
+            $level = $request->filled('urutan') ? (int) $request->urutan : ($kategori->level_organigram ?: 1);
+        }
+
         $kategori->update([
             'nama' => $request->nama,
             'slug' => $newSlug,
             'modul' => $request->modul,
-            'level_organigram' => $request->filled('level_organigram') ? (int) $request->level_organigram : null,
+            'level_organigram' => $level,
             'warna' => $request->warna ?: 'success',
-            'ikon' => $request->ikon ?: '📌',
+            'ikon' => $request->ikon ?: ($request->modul === 'organigram' ? '🏛️' : '📌'),
             'keterangan' => $request->keterangan,
-            'urutan' => $request->urutan ?: 0,
+            'urutan' => $request->urutan ?: ($level ?: 0),
             'is_active' => $request->has('is_active') ? (bool) $request->is_active : false,
         ]);
 
         return redirect()->route('admin.kategori.index', ['modul' => $request->modul])
-            ->with('success', "Kategori '{$kategori->nama}' berhasil diperbarui.");
+            ->with('success', "Kategori / Tingkat '{$kategori->nama}' berhasil diperbarui.");
     }
 
     public function destroy($id)
@@ -544,13 +562,15 @@ class KategoriController extends Controller
         $usedInDosen = 0;
         if ($kategori->modul === 'jabatan') {
             $usedInDosen = Dosen::where('jabatan', 'LIKE', "%{$kategori->nama}%")->count();
+        } elseif ($kategori->modul === 'organigram') {
+            $usedInDosen = Dosen::where('level_organigram', $kategori->level_organigram)->count();
         }
 
         $totalUsed = $usedInBerita + $usedInPMB + $usedInProdiDok + $usedInPPMDok + $usedInLPPMDok + $usedInDokumenKampus + $usedInDosen;
 
         if ($totalUsed > 0) {
             return redirect()->route('admin.kategori.index', ['modul' => $kategori->modul])
-                ->with('error', "Kategori '{$kategori->nama}' tidak dapat dihapus karena masih digunakan oleh {$totalUsed} data/konten/dosen aktif. Silakan ubah atau hapus data terkait terlebih dahulu, atau nonaktifkan kategori ini.");
+                ->with('error', "Kategori / Tingkat '{$kategori->nama}' tidak dapat dihapus karena masih digunakan oleh {$totalUsed} data/konten/dosen aktif. Silakan ubah data dosen terkait terlebih dahulu.");
         }
 
         $nama = $kategori->nama;

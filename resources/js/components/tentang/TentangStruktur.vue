@@ -5,6 +5,10 @@ const props = defineProps({
   dosen: {
     type: Array,
     default: () => []
+  },
+  organigramLevels: {
+    type: Array,
+    default: () => []
   }
 });
 
@@ -76,8 +80,29 @@ const isDosenPengajar = (d) => {
   return !isDirektur(d) && !isWadir(d) && !isLembagaOrPusat(d) && !isKaprodi(d) && !isKabag(d) && !isStaf(d);
 };
 
-// Organigram Levels (Top-down structure: Lembaga/Pusat & Kaprodi terpisah)
+// Organigram Levels (Dynamic from Master Kategori with static fallback)
 const organigramLevels = computed(() => {
+  if (props.organigramLevels && props.organigramLevels.length > 0) {
+    return props.organigramLevels.map(lvl => {
+      const lvlNum = Number(lvl.level_organigram);
+      const cleanTitle = (lvl.nama || '').replace(/^Level\s*\d+\s*-\s*/i, '').trim();
+      let items = props.dosen.filter(d => Number(d.level_organigram) === lvlNum);
+
+      // Sort items within level if wadir
+      if (lvlNum === 2) {
+        items = [...items].sort((a, b) => (a.jabatan || '').localeCompare(b.jabatan || ''));
+      }
+
+      return {
+        level: lvlNum,
+        title: cleanTitle || lvl.nama,
+        subtitle: lvl.keterangan || `Tingkat ${lvlNum} Sivitas Akademika`,
+        badge: `Level ${lvlNum}`,
+        items: items
+      };
+    }).filter(lvl => lvl.items.length > 0);
+  }
+
   const direktur = props.dosen.filter(isDirektur);
   const wadir = props.dosen.filter(isWadir).sort((a, b) => (a.jabatan || '').localeCompare(b.jabatan || ''));
   const lembagaPusat = props.dosen.filter(isLembagaOrPusat);

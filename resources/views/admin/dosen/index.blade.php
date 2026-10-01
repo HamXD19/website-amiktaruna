@@ -158,17 +158,30 @@
                                required>
 
                         <div class="mt-3">
-                            <label class="fw-semibold mb-2">
-                                Tingkat Organigram / Bagan
-                            </label>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <label class="fw-semibold mb-0">
+                                    Tingkat Organigram / Bagan <span class="text-danger">*</span>
+                                </label>
+                                <a href="{{ route('admin.kategori.index', ['modul' => 'organigram']) }}" target="_blank" class="small text-success text-decoration-none fw-semibold">
+                                    <i class="fas fa-cog me-1"></i>Master Tingkat Organigram
+                                </a>
+                            </div>
                             <select name="level_organigram" class="form-select" required>
-                                <option value="1">Level 1 - Direktur (Pimpinan Utama)</option>
-                                <option value="2">Level 2 - Wakil Direktur (Wadir I, II, III)</option>
-                                <option value="3">Level 3 - Lembaga, Pusat & Unit Penunjang (PPM, LPPM, Perpustakaan, Kerjasama)</option>
-                                <option value="4">Level 4 - Ketua Program Studi (Kaprodi)</option>
-                                <option value="5">Level 5 - Kepala Bagian (Kabag)</option>
-                                <option value="6">Level 6 - Staf & Tenaga Kependidikan</option>
-                                <option value="7" selected>Level 7 - Dosen Pengajar Lainnya</option>
+                                @if(isset($organigramLevels) && $organigramLevels->count() > 0)
+                                    @foreach($organigramLevels as $lvl)
+                                        <option value="{{ $lvl->level_organigram }}" {{ $lvl->level_organigram == 7 ? 'selected' : '' }}>
+                                            {{ $lvl->nama }}
+                                        </option>
+                                    @endforeach
+                                @else
+                                    <option value="1">Level 1 - Direktur (Pimpinan Utama)</option>
+                                    <option value="2">Level 2 - Wakil Direktur (Wadir I, II, III)</option>
+                                    <option value="3">Level 3 - Lembaga, Pusat & Unit Penunjang (PPM, LPPM, Perpustakaan, Kerjasama)</option>
+                                    <option value="4">Level 4 - Ketua Program Studi (Kaprodi)</option>
+                                    <option value="5">Level 5 - Kepala Bagian (Kabag)</option>
+                                    <option value="6">Level 6 - Staf & Tenaga Kependidikan</option>
+                                    <option value="7" selected>Level 7 - Dosen Pengajar Lainnya</option>
+                                @endif
                             </select>
                             <small class="text-muted d-block mt-1">Menentukan posisi bagan struktur di halaman Tentang Kampus.</small>
                         </div>

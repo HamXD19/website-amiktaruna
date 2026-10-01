@@ -71,6 +71,25 @@ class Kategori extends Model
 
     public static function getOrganigramLevels(): array
     {
+        try {
+            self::seedOrganigramDefaults();
+            $levels = self::where('modul', 'organigram')
+                ->where('is_active', true)
+                ->orderBy('level_organigram')
+                ->orderBy('urutan')
+                ->get();
+
+            if ($levels->isNotEmpty()) {
+                $result = [];
+                foreach ($levels as $l) {
+                    $result[$l->level_organigram] = $l->nama;
+                }
+                return $result;
+            }
+        } catch (\Throwable $e) {
+            // fallback if table/column not available
+        }
+
         return [
             1 => 'Level 1 - Direktur (Pimpinan Utama)',
             2 => 'Level 2 - Wakil Direktur (Wadir I, II, III)',
@@ -80,5 +99,98 @@ class Kategori extends Model
             6 => 'Level 6 - Staf & Tenaga Kependidikan',
             7 => 'Level 7 - Dosen Pengajar Lainnya',
         ];
+    }
+
+    public static function seedOrganigramDefaults(): void
+    {
+        try {
+            if (self::where('modul', 'organigram')->count() === 0) {
+                $defaults = [
+                    [
+                        'nama' => 'Level 1 - Direktur (Pimpinan Utama)',
+                        'slug' => 'level-1-direktur',
+                        'modul' => 'organigram',
+                        'level_organigram' => 1,
+                        'warna' => 'success',
+                        'ikon' => '🏛️',
+                        'keterangan' => 'Direktur AMIK Taruna Probolinggo',
+                        'urutan' => 1,
+                        'is_active' => true,
+                    ],
+                    [
+                        'nama' => 'Level 2 - Wakil Direktur (Wadir I, II, III)',
+                        'slug' => 'level-2-wakil-direktur',
+                        'modul' => 'organigram',
+                        'level_organigram' => 2,
+                        'warna' => 'primary',
+                        'ikon' => '👔',
+                        'keterangan' => 'Wakil Direktur Bidang Akademik, Keuangan & Kemahasiswaan',
+                        'urutan' => 2,
+                        'is_active' => true,
+                    ],
+                    [
+                        'nama' => 'Level 3 - Lembaga, Pusat & Unit Penunjang (PPM, LPPM, Perpustakaan, Kerjasama)',
+                        'slug' => 'level-3-lembaga-pusat',
+                        'modul' => 'organigram',
+                        'level_organigram' => 3,
+                        'warna' => 'info',
+                        'ikon' => '🛡️',
+                        'keterangan' => 'Kepala Pusat Penjaminan Mutu (PPM), Ketua LPPM, UPT Perpustakaan & Kerjasama',
+                        'urutan' => 3,
+                        'is_active' => true,
+                    ],
+                    [
+                        'nama' => 'Level 4 - Ketua Program Studi (Kaprodi)',
+                        'slug' => 'level-4-kaprodi',
+                        'modul' => 'organigram',
+                        'level_organigram' => 4,
+                        'warna' => 'success',
+                        'ikon' => '🎓',
+                        'keterangan' => 'Pimpinan & Pelaksana Kurikulum Keilmuan Program Studi Vokasi',
+                        'urutan' => 4,
+                        'is_active' => true,
+                    ],
+                    [
+                        'nama' => 'Level 5 - Kepala Bagian (Kabag)',
+                        'slug' => 'level-5-kabag',
+                        'modul' => 'organigram',
+                        'level_organigram' => 5,
+                        'warna' => 'warning',
+                        'ikon' => '💼',
+                        'keterangan' => 'Pelaksana Teknis Administrasi Akademik & Umum',
+                        'urutan' => 5,
+                        'is_active' => true,
+                    ],
+                    [
+                        'nama' => 'Level 6 - Staf & Tenaga Kependidikan',
+                        'slug' => 'level-6-staf-tendik',
+                        'modul' => 'organigram',
+                        'level_organigram' => 6,
+                        'warna' => 'secondary',
+                        'ikon' => '👤',
+                        'keterangan' => 'Tenaga Kependidikan, Layanan Informasi & Perpustakaan',
+                        'urutan' => 6,
+                        'is_active' => true,
+                    ],
+                    [
+                        'nama' => 'Level 7 - Dosen Pengajar Lainnya',
+                        'slug' => 'level-7-dosen-pengajar',
+                        'modul' => 'organigram',
+                        'level_organigram' => 7,
+                        'warna' => 'secondary',
+                        'ikon' => '👨‍🏫',
+                        'keterangan' => 'Tenaga Pendidik Sivitas Akademika AMIK Taruna',
+                        'urutan' => 7,
+                        'is_active' => true,
+                    ],
+                ];
+
+                foreach ($defaults as $d) {
+                    self::create($d);
+                }
+            }
+        } catch (\Throwable $e) {
+            // ignore if DB is migrating
+        }
     }
 }

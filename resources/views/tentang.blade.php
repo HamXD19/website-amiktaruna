@@ -22,6 +22,7 @@
         'visimisi' => $visimisi ?? null,
         'dosen' => $dosen ?? [],
         'akreditasi' => $akreditasi ?? [],
+        'organigramLevels' => $organigramLevels ?? [],
     ]) }}"
 >
 </div>

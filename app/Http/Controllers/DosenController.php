@@ -59,12 +59,23 @@ class DosenController extends Controller
         }
     }
 
+    private function getOrganigramLevels()
+    {
+        Kategori::seedOrganigramDefaults();
+        return Kategori::where('modul', 'organigram')
+            ->where('is_active', true)
+            ->orderBy('level_organigram')
+            ->orderBy('urutan')
+            ->get();
+    }
+
     public function index()
     {
-        $dosen = Dosen::all();
+        $dosen = Dosen::orderBy('level_organigram')->orderBy('nama')->get();
         $jabatanList = $this->getJabatanList();
+        $organigramLevels = $this->getOrganigramLevels();
 
-        return view('admin.dosen.index', compact('dosen', 'jabatanList'));
+        return view('admin.dosen.index', compact('dosen', 'jabatanList', 'organigramLevels'));
     }
 
     /*
@@ -77,7 +88,7 @@ class DosenController extends Controller
         $request->validate([
             'nama'             => 'required|string|max:255',
             'jabatan'          => 'required|array',
-            'level_organigram' => 'nullable|integer|between:1,7',
+            'level_organigram' => 'nullable|integer|min:1|max:99',
             'foto'             => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120'
         ]);
 
@@ -123,8 +134,9 @@ class DosenController extends Controller
     {
         $dosen = Dosen::findOrFail($id);
         $jabatanList = $this->getJabatanList();
+        $organigramLevels = $this->getOrganigramLevels();
 
-        return view('admin.dosen_edit', compact('dosen', 'jabatanList'));
+        return view('admin.dosen_edit', compact('dosen', 'jabatanList', 'organigramLevels'));
     }
 
     /*
@@ -137,7 +149,7 @@ class DosenController extends Controller
         $request->validate([
             'nama'             => 'required|string|max:255',
             'jabatan'          => 'required|array',
-            'level_organigram' => 'nullable|integer|between:1,7',
+            'level_organigram' => 'nullable|integer|min:1|max:99',
             'foto'             => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120'
         ]);
 

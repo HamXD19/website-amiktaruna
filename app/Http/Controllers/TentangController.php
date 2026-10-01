@@ -101,6 +101,18 @@ END
 
         /*
         |--------------------------------------------------------------------------
+        | ORGANIGRAM LEVELS (DYNAMIC FROM MASTER KATEGORI)
+        |--------------------------------------------------------------------------
+        */
+        \App\Models\Kategori::seedOrganigramDefaults();
+        $organigramLevels = \App\Models\Kategori::where('modul', 'organigram')
+            ->where('is_active', true)
+            ->orderBy('level_organigram')
+            ->orderBy('urutan')
+            ->get();
+
+        /*
+        |--------------------------------------------------------------------------
         | VIEW
         |--------------------------------------------------------------------------
         */
@@ -108,7 +120,8 @@ END
         return view('tentang', compact(
             'visimisi',
             'dosen',
-            'akreditasi'
+            'akreditasi',
+            'organigramLevels'
         ));
     }
 }

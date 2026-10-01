@@ -24,6 +24,10 @@ defineProps({
   akreditasi: {
     type: Array,
     default: () => []
+  },
+  organigramLevels: {
+    type: Array,
+    default: () => []
   }
 });
 </script>
@@ -48,7 +52,7 @@ defineProps({
       <TentangAkreditasi :akreditasi="akreditasi" />
 
       <!-- 6. People & Leadership (Hierarchy-Preserved Portrait Editorial Cards) -->
-      <TentangStruktur :dosen="dosen" />
+      <TentangStruktur :dosen="dosen" :organigram-levels="organigramLevels" />
 
       <!-- 7. Institutional Call to Action (Next Steps & Contact) -->
       <CtaSection :setting="setting" />
