@@ -19,6 +19,9 @@ class VisitorLog extends Model
         'device',
         'platform',
         'browser',
+        'country',
+        'country_code',
+        'city',
         'session_id',
         'is_bot',
     ];
@@ -72,5 +75,44 @@ class VisitorLog extends Model
             'desktop' => 'fas fa-laptop',
             default   => 'fas fa-robot',
         };
+    }
+
+    /**
+     * Get Flag Emoji from Country Code
+     */
+    public function getCountryFlagAttribute(): string
+    {
+        if (!$this->country_code || strlen($this->country_code) !== 2) {
+            return '🌐';
+        }
+
+        $code = strtoupper($this->country_code);
+        if ($code === 'LO' || $code === 'XX') {
+            return '🏠';
+        }
+
+        try {
+            $firstChar = mb_chr(ord($code[0]) - 65 + 0x1F1E6, 'UTF-8');
+            $secondChar = mb_chr(ord($code[1]) - 65 + 0x1F1E6, 'UTF-8');
+            return $firstChar . $secondChar;
+        } catch (\Throwable $e) {
+            return '🌐';
+        }
+    }
+
+    /**
+     * Get Readable Location String
+     */
+    public function getLocationLabelAttribute(): string
+    {
+        if (!$this->country) {
+            return 'Tidak Diketahui';
+        }
+
+        if ($this->city && $this->city !== $this->country) {
+            return "{$this->city}, {$this->country}";
+        }
+
+        return $this->country;
     }
 }

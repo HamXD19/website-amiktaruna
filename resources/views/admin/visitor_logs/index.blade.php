@@ -288,6 +288,23 @@
         <!-- Top Browsers & Referrers -->
         <div class="col-12 col-lg-5">
             <div class="card border-0 rounded-4 shadow-sm h-100 bg-white p-4">
+                <!-- Top Countries -->
+                <h6 class="fw-bold text-slate-800 mb-2.5 d-flex align-items-center gap-2">
+                    <i class="fas fa-earth-asia text-emerald-600"></i>
+                    Negara Pengunjung
+                </h6>
+                <div class="d-flex flex-wrap gap-2 mb-4">
+                    @forelse($topCountries as $c)
+                        <div class="d-flex align-items-center gap-1.5 px-2.5 py-1.5 rounded-3 bg-slate-50 border border-slate-100 text-xs">
+                            <span class="fs-6" style="line-height: 1;">{{ (new \App\Models\VisitorLog(['country_code' => $c->country_code]))->country_flag }}</span>
+                            <span class="fw-semibold text-slate-700">{{ $c->country }}</span>
+                            <span class="badge bg-emerald-100 text-emerald-800 rounded-pill font-monospace">{{ number_format($c->total) }}</span>
+                        </div>
+                    @empty
+                        <span class="text-muted text-xs">Belum ada data negara</span>
+                    @endforelse
+                </div>
+
                 <!-- Browsers -->
                 <h6 class="fw-bold text-slate-800 mb-2.5 d-flex align-items-center gap-2">
                     <i class="fab fa-chrome text-cyan-600"></i>
@@ -334,12 +351,12 @@
         <form method="GET" action="{{ route('admin.visitor-logs.index') }}" class="row g-2.5 align-items-center">
             
             <!-- Search -->
-            <div class="col-12 col-md-4">
+            <div class="col-12 col-md-3">
                 <div class="input-group input-group-sm">
                     <span class="input-group-text bg-white border-end-0 text-muted">
                         <i class="fas fa-magnifying-glass"></i>
                     </span>
-                    <input type="text" name="search" value="{{ $search }}" class="form-control border-start-0 ps-0" placeholder="Cari IP, Halaman, Browser, OS, Referrer...">
+                    <input type="text" name="search" value="{{ $search }}" class="form-control border-start-0 ps-0" placeholder="Cari IP, Negara, Kota, Halaman, OS...">
                 </div>
             </div>
 
@@ -366,12 +383,24 @@
                 </select>
             </div>
 
+            <!-- Country Dropdown -->
+            <div class="col-6 col-md-2">
+                <select name="country" class="form-select form-select-sm text-xs">
+                    <option value="all" {{ $country === 'all' ? 'selected' : '' }}>Semua Negara</option>
+                    @foreach($availableCountries as $ac)
+                        <option value="{{ $ac->country_code }}" {{ $country === $ac->country_code ? 'selected' : '' }}>
+                            {{ (new \App\Models\VisitorLog(['country_code' => $ac->country_code]))->country_flag }} {{ $ac->country }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
             <!-- Actions -->
-            <div class="col-12 col-md-4 d-flex gap-2 justify-content-md-end">
+            <div class="col-6 col-md-3 d-flex gap-2 justify-content-end">
                 <button type="submit" class="btn btn-sm btn-emerald text-white rounded-3 px-3 fw-semibold">
-                    <i class="fas fa-filter me-1"></i>Terapkan Filter
+                    <i class="fas fa-filter me-1"></i>Filter
                 </button>
-                @if($search || $period !== '7days' || $device !== 'all')
+                @if($search || $period !== '7days' || $device !== 'all' || $country !== 'all')
                     <a href="{{ route('admin.visitor-logs.index') }}" class="btn btn-sm btn-outline-secondary rounded-3 px-2.5" title="Reset Filter">
                         <i class="fas fa-rotate-left"></i>
                     </a>
@@ -386,12 +415,13 @@
             <table class="table table-hover align-middle mb-0">
                 <thead class="bg-slate-50 border-bottom border-slate-100">
                     <tr class="text-xs text-uppercase tracking-wider text-muted font-monospace">
-                        <th class="ps-4 py-3" style="width: 140px;">Waktu</th>
-                        <th style="min-width: 150px;">Pengunjung / IP</th>
-                        <th style="min-width: 200px;">Halaman Dikunjungi</th>
-                        <th style="min-width: 140px;">Perangkat &amp; OS</th>
-                        <th style="min-width: 130px;">Browser</th>
-                        <th class="pe-4" style="min-width: 140px;">Sumber (Referrer)</th>
+                        <th class="ps-4 py-3" style="width: 130px;">Waktu</th>
+                        <th style="min-width: 140px;">Pengunjung / IP</th>
+                        <th style="min-width: 150px;">Lokasi / Asal</th>
+                        <th style="min-width: 190px;">Halaman Dikunjungi</th>
+                        <th style="min-width: 130px;">Perangkat &amp; OS</th>
+                        <th style="min-width: 120px;">Browser</th>
+                        <th class="pe-4" style="min-width: 130px;">Sumber (Referrer)</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
@@ -417,6 +447,19 @@
                                 </div>
                                 <div class="text-3xs text-muted font-monospace mt-0.5">
                                     Sesi: {{ substr($log->session_id, 0, 8) }}...
+                                </div>
+                            </td>
+
+                            <!-- Lokasi / Asal -->
+                            <td>
+                                <div class="d-flex align-items-center gap-1.5 text-xs text-slate-800">
+                                    <span class="fs-6" style="line-height: 1;">{{ $log->country_flag }}</span>
+                                    <span class="fw-semibold text-truncate" style="max-width: 140px;" title="{{ $log->country ?? 'Tidak Diketahui' }}">
+                                        {{ $log->country ?? 'Tidak Diketahui' }}
+                                    </span>
+                                </div>
+                                <div class="text-3xs text-muted text-truncate font-monospace mt-0.5" style="max-width: 140px;" title="{{ $log->city ?? '-' }}">
+                                    <i class="fas fa-location-dot me-0.5 text-slate-400"></i>{{ $log->city ?: '-' }}
                                 </div>
                             </td>
 
@@ -463,7 +506,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="text-center py-5">
+                            <td colspan="7" class="text-center py-5">
                                 <div class="text-muted small">
                                     <i class="fas fa-magnifying-glass fs-3 mb-2 d-block text-slate-300"></i>
                                     Tidak ada catatan log pengunjung yang sesuai filter.

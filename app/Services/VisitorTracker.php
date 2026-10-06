@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Models\VisitorLog;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
 class VisitorTracker
@@ -37,6 +39,7 @@ class VisitorTracker
             $referrer = $request->header('referer');
             $referrerHost = self::parseReferrerHost($referrer);
             $pageName = self::resolvePageName($path);
+            $location = self::detectLocation($ip, $request);
 
             return VisitorLog::create([
                 'ip_address'    => $ip,
@@ -49,6 +52,9 @@ class VisitorTracker
                 'device'        => $device,
                 'platform'      => $platform,
                 'browser'       => $browser,
+                'country'       => $location['country'] ?? null,
+                'country_code'  => $location['country_code'] ?? null,
+                'city'          => $location['city'] ?? null,
                 'session_id'    => $sessionId,
                 'is_bot'        => $isBot,
             ]);
@@ -171,5 +177,98 @@ class VisitorTracker
             'jadwal-kuliah'   => 'Jadwal Perkuliahan',
             default           => Str::title(str_replace(['-', '_'], ' ', $first)),
         };
+    }
+
+    /**
+     * Detect Visitor Location (Country, Country Code, City)
+     */
+    public static function detectLocation(string $ip, Request $request): array
+    {
+        // 1. Check Cloudflare header if present (fastest, 0ms latency)
+        $cfCountry = $request->header('cf-ipcountry');
+        $cfCity = $request->header('cf-ipcity');
+
+        if ($cfCountry && !in_array(strtoupper($cfCountry), ['XX', 'T1', 'UNKNOWN'])) {
+            $code = strtoupper(trim($cfCountry));
+            return [
+                'country'      => self::countryCodeToName($code),
+                'country_code' => $code,
+                'city'         => $cfCity ? Str::title(trim($cfCity)) : null,
+            ];
+        }
+
+        // 2. Local / Private / Reserved IP addresses
+        if (
+            in_array($ip, ['127.0.0.1', '::1', 'localhost']) ||
+            !filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)
+        ) {
+            return [
+                'country'      => 'Lokal / Internal',
+                'country_code' => 'LO',
+                'city'         => 'Jaringan Lokal',
+            ];
+        }
+
+        // 3. Cached GeoIP API Lookup (Cached for 30 days per IP to prevent rate limits)
+        return Cache::remember('geo_ip_' . $ip, now()->addDays(30), function () use ($ip) {
+            try {
+                $response = Http::timeout(2)->get("http://ip-api.com/json/{$ip}?fields=status,country,countryCode,city");
+
+                if ($response->successful()) {
+                    $data = $response->json();
+                    if (($data['status'] ?? '') === 'success') {
+                        return [
+                            'country'      => $data['country'] ?? 'Tidak Diketahui',
+                            'country_code' => isset($data['countryCode']) ? strtoupper($data['countryCode']) : null,
+                            'city'         => $data['city'] ?? null,
+                        ];
+                    }
+                }
+            } catch (\Throwable $e) {
+                // Silently fallback on timeout or connection issue
+            }
+
+            return [
+                'country'      => 'Tidak Diketahui',
+                'country_code' => null,
+                'city'         => null,
+            ];
+        });
+    }
+
+    /**
+     * Map common ISO Country Codes to Indonesian Country Names
+     */
+    public static function countryCodeToName(string $code): string
+    {
+        $code = strtoupper($code);
+        $names = [
+            'ID' => 'Indonesia',
+            'MY' => 'Malaysia',
+            'SG' => 'Singapura',
+            'US' => 'Amerika Serikat',
+            'GB' => 'Inggris Raya',
+            'AU' => 'Australia',
+            'JP' => 'Jepang',
+            'KR' => 'Korea Selatan',
+            'CN' => 'Tiongkok',
+            'HK' => 'Hong Kong',
+            'TW' => 'Taiwan',
+            'TH' => 'Thailand',
+            'VN' => 'Vietnam',
+            'PH' => 'Filipina',
+            'IN' => 'India',
+            'SA' => 'Arab Saudi',
+            'AE' => 'Uni Emirat Arab',
+            'TR' => 'Turki',
+            'DE' => 'Jerman',
+            'FR' => 'Prancis',
+            'NL' => 'Belanda',
+            'RU' => 'Rusia',
+            'CA' => 'Kanada',
+            'BR' => 'Brasil',
+        ];
+
+        return $names[$code] ?? $code;
     }
 }

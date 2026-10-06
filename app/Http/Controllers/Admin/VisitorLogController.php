@@ -15,6 +15,7 @@ class VisitorLogController extends Controller
     {
         $period = $request->get('period', '7days');
         $device = $request->get('device', 'all');
+        $country = $request->get('country', 'all');
         $search = $request->get('search');
         $startDate = $request->get('start_date');
         $endDate = $request->get('end_date');
@@ -47,6 +48,11 @@ class VisitorLogController extends Controller
             }
         }
 
+        // Filter by Country
+        if ($country !== 'all') {
+            $query->where('country_code', $country);
+        }
+
         // Search Filter
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -55,7 +61,9 @@ class VisitorLogController extends Controller
                   ->orWhere('page_name', 'like', "%{$search}%")
                   ->orWhere('referrer', 'like', "%{$search}%")
                   ->orWhere('browser', 'like', "%{$search}%")
-                  ->orWhere('platform', 'like', "%{$search}%");
+                  ->orWhere('platform', 'like', "%{$search}%")
+                  ->orWhere('country', 'like', "%{$search}%")
+                  ->orWhere('city', 'like', "%{$search}%");
             });
         }
 
@@ -128,6 +136,24 @@ class VisitorLogController extends Controller
             ->limit(5)
             ->get();
 
+        // Top Countries
+        $topCountries = VisitorLog::human()
+            ->select('country', 'country_code', DB::raw('count(*) as total'))
+            ->whereNotNull('country')
+            ->groupBy('country', 'country_code')
+            ->orderByDesc('total')
+            ->limit(5)
+            ->get();
+
+        // Available Countries for Filter Dropdown
+        $availableCountries = VisitorLog::human()
+            ->select('country', 'country_code')
+            ->whereNotNull('country_code')
+            ->whereNotNull('country')
+            ->groupBy('country', 'country_code')
+            ->orderBy('country')
+            ->get();
+
         // Paginated Logs Table
         $logs = $query->latest('id')->paginate(25)->withQueryString();
 
@@ -135,6 +161,7 @@ class VisitorLogController extends Controller
             'logs',
             'period',
             'device',
+            'country',
             'search',
             'startDate',
             'endDate',
@@ -152,7 +179,9 @@ class VisitorLogController extends Controller
             'deviceShare',
             'deviceCounts',
             'topBrowsers',
-            'topReferrers'
+            'topReferrers',
+            'topCountries',
+            'availableCountries'
         ));
     }
 
@@ -175,6 +204,18 @@ class VisitorLogController extends Controller
             };
         }
 
+        if ($request->filled('device') && $request->device !== 'all') {
+            if ($request->device === 'bot') {
+                $query->where('is_bot', true);
+            } else {
+                $query->where('device', $request->device)->where('is_bot', false);
+            }
+        }
+
+        if ($request->filled('country') && $request->country !== 'all') {
+            $query->where('country_code', $request->country);
+        }
+
         $headers = [
             "Content-type"        => "text/csv; charset=UTF-8",
             "Content-Disposition" => "attachment; filename=$fileName",
@@ -183,7 +224,22 @@ class VisitorLogController extends Controller
             "Expires"             => "0"
         ];
 
-        $columns = ['ID', 'Waktu', 'IP Address', 'Halaman / URL', 'Judul Halaman', 'Perangkat', 'Sistem Operasi', 'Browser', 'Sumber (Referrer)', 'Tipe Pengunjung'];
+        $columns = [
+            'ID',
+            'Waktu Kunjungan (WIB)',
+            'IP Address',
+            'Halaman',
+            'URL Lengkap',
+            'Perangkat',
+            'Sistem Operasi',
+            'Browser',
+            'Negara',
+            'Kode Negara',
+            'Kota',
+            'Sumber (Referrer)',
+            'Tipe Pengunjung',
+            'ID Sesi',
+        ];
 
         $callback = function () use ($query, $columns) {
             $file = fopen('php://output', 'w');
@@ -197,13 +253,17 @@ class VisitorLogController extends Controller
                         $log->id,
                         $log->created_at->format('d/m/Y H:i:s'),
                         $log->ip_address,
-                        $log->url,
                         $log->page_name,
+                        $log->url,
                         ucfirst($log->device),
                         $log->platform,
                         $log->browser,
-                        $log->referrer_host ?: ($log->referrer ?: 'Direct'),
+                        $log->country ?? '-',
+                        $log->country_code ?? '-',
+                        $log->city ?? '-',
+                        $log->referrer_host ?: ($log->referrer ?: 'Langsung (Direct)'),
                         $log->is_bot ? 'Robot / Crawler' : 'Pengguna (Human)',
+                        $log->session_id,
                     ]);
                 }
             });
