@@ -581,6 +581,7 @@
                     $authUser->hasPermission('kritiksaran') ||
                     $authUser->hasPermission('ppks') ||
                     $authUser->hasPermission('dokumen_kampus') ||
+                    $authUser->hasPermission('visitor_logs') ||
                     $authUser->hasPermission('setting')
                 );
             @endphp
@@ -627,6 +628,13 @@
                     <a href="{{ route('setting.edit') }}" class="admin-nav-item {{ request()->routeIs('setting.*') ? 'active' : '' }}">
                         <i class="fas fa-sliders"></i>
                         <span>Setting Website</span>
+                    </a>
+                @endif
+
+                @if($authUser->hasPermission('visitor_logs'))
+                    <a href="{{ route('admin.visitor-logs.index') }}" class="admin-nav-item {{ request()->routeIs('admin.visitor-logs.*') ? 'active' : '' }}">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Log Pengunjung</span>
                     </a>
                 @endif
             @endif

@@ -59,6 +59,11 @@ class CheckMenuPermission
             }
         }
 
+        // Implied permissions for visitor_logs: accessible if user has 'visitor_logs' or 'setting'
+        if ($menuKey === 'visitor_logs' && ($user->hasPermission('visitor_logs') || $user->hasPermission('setting'))) {
+            return $next($request);
+        }
+
         // Check if menu is in user permissions
         if (!$user->hasPermission($menuKey)) {
             ActivityLogger::log(

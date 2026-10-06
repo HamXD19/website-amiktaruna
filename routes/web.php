@@ -25,6 +25,7 @@ use App\Http\Controllers\PPKSController;
 use App\Http\Controllers\DokumenKampusController;
 use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\Admin\ActivityLogController;
+use App\Http\Controllers\Admin\VisitorLogController;
 use App\Http\Controllers\HalamanKustomController;
 /*
 |--------------------------------------------------------------------------
@@ -115,6 +116,17 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         Route::resource('users', UserManagementController::class)->names('admin.users');
         Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('admin.activity-logs.index');
         Route::post('/activity-logs/clear', [ActivityLogController::class, 'clear'])->name('admin.activity-logs.clear');
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | LOG PENGUNJUNG & ANALITIK TRAFIK
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware(['menu.permission:visitor_logs'])->group(function () {
+        Route::get('/visitor-logs', [VisitorLogController::class, 'index'])->name('admin.visitor-logs.index');
+        Route::get('/visitor-logs/export', [VisitorLogController::class, 'export'])->name('admin.visitor-logs.export');
+        Route::post('/visitor-logs/clear', [VisitorLogController::class, 'clear'])->name('admin.visitor-logs.clear');
     });
 
     /*

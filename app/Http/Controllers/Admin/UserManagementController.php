@@ -108,6 +108,11 @@ class UserManagementController extends Controller
                 'icon' => 'fas fa-sliders',
                 'desc' => 'Identitas institusi, logo, kontak, maps, dan SEO'
             ],
+            'visitor_logs' => [
+                'label' => 'Log & Trafik Pengunjung',
+                'icon' => 'fas fa-chart-line',
+                'desc' => 'Melihat statistik realtime, grafik analitik, dan riwayat pengunjung'
+            ],
         ];
     }
 
