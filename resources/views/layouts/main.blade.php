@@ -2,7 +2,7 @@
     use App\Models\Setting;
     if (!isset($setting)) {
         try {
-            $setting = Setting::first();
+            $setting = \Illuminate\Support\Facades\Cache::remember('global_setting', 86400, fn() => Setting::first());
         } catch (\Throwable $e) {
             $setting = null;
         }
@@ -17,20 +17,55 @@
     <link rel="shortcut icon" href="{{ asset('uploads/' . ($setting->logo ?? '')) }}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    <!-- Preconnect & DNS-Prefetch for Speed -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="https://unpkg.com">
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print" onload="this.media='all'">
+    <noscript>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    </noscript>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
     <!-- Unified Design System & Vue App -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    <!-- Mozilla PDF.js Engine for Continuous Canvas Scrolling -->
-    <script src="/vendor/pdfjs/pdf.min.js"></script>
+    <!-- Mozilla PDF.js Engine (Non-blocking Deferred) -->
+    <script src="/vendor/pdfjs/pdf.min.js" defer></script>
     <script>
-        if (window.pdfjsLib) {
-            window.pdfjsLib.GlobalWorkerOptions.workerSrc = "/vendor/pdfjs/pdf.worker.min.js";
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.pdfjsLib) {
+                window.pdfjsLib.GlobalWorkerOptions.workerSrc = "/vendor/pdfjs/pdf.worker.min.js";
+            }
+        });
+    </script>
+
+    <!-- Speculative Loading for Instant 0ms Page Navigation (High Refresh Rate) -->
+    <script type="speculationrules">
+    {
+      "prefetch": [
+        {
+          "where": {
+            "and": [
+              { "href_matches": "/*" },
+              { "not": { "href_matches": "/admin*" } },
+              { "not": { "href_matches": "/login*" } },
+              { "not": { "href_matches": "/logout*" } },
+              { "not": { "href_matches": "/register*" } },
+              { "not": { "href_matches": "/uploads*" } },
+              { "not": { "href_matches": "/storage*" } },
+              { "not": { "href_matches": "/*.pdf" } }
+            ]
+          },
+          "eagerness": "moderate"
         }
+      ]
+    }
     </script>
 
     <style>

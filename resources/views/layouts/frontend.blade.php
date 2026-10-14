@@ -2,7 +2,7 @@
     use App\Models\Setting;
     if (!isset($setting)) {
         try {
-            $setting = Setting::first();
+            $setting = \Illuminate\Support\Facades\Cache::remember('global_setting', 86400, fn() => Setting::first());
         } catch (\Throwable $e) {
             $setting = null;
         }
@@ -24,6 +24,7 @@
     <!-- Fonts: Plus Jakarta Sans (Non-blocking with display=swap) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" media="print" onload="this.media='all'">
     <noscript>
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
@@ -37,6 +38,29 @@
 
     <!-- Vite Assets (Tailwind CSS + Vue 3 App) -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <!-- Speculative Loading for Instant 0ms Page Navigation (High Refresh Rate) -->
+    <script type="speculationrules">
+    {
+      "prefetch": [
+        {
+          "where": {
+            "and": [
+              { "href_matches": "/*" },
+              { "not": { "href_matches": "/admin*" } },
+              { "not": { "href_matches": "/login*" } },
+              { "not": { "href_matches": "/logout*" } },
+              { "not": { "href_matches": "/register*" } },
+              { "not": { "href_matches": "/uploads*" } },
+              { "not": { "href_matches": "/storage*" } },
+              { "not": { "href_matches": "/*.pdf" } }
+            ]
+          },
+          "eagerness": "moderate"
+        }
+      ]
+    }
+    </script>
 </head>
 <body class="text-slate-800 antialiased overflow-x-hidden font-sans relative">
     {{-- Universal Campus Digital Aurora & Tech Mesh Background --}}

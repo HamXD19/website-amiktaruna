@@ -158,6 +158,8 @@ class SettingController extends Controller
 
         $setting->update($data);
 
+        \Illuminate\Support\Facades\Cache::forget('global_setting');
+
         ActivityLogger::log('UPDATE', 'Setting Website', 'Memperbarui konfigurasi identitas dan tampilan website');
 
         return back()->with('success', 'Pengaturan tampilan & konten website berhasil disimpan!');

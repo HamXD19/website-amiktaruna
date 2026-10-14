@@ -14,10 +14,18 @@ class TrackVisitorMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $response = $next($request);
+        return $next($request);
+    }
 
-        // Track only successful public GET visits
+    /**
+     * Handle tasks after the response has been sent to the browser.
+     * Terminable middleware runs with zero added latency to user page loads.
+     */
+    public function terminate(Request $request, Response $response): void
+    {
+        // Track only successful public GET visits (HTTP 200)
         if (
+            $response->getStatusCode() === 200 &&
             $request->isMethod('GET') &&
             !$request->ajax() &&
             !$request->is('admin*') &&
@@ -33,9 +41,11 @@ class TrackVisitorMiddleware
             !$request->is('favicon.ico') &&
             !$request->is('robots.txt')
         ) {
-            VisitorTracker::track($request);
+            try {
+                VisitorTracker::track($request);
+            } catch (\Throwable $e) {
+                // Ignore tracking errors
+            }
         }
-
-        return $response;
     }
 }

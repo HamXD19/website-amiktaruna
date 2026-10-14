@@ -321,3 +321,32 @@ header#navbar-app,
     }
 }
 
+/*
+   ============================================================
+   7. HIGH REFRESH RATE (60-120 FPS) & RENDERING PERFORMANCE
+   ============================================================
+*/
+/* Defer rendering of off-screen footer & lower sections for instant initial paint */
+#footer-app,
+.site-footer,
+footer {
+    content-visibility: auto;
+    contain-intrinsic-size: auto none auto 400px;
+}
+
+/* Hardware accelerated smooth scrolling & text rendering */
+html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeSpeed;
+}
+
+/* Optimize canvas rendering pipeline */
+#campus-plexus-canvas {
+    pointer-events: none;
+    transform: translateZ(0);
+    will-change: transform;
+    backface-visibility: hidden;
+}
+
