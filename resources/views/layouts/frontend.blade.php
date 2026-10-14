@@ -2,7 +2,7 @@
     use App\Models\Setting;
     if (!isset($setting)) {
         try {
-            $setting = \Illuminate\Support\Facades\Cache::remember('global_setting', 86400, fn() => Setting::first());
+            $setting = Setting::first();
         } catch (\Throwable $e) {
             $setting = null;
         }

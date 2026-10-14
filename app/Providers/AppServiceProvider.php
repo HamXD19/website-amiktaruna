@@ -27,9 +27,7 @@ class AppServiceProvider extends ServiceProvider
 
         try {
             if (Schema::hasTable('settings')) {
-                $setting = \Illuminate\Support\Facades\Cache::remember('global_setting', 86400, function () {
-                    return Setting::first();
-                });
+                $setting = Setting::first();
                 view()->share('setting', $setting);
             }
         } catch (\Throwable $e) {
