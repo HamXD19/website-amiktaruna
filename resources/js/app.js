@@ -49,11 +49,12 @@ if (navbarElement) {
             console.error('Gagal memproses setting navbar:', e);
         }
 
-        const currentPath = navbarElement.dataset.path || window.location.pathname;
+        let currentPath = navbarElement.dataset.path || window.location.pathname || '/';
+        currentPath = '/' + currentPath.replace(/^\/+/, '');
 
         const navApp = createApp(AppNavbar, {
             setting: setting,
-            currentPath: currentPath === '' ? '/' : (currentPath.startsWith('/') ? currentPath : '/' + currentPath)
+            currentPath: currentPath
         });
         navApp.mount('#navbar-app');
     });

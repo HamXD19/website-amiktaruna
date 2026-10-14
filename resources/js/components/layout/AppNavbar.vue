@@ -215,7 +215,7 @@ const navGroups = computed(() => navConfig.value.groups);
           <a
             :href="berandaItem.href || '/'"
             class="px-3.5 py-2 text-sm font-semibold rounded-lg transition-colors"
-            :class="currentPath === (berandaItem.href || '/') ? 'text-emerald-300 bg-emerald-950/70 border border-emerald-500/30' : 'text-slate-300 hover:text-emerald-300 hover:bg-emerald-950/40'"
+            :class="currentPath === (berandaItem.href || '/') ? 'text-emerald-300 bg-emerald-500/15 font-semibold' : 'text-slate-300 hover:text-emerald-300 hover:bg-emerald-500/10'"
           >
             {{ berandaItem.label || 'Beranda' }}
           </a>
@@ -232,9 +232,9 @@ const navGroups = computed(() => navConfig.value.groups);
               class="inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-semibold rounded-lg transition-colors focus:outline-none"
               :class="[
                 isGroupActive(group)
-                  ? 'text-emerald-300 bg-emerald-950/70 border border-emerald-500/30 font-bold'
-                  : 'text-slate-300 hover:text-emerald-300 hover:bg-emerald-950/40',
-                { 'text-emerald-300 bg-emerald-950/40': activeDropdown === group.id && !isGroupActive(group) }
+                  ? 'text-emerald-300 bg-emerald-500/15 font-semibold'
+                  : 'text-slate-300 hover:text-emerald-300 hover:bg-emerald-500/10',
+                { 'text-emerald-300 bg-emerald-500/10': activeDropdown === group.id && !isGroupActive(group) }
               ]"
               @click="toggleDropdown(group.id)"
             >
@@ -270,7 +270,7 @@ const navGroups = computed(() => navConfig.value.groups);
                   :target="item.target || '_self'"
                   :rel="item.target === '_blank' ? 'noopener noreferrer' : undefined"
                   class="block px-3.5 py-2.5 rounded-lg transition-colors group"
-                  :class="isItemActive(item) ? 'bg-emerald-900/50 text-emerald-300 font-semibold border border-emerald-500/30' : 'hover:bg-emerald-950/60 border border-transparent'"
+                  :class="isItemActive(item) ? 'bg-emerald-500/15 text-emerald-300 font-semibold' : 'text-slate-200 hover:text-emerald-300 hover:bg-emerald-500/10'"
                 >
                   <div class="flex items-center justify-between">
                     <p class="text-sm font-semibold transition-colors d-flex items-center gap-1.5" :class="isItemActive(item) ? 'text-emerald-300' : 'text-slate-200 group-hover:text-emerald-300'">
@@ -448,7 +448,7 @@ const navGroups = computed(() => navConfig.value.groups);
               <a
                 :href="berandaItem.href || '/'"
                 class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition font-semibold text-sm"
-                :class="currentPath === (berandaItem.href || '/') ? 'bg-emerald-900/60 text-emerald-300 border border-emerald-500/40 font-bold' : 'text-slate-200 hover:bg-emerald-950/60'"
+                :class="currentPath === (berandaItem.href || '/') ? 'bg-emerald-500/15 text-emerald-300 font-semibold' : 'text-slate-200 hover:bg-emerald-950/60'"
                 @click="mobileMenuOpen = false"
               >
                 <i class="fas fa-home text-emerald-400 w-4 text-center"></i>
@@ -486,7 +486,7 @@ const navGroups = computed(() => navConfig.value.groups);
                     :target="item.target || '_self'"
                     :rel="item.target === '_blank' ? 'noopener noreferrer' : undefined"
                     class="flex items-start gap-2.5 px-3 py-2 rounded-lg text-xs transition"
-                    :class="isItemActive(item) ? 'bg-emerald-900/50 text-emerald-300 font-semibold border border-emerald-500/30' : 'text-slate-300 hover:text-emerald-300 hover:bg-emerald-950/50 border border-transparent'"
+                    :class="isItemActive(item) ? 'bg-emerald-500/15 text-emerald-300 font-semibold' : 'text-slate-300 hover:text-emerald-300 hover:bg-emerald-950/50'"
                     @click="mobileMenuOpen = false"
                   >
                     <i :class="item.icon || 'fas fa-angle-right'" class="text-emerald-400 mt-0.5 text-xs w-3.5 text-center shrink-0"></i>

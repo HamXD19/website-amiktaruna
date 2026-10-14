@@ -449,7 +449,7 @@
 @include('components.animated-background')
 
 <!-- Unified Vue AppNavbar (Identical to Homepage) -->
-<div id="navbar-app" data-setting="{{ json_encode($setting) }}" data-path="{{ '/' . request()->path() }}"></div>
+<div id="navbar-app" data-setting="{{ json_encode($setting) }}" data-path="{{ request()->path() === '/' ? '/' : '/' . ltrim(request()->path(), '/') }}"></div>
 
 @if(request()->is('/'))
 <section class="hero-modern">
