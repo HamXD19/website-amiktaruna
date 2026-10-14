@@ -36,7 +36,7 @@ class AuthenticatedSessionController extends Controller
             "Pengguna {$user->name} ({$user->email}) berhasil login ke sistem sebagai " . ($user->isSuperAdmin() ? 'Super Admin' : 'Admin Staf')
         );
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        return redirect()->intended(route('admin.dashboard', absolute: false));
     }
 
     /**

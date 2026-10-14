@@ -53,7 +53,7 @@ class User extends Authenticatable
      */
     public function hasPermission(string $menuKey): bool
     {
-        if ($this->isSuperAdmin()) {
+        if ($this->isSuperAdmin() || $menuKey === 'dashboard') {
             return true;
         }
 

@@ -60,21 +60,21 @@
             <form method="POST" action="{{ route('login') }}" class="space-y-5">
                 @csrf
 
-                {{-- EMAIL --}}
+                {{-- EMAIL OR USERNAME --}}
                 <div>
                     <label for="email" class="block text-xs font-bold uppercase tracking-wider text-emerald-300/90 mb-2">
-                        Alamat Email
+                        Alamat Email atau Nama Pengguna
                     </label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-emerald-400/80 text-sm">
-                            <i class="fas fa-envelope"></i>
+                            <i class="fas fa-user-circle"></i>
                         </div>
                         <input
-                            type="email"
+                            type="text"
                             id="email"
                             name="email"
                             value="{{ old('email') }}"
-                            placeholder="nama@amiktaruna.ac.id"
+                            placeholder="email@amiktaruna.ac.id atau nama pengguna"
                             required
                             autofocus
                             class="w-full pl-10 pr-4 py-3 bg-[#031d11]/85 border border-emerald-500/30 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20 transition-all"

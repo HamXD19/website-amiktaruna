@@ -28,6 +28,11 @@ class CheckMenuPermission
             return $next($request);
         }
 
+        // Dashboard is the landing overview and is accessible to all authenticated admins
+        if ($menuKey === 'dashboard' || $request->routeIs('admin.dashboard')) {
+            return $next($request);
+        }
+
         // Implied permissions: 'kategori' is automatically granted to users
         // who have access to any module that uses categories (berita, lppm, ppm, etc.)
         if ($menuKey === 'kategori') {

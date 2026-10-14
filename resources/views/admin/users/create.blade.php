@@ -163,12 +163,15 @@
                     <div class="row g-2.5" id="menuCheckboxesGrid">
                         @foreach($availableMenus as $key => $menu)
                             <div class="col-12 col-sm-6">
-                                <label class="menu-check-card p-3 rounded-3 border h-100 d-flex align-items-start gap-3 cursor-pointer">
-                                    <input type="checkbox" name="permissions[]" value="{{ $key }}" class="menu-checkbox form-check-input mt-1 flex-shrink-0" {{ (is_array(old('permissions')) && in_array($key, old('permissions'))) || old('role') === 'super_admin' ? 'checked' : '' }}>
+                                <label class="menu-check-card p-3 rounded-3 border h-100 d-flex align-items-start gap-3 cursor-pointer {{ $key === 'dashboard' ? 'bg-emerald-50/40 border-emerald-300' : '' }}">
+                                    <input type="checkbox" name="permissions[]" value="{{ $key }}" class="menu-checkbox form-check-input mt-1 flex-shrink-0" {{ $key === 'dashboard' || (is_array(old('permissions')) && in_array($key, old('permissions'))) || old('role') === 'super_admin' ? 'checked' : '' }}>
                                     <div class="min-w-0">
                                         <div class="fw-bold text-slate-900 small d-flex align-items-center gap-2 mb-0.5">
                                             <i class="{{ $menu['icon'] }} text-emerald-600"></i>
                                             <span class="text-truncate">{{ $menu['label'] }}</span>
+                                            @if($key === 'dashboard')
+                                                <span class="badge bg-emerald-100 text-emerald-800 rounded-pill px-2 py-0.5 font-monospace text-3xs">Standar</span>
+                                            @endif
                                         </div>
                                         <div class="text-muted text-xs line-clamp-2" style="font-size: 0.75rem; line-height: 1.3;">{{ $menu['desc'] }}</div>
                                     </div>

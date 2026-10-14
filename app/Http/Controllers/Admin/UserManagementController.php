@@ -174,6 +174,9 @@ class UserManagementController extends Controller
         ]);
 
         $permissions = $request->role === 'super_admin' ? array_keys(self::availableMenus()) : ($request->permissions ?? []);
+        if (!in_array('dashboard', $permissions, true)) {
+            $permissions[] = 'dashboard';
+        }
 
         $user = User::create([
             'name' => $request->name,
@@ -243,7 +246,11 @@ class UserManagementController extends Controller
         if ($request->role === 'super_admin') {
             $user->permissions = array_keys(self::availableMenus());
         } else {
-            $user->permissions = $request->permissions ?? [];
+            $perms = $request->permissions ?? [];
+            if (!in_array('dashboard', $perms, true)) {
+                $perms[] = 'dashboard';
+            }
+            $user->permissions = $perms;
         }
 
         $user->save();
