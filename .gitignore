@@ -1,6 +1,7 @@
 *.log
 *.rar
 *.zip
+*.tar.gz
 *.bak
 *.tmp
 .DS_Store
