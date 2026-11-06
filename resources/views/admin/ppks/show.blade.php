@@ -28,9 +28,12 @@
         </div>
 
         <div class="d-flex align-items-center gap-2">
-            <span class="text-muted small">
+            <span class="text-muted small me-2">
                 Masuk pada: {{ $laporan->created_at->translatedFormat('d F Y, H:i') }} WIB
             </span>
+            <a href="{{ route('admin.ppks.export.detail.pdf', $laporan->id) }}" target="_blank" class="btn btn-outline-danger rounded-3 shadow-sm px-3">
+                <i class="fas fa-file-pdf me-1"></i> Cetak Berita Acara / Laporan PDF
+            </a>
         </div>
     </div>
 

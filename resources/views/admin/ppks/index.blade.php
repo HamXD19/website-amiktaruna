@@ -20,6 +20,9 @@
         </div>
 
         <div class="d-flex align-items-center gap-2">
+            <button type="button" class="btn btn-danger rounded-3 shadow-sm" data-bs-toggle="modal" data-bs-target="#modalExportPpksPdf">
+                <i class="fas fa-file-pdf me-1"></i> Cetak Laporan PDF
+            </button>
             <a href="{{ route('berita.create', ['kategori' => 'ppks']) }}" class="btn btn-outline-success rounded-3 shadow-sm">
                 <i class="fas fa-plus me-1"></i> Buat Warta / Dokumen PPKS
             </a>
@@ -210,6 +213,9 @@
                             <!-- AKSI -->
                             <td class="text-end pe-4">
                                 <div class="d-flex align-items-center justify-content-end gap-1.5">
+                                    <a href="{{ route('admin.ppks.export.detail.pdf', $item->id) }}" class="btn btn-sm btn-outline-danger rounded-3 px-2 py-1" title="Cetak Berita Acara PDF" target="_blank">
+                                        <i class="fas fa-file-pdf"></i>
+                                    </a>
                                     <a href="{{ route('admin.ppks.show', $item->id) }}" class="btn btn-sm btn-outline-primary rounded-3 px-2.5" title="Lihat Detail & Tindak Lanjut">
                                         <i class="fas fa-eye me-1"></i> Detail
                                     </a>
@@ -242,6 +248,56 @@
                 {{ $laporans->links() }}
             </div>
         @endif
+    </div>
+
+    <!-- Modal Cetak Rekapitulasi PPKS PDF -->
+    <div class="modal fade" id="modalExportPpksPdf" tabindex="-1" aria-labelledby="modalExportPpksPdfLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4">
+                <div class="modal-header bg-danger text-white rounded-top-4">
+                    <h5 class="modal-title fw-bold" id="modalExportPpksPdfLabel">
+                        <i class="fas fa-file-pdf me-2"></i> Cetak Rekapitulasi Laporan PPKS
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <form action="{{ route('admin.ppks.export.pdf') }}" method="GET" target="_blank">
+                    <div class="modal-body p-4">
+                        <p class="text-muted small mb-3">
+                            Laporan resmi register kasus PPKS dilengkapi Kop Surat Satgas &amp; Logo AMIK Taruna.
+                        </p>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small">Status Penanganan</label>
+                            <select name="status" class="form-select rounded-3">
+                                <option value="">-- Semua Status --</option>
+                                <option value="baru">🔴 Baru Masuk</option>
+                                <option value="ditinjau">🟡 Sedang Ditinjau</option>
+                                <option value="investigasi">🟠 Tahap Investigasi</option>
+                                <option value="selesai">🟢 Selesai</option>
+                            </select>
+                        </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="form-label fw-semibold small">Dari Tanggal</label>
+                                <input type="date" name="start_date" class="form-control rounded-3">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label fw-semibold small">Sampai Tanggal</label>
+                                <input type="date" name="end_date" class="form-control rounded-3">
+                            </div>
+                        </div>
+                        <div class="alert alert-danger-subtle border border-danger-subtle small text-danger mb-0">
+                            <i class="fas fa-lock me-1"></i> Dokumen berklasifikasi <strong>RAHASIA</strong>. Seluruh identitas pelapor anonim akan tetap dilindungi.
+                        </div>
+                    </div>
+                    <div class="modal-footer bg-light rounded-bottom-4">
+                        <button type="button" class="btn btn-secondary rounded-pill px-3" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-danger rounded-pill px-4 fw-semibold">
+                            <i class="fas fa-print me-1"></i> Unduh / Cetak PDF
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 
 </div>

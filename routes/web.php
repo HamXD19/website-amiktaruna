@@ -452,7 +452,9 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     */
     Route::middleware(['menu.permission:ppks'])->group(function () {
         Route::get('/ppks', [PPKSController::class, 'adminIndex'])->name('admin.ppks.index');
+        Route::get('/ppks/export-pdf', [PPKSController::class, 'exportRekapPdf'])->name('admin.ppks.export.pdf');
         Route::get('/ppks/{id}', [PPKSController::class, 'adminShow'])->name('admin.ppks.show');
+        Route::get('/ppks/{id}/pdf', [PPKSController::class, 'exportDetailPdf'])->name('admin.ppks.export.detail.pdf');
         Route::post('/ppks/{id}/status', [PPKSController::class, 'updateStatus'])->name('admin.ppks.status');
         Route::delete('/ppks/{id}', [PPKSController::class, 'adminDestroy'])->name('admin.ppks.destroy');
     });
@@ -464,6 +466,8 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     */
     Route::middleware(['menu.permission:kritiksaran'])->group(function () {
         Route::get('/kritiksaran', [KritikSaranController::class, 'index'])->name('kritiksaran.index');
+        Route::get('/kritiksaran/export-pdf', [KritikSaranController::class, 'exportPdf'])->name('kritiksaran.export.pdf');
+        Route::get('/kritiksaran/{id}/pdf', [KritikSaranController::class, 'exportSinglePdf'])->name('kritiksaran.export.single.pdf');
         Route::delete('/kritik-saran/{id}', [KritikSaranController::class, 'destroy'])->name('kritiksaran.destroy');
     });
 

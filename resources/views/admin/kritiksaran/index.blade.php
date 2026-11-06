@@ -15,10 +15,13 @@
                             Daftar masukan dari pengunjung website
                         </p>
                     </div>
-                    <div>
+                    <div class="d-flex align-items-center gap-2">
                         <span class="badge bg-light text-success fs-6 px-3 py-2 shadow-sm rounded-pill">
                             🧾 Total : {{ $data->count() }}
                         </span>
+                        <button type="button" class="btn btn-light text-success fw-bold shadow-sm rounded-pill px-3 py-2" data-bs-toggle="modal" data-bs-target="#modalExportKritikPdf">
+                            <i class="fas fa-file-pdf text-danger me-1"></i> Cetak Laporan PDF
+                        </button>
                     </div>
                 </div>
             </div>
@@ -37,7 +40,7 @@
                             <th>Judul</th>
                             <th width="120">Pesan</th>
                             <th width="160">Tanggal</th>
-                            <th width="80">Aksi</th>
+                            <th width="140">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -70,11 +73,20 @@
                                 <i class="bi bi-clock"></i> {{ $item->created_at->format('H:i') }}
                             </td>
                             <td class="text-center">
-                                <button type="button"
-                                        class="btn btn-danger btn-sm rounded-pill px-3"
-                                        onclick="confirmDelete({{ $item->id }}, '{{ $item->nama }}')">
-                                    🗑️ Hapus
-                                </button>
+                                <div class="d-flex justify-content-center gap-1">
+                                    <a href="{{ route('kritiksaran.export.single.pdf', $item->id) }}"
+                                       class="btn btn-outline-danger btn-sm rounded-pill px-2.5 py-1"
+                                       title="Cetak Lembar PDF"
+                                       target="_blank">
+                                        <i class="fas fa-file-pdf"></i>
+                                    </a>
+                                    <button type="button"
+                                            class="btn btn-danger btn-sm rounded-pill px-2.5 py-1"
+                                            onclick="confirmDelete({{ $item->id }}, '{{ $item->nama }}')"
+                                            title="Hapus Pesan">
+                                        🗑️
+                                    </button>
+                                </div>
 
                                 <form id="delete-form-{{ $item->id }}"
                                       action="{{ route('kritiksaran.destroy', $item->id) }}"
@@ -121,7 +133,12 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="modal-footer">
+                                    <div class="modal-footer d-flex justify-content-between">
+                                        <a href="{{ route('kritiksaran.export.single.pdf', $item->id) }}"
+                                           target="_blank"
+                                           class="btn btn-outline-danger rounded-pill px-3">
+                                            <i class="fas fa-file-pdf me-1"></i> Cetak Lembar PDF
+                                        </a>
                                         <button type="button"
                                                 class="btn btn-secondary rounded-pill px-4"
                                                 data-bs-dismiss="modal">
@@ -143,6 +160,52 @@
                         @endforelse
                     </tbody>
                 </table>
+            </div>
+        </div>
+    <!-- Modal Cetak Rekapitulasi PDF -->
+    <div class="modal fade" id="modalExportKritikPdf" tabindex="-1" aria-labelledby="modalExportKritikPdfLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4">
+                <div class="modal-header bg-success text-white rounded-top-4">
+                    <h5 class="modal-title fw-bold" id="modalExportKritikPdfLabel">
+                        <i class="fas fa-file-pdf text-danger me-2"></i> Cetak Rekapitulasi Kritik &amp; Saran
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <form action="{{ route('kritiksaran.export.pdf') }}" method="GET" target="_blank">
+                    <div class="modal-body p-4">
+                        <p class="text-muted small mb-3">
+                            Pilih filter periode dan status untuk mencetak laporan resmi berlogo AMIK Taruna dalam format PDF.
+                        </p>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small">Status Pengaduan</label>
+                            <select name="status" class="form-select rounded-3">
+                                <option value="">-- Semua Status --</option>
+                                <option value="baru">Baru</option>
+                                <option value="dibaca">Dibaca / Ditinjau</option>
+                            </select>
+                        </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="form-label fw-semibold small">Dari Tanggal</label>
+                                <input type="date" name="start_date" class="form-control rounded-3">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label fw-semibold small">Sampai Tanggal</label>
+                                <input type="date" name="end_date" class="form-control rounded-3">
+                            </div>
+                        </div>
+                        <div class="alert alert-light border small text-muted mb-0">
+                            <i class="fas fa-info-circle text-success me-1"></i> Kosongkan tanggal jika ingin mencetak seluruh data tanpa batasan periode.
+                        </div>
+                    </div>
+                    <div class="modal-footer bg-light rounded-bottom-4">
+                        <button type="button" class="btn btn-secondary rounded-pill px-3" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-success rounded-pill px-4 fw-semibold">
+                            <i class="fas fa-print me-1"></i> Unduh / Cetak PDF
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

@@ -7,6 +7,8 @@ use App\Models\Berita;
 use App\Models\Setting;
 use App\Models\Kategori;
 use App\Services\ActivityLogger;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -188,5 +190,98 @@ class PPKSController extends Controller
 
         return redirect()->route('admin.ppks.index')
             ->with('success', 'Laporan berhasil dihapus.');
+    }
+
+    /**
+     * Ekspor Laporan Rekapitulasi PPKS ke format PDF
+     */
+    public function exportRekapPdf(Request $request)
+    {
+        $status = $request->status;
+        $search = $request->search;
+        $startDate = $request->start_date;
+        $endDate = $request->end_date;
+
+        $query = PPKSLaporan::latest();
+
+        if ($status && in_array($status, ['baru', 'ditinjau', 'investigasi', 'selesai'])) {
+            $query->where('status', $status);
+        }
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('kode_tiket', 'like', "%{$search}%")
+                  ->orWhere('nama_pelapor', 'like', "%{$search}%")
+                  ->orWhere('kategori_kekerasan', 'like', "%{$search}%")
+                  ->orWhere('kronologi', 'like', "%{$search}%");
+            });
+        }
+
+        $periodeText = 'Semua Data';
+        if ($startDate && $endDate) {
+            $query->whereDate('created_at', '>=', $startDate)
+                  ->whereDate('created_at', '<=', $endDate);
+            $periodeText = Carbon::parse($startDate)->format('d/m/Y') . ' s/d ' . Carbon::parse($endDate)->format('d/m/Y');
+        } elseif ($startDate) {
+            $query->whereDate('created_at', '>=', $startDate);
+            $periodeText = 'Mulai ' . Carbon::parse($startDate)->format('d/m/Y');
+        } elseif ($endDate) {
+            $query->whereDate('created_at', '<=', $endDate);
+            $periodeText = 'Hingga ' . Carbon::parse($endDate)->format('d/m/Y');
+        }
+
+        $items = $query->get();
+        $setting = Setting::first();
+        $logoBase64 = $this->getLogoBase64();
+        $statusFilter = $status;
+
+        ActivityLogger::log('EXPORT', 'Layanan PPKS', "Mengekspor laporan rekapitulasi PPKS ke PDF ({$items->count()} data)");
+
+        $pdf = Pdf::loadView('admin.ppks.pdf_rekap', compact(
+            'items', 'setting', 'logoBase64', 'periodeText', 'statusFilter'
+        ))->setPaper('a4', 'landscape');
+
+        $filename = 'Rekap_Laporan_PPKS_' . date('Ymd_His') . '.pdf';
+        return $pdf->download($filename);
+    }
+
+    /**
+     * Ekspor Lembar Berita Acara / Laporan Kasus Individual PPKS ke format PDF
+     */
+    public function exportDetailPdf($id)
+    {
+        $laporan = PPKSLaporan::findOrFail($id);
+        $setting = Setting::first();
+        $logoBase64 = $this->getLogoBase64();
+
+        ActivityLogger::log('EXPORT', 'Layanan PPKS', "Mengekspor berita acara laporan PPKS #{$laporan->kode_tiket} ke PDF");
+
+        $pdf = Pdf::loadView('admin.ppks.pdf_detail', compact(
+            'laporan', 'setting', 'logoBase64'
+        ))->setPaper('a4', 'portrait');
+
+        $filename = 'Berita_Acara_PPKS_' . $laporan->kode_tiket . '.pdf';
+        return $pdf->download($filename);
+    }
+
+    /**
+     * Konversi logo resmi institusi ke base64 agar aman dan cepat dimuat di DomPDF
+     */
+    private function getLogoBase64(): ?string
+    {
+        $setting = Setting::first();
+        if ($setting && $setting->logo && file_exists(public_path('uploads/' . $setting->logo))) {
+            $path = public_path('uploads/' . $setting->logo);
+            $type = pathinfo($path, PATHINFO_EXTENSION);
+            $data = file_get_contents($path);
+            return 'data:image/' . $type . ';base64,' . base64_encode($data);
+        }
+
+        if (file_exists(public_path('logo.png'))) {
+            $data = file_get_contents(public_path('logo.png'));
+            return 'data:image/png;base64,' . base64_encode($data);
+        }
+
+        return null;
     }
 }
