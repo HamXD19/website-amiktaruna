@@ -13,19 +13,15 @@ echo "📥 Menarik kode terbaru dari GitHub..."
 git fetch origin main
 git reset --hard origin/main
 
-# 2. Install dependensi composer (jika ada package baru seperti dompdf)
-echo "📦 Memperbarui package composer..."
-composer install --no-dev --optimize-autoloader --no-interaction
-
-# 3. Jalankan migrasi database jika ada tabel baru
+# 2. Jalankan migrasi database jika ada tabel baru
 echo "🗄️ Menjalankan migrasi database..."
 php artisan migrate --force
 
-# 4. Pastikan symlink storage terpasang
+# 3. Pastikan symlink storage terpasang
 echo "🔗 Mengecek symbolic link storage..."
 php artisan storage:link 2>/dev/null
 
-# 5. Bersihkan dan optimalkan cache Laravel
+# 4. Bersihkan dan optimalkan cache Laravel
 echo "⚡ Mengoptimalkan cache sistem..."
 php artisan optimize:clear
 php artisan config:cache
