@@ -101,4 +101,9 @@
     <FilesMatch "\.(ico|pdf|flv|jpg|jpeg|png|gif|webp|js|css|swf|woff|woff2|ttf|svg)$">
         Header set Cache-Control "max-age=2592000, public"
     </FilesMatch>
+
+    # Mencegah CDN / Edge Server men-cache respons dinamis PHP
+    <FilesMatch "\.php$">
+        Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+    </FilesMatch>
 </IfModule>
