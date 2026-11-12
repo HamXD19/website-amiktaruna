@@ -98,10 +98,20 @@ class KritikSaranController extends Controller
 
         $pdf = Pdf::loadView('admin.kritiksaran.pdf_rekap', compact(
             'items', 'setting', 'logoBase64', 'periodeText', 'statusFilter'
-        ))->setPaper('a4', 'landscape');
+        ))->setPaper('a4', 'landscape')
+          ->setOptions([
+              'isHtml5ParserEnabled' => true,
+              'isRemoteEnabled' => true,
+              'defaultFont' => 'sans-serif',
+          ]);
 
         $filename = 'Laporan_Rekap_Kritik_Saran_' . date('Ymd_His') . '.pdf';
-        return $pdf->download($filename);
+
+        if ($request->query('download') === '1') {
+            return $pdf->download($filename);
+        }
+
+        return $pdf->stream($filename);
     }
 
     /**
@@ -121,10 +131,20 @@ class KritikSaranController extends Controller
 
         $pdf = Pdf::loadView('admin.kritiksaran.pdf_detail', compact(
             'item', 'setting', 'logoBase64'
-        ))->setPaper('a4', 'portrait');
+        ))->setPaper('a4', 'portrait')
+          ->setOptions([
+              'isHtml5ParserEnabled' => true,
+              'isRemoteEnabled' => true,
+              'defaultFont' => 'sans-serif',
+          ]);
 
         $filename = 'Lembar_Kritik_Saran_' . $item->id . '_' . date('Ymd') . '.pdf';
-        return $pdf->download($filename);
+
+        if (request()->query('download') === '1') {
+            return $pdf->download($filename);
+        }
+
+        return $pdf->stream($filename);
     }
 
     /**
@@ -133,11 +153,26 @@ class KritikSaranController extends Controller
     private function getLogoBase64(): ?string
     {
         $setting = Setting::first();
-        if ($setting && $setting->logo && file_exists(public_path('uploads/' . $setting->logo))) {
-            $path = public_path('uploads/' . $setting->logo);
-            $type = pathinfo($path, PATHINFO_EXTENSION);
-            $data = file_get_contents($path);
-            return 'data:image/' . $type . ';base64,' . base64_encode($data);
+        if ($setting && $setting->logo) {
+            $possiblePaths = [
+                public_path('uploads/' . $setting->logo),
+                public_path($setting->logo),
+            ];
+            foreach ($possiblePaths as $path) {
+                if (file_exists($path) && is_file($path)) {
+                    $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+                    $mime = match ($ext) {
+                        'jpg', 'jpeg' => 'image/jpeg',
+                        'png' => 'image/png',
+                        'webp' => 'image/webp',
+                        'gif' => 'image/gif',
+                        'svg' => 'image/svg+xml',
+                        default => 'image/jpeg',
+                    };
+                    $data = file_get_contents($path);
+                    return 'data:' . $mime . ';base64,' . base64_encode($data);
+                }
+            }
         }
 
         if (file_exists(public_path('logo.png'))) {

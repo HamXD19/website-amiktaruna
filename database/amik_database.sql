@@ -51,13 +51,13 @@ SET @OLD_AUTOCOMMIT=@@AUTOCOMMIT, @@AUTOCOMMIT=0;
 LOCK TABLES `activity_logs` WRITE;
 /*!40000 ALTER TABLE `activity_logs` DISABLE KEYS */;
 INSERT INTO `activity_logs` VALUES
-(1,1,'irham','super_admin','LOGIN','Autentikasi','Test login audit trail','127.0.0.1','Symfony','2026-09-24 00:19:25','2026-09-24 00:19:25'),
+(1,1,'Super Admin','super_admin','LOGIN','Autentikasi','Test login audit trail','127.0.0.1','Symfony','2026-09-24 00:19:25','2026-09-24 00:19:25'),
 (4,NULL,'Sistem / Tamu','guest','SECURITY','Hak Akses','Tes insiden keamanan','127.0.0.1','Symfony','2026-09-24 00:20:06','2026-09-24 00:20:06'),
-(5,1,'irham','super_admin','LOGIN','Autentikasi','Pengguna irham (m.irhamauliaq@gmail.com) berhasil login ke sistem sebagai Super Admin','127.0.0.1','Mozilla/5.0 (X11; Linux x86_64; rv:155.0) Gecko/20100101 Firefox/155.0','2026-09-24 00:21:17','2026-09-24 00:21:17'),
-(6,1,'irham','super_admin','DELETE','Manajemen Pengguna','Menghapus akun: Test User 44269 (testuser44269@test.com) [Role: super_admin]','127.0.0.1','Mozilla/5.0 (X11; Linux x86_64; rv:155.0) Gecko/20100101 Firefox/155.0','2026-09-24 00:21:37','2026-09-24 00:21:37'),
-(7,1,'irham','super_admin','CREATE','Unit Test','Testing logger service','127.0.0.1','Symfony','2026-09-24 00:23:41','2026-09-24 00:23:41'),
-(8,1,'irham','super_admin','LOGIN','Autentikasi','Pengguna irham (m.irhamauliaq@gmail.com) berhasil login ke sistem sebagai Super Admin','127.0.0.1','Mozilla/5.0 (X11; Linux x86_64; rv:155.0) Gecko/20100101 Firefox/155.0','2026-09-24 05:01:14','2026-09-24 05:01:14'),
-(9,1,'irham','super_admin','CREATE','Unit Test','Testing logger service','127.0.0.1','Symfony','2026-09-24 05:19:40','2026-09-24 05:19:40');
+(5,1,'Super Admin','super_admin','LOGIN','Autentikasi','Pengguna Super Admin (superadmin@amiktaruna.ac.id) berhasil login ke sistem sebagai Super Admin','127.0.0.1','Mozilla/5.0 (X11; Linux x86_64; rv:155.0) Gecko/20100101 Firefox/155.0','2026-09-24 00:21:17','2026-09-24 00:21:17'),
+(6,1,'Super Admin','super_admin','DELETE','Manajemen Pengguna','Menghapus akun: Test User [Role: super_admin]','127.0.0.1','Mozilla/5.0 (X11; Linux x86_64; rv:155.0) Gecko/20100101 Firefox/155.0','2026-09-24 00:21:37','2026-09-24 00:21:37'),
+(7,1,'Super Admin','super_admin','CREATE','Unit Test','Testing logger service','127.0.0.1','Symfony','2026-09-24 00:23:41','2026-09-24 00:23:41'),
+(8,1,'Super Admin','super_admin','LOGIN','Autentikasi','Pengguna Super Admin (superadmin@amiktaruna.ac.id) berhasil login ke sistem sebagai Super Admin','127.0.0.1','Mozilla/5.0 (X11; Linux x86_64; rv:155.0) Gecko/20100101 Firefox/155.0','2026-09-24 05:01:14','2026-09-24 05:01:14'),
+(9,1,'Super Admin','super_admin','CREATE','Unit Test','Testing logger service','127.0.0.1','Symfony','2026-09-24 05:19:40','2026-09-24 05:19:40');
 /*!40000 ALTER TABLE `activity_logs` ENABLE KEYS */;
 UNLOCK TABLES;
 COMMIT;
@@ -1261,8 +1261,8 @@ SET @OLD_AUTOCOMMIT=@@AUTOCOMMIT, @@AUTOCOMMIT=0;
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
 INSERT INTO `users` VALUES
-(1,'irham','m.irhamauliaq@gmail.com','super_admin',NULL,NULL,'$2y$12$dgu/TjfwcrJfGMS51wVtVuRvZN7g.LyYF2wWP/vcEAOtvML.wqPTu',NULL,'2026-04-19 09:42:22','2026-04-19 09:42:22'),
-(2,'admin','humas.amiktarunaprobolinggo@gmail.com','super_admin',NULL,NULL,'$2y$12$CRTgURmPAcuQGgkfit7BDOCi..IuJVTjDEAJ2Wur3xCa8Tdg3u/cu',NULL,'2026-06-11 03:34:12','2026-06-11 03:34:12');
+(1,'Super Admin','superadmin@amiktaruna.ac.id','super_admin',NULL,NULL,'$2y$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4N2.gCq5um',NULL,'2026-04-19 09:42:22','2026-04-19 09:42:22'),
+(2,'Admin Staf','admin@amiktaruna.ac.id','admin',NULL,NULL,'$2y$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4N2.gCq5um',NULL,'2026-06-11 03:34:12','2026-06-11 03:34:12');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 COMMIT;

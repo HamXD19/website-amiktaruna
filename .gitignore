@@ -2,12 +2,14 @@
 *.rar
 *.zip
 *.tar.gz
+*.sql
 *.bak
 *.tmp
 .DS_Store
 .env
 .env.backup
 .env.production
+.deploy.env
 .phpactor.json
 .phpunit.result.cache
 /.cursor/

@@ -2,7 +2,7 @@
     use App\Models\Setting;
     if (!isset($setting)) {
         try {
-            $setting = Setting::first();
+            $setting = Setting::cached();
         } catch (\Throwable $e) {
             $setting = null;
         }

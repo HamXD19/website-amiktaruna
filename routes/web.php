@@ -78,7 +78,7 @@ Route::get(
 Route::post(
     '/kritik-saran',
     [KritikSaranController::class,'store']
-)->name('kritiksaran.store');
+)->middleware('throttle:5,1')->name('kritiksaran.store');
 
 /*
 |--------------------------------------------------------------------------
@@ -86,7 +86,7 @@ Route::post(
 |--------------------------------------------------------------------------
 */
 Route::get('/ppks', [PPKSController::class, 'index'])->name('ppks.index');
-Route::post('/ppks/lapor', [PPKSController::class, 'storeLaporan'])->name('ppks.lapor.store');
+Route::post('/ppks/lapor', [PPKSController::class, 'storeLaporan'])->middleware('throttle:3,1')->name('ppks.lapor.store');
 
 /*
 |--------------------------------------------------------------------------
@@ -454,6 +454,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         Route::get('/ppks', [PPKSController::class, 'adminIndex'])->name('admin.ppks.index');
         Route::get('/ppks/export-pdf', [PPKSController::class, 'exportRekapPdf'])->name('admin.ppks.export.pdf');
         Route::get('/ppks/{id}', [PPKSController::class, 'adminShow'])->name('admin.ppks.show');
+        Route::get('/ppks/{id}/bukti', [PPKSController::class, 'adminDownloadBukti'])->name('admin.ppks.download_bukti');
         Route::get('/ppks/{id}/pdf', [PPKSController::class, 'exportDetailPdf'])->name('admin.ppks.export.detail.pdf');
         Route::post('/ppks/{id}/status', [PPKSController::class, 'updateStatus'])->name('admin.ppks.status');
         Route::delete('/ppks/{id}', [PPKSController::class, 'adminDestroy'])->name('admin.ppks.destroy');

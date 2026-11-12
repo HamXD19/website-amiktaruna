@@ -161,10 +161,10 @@
                             </div>
 
                             <div class="d-flex gap-2">
-                                <a href="{{ asset('uploads/ppks/' . $laporan->dokumen_bukti) }}" target="_blank" class="btn btn-outline-primary btn-sm rounded-pill px-3">
+                                <a href="{{ route('admin.ppks.download_bukti', ['id' => $laporan->id, 'view' => 1]) }}" target="_blank" class="btn btn-outline-primary btn-sm rounded-pill px-3">
                                     <i class="fas fa-eye me-1"></i> Lihat Berkas
                                 </a>
-                                <a href="{{ asset('uploads/ppks/' . $laporan->dokumen_bukti) }}" download class="btn btn-success btn-sm rounded-pill px-3">
+                                <a href="{{ route('admin.ppks.download_bukti', ['id' => $laporan->id]) }}" class="btn btn-success btn-sm rounded-pill px-3">
                                     <i class="fas fa-download me-1"></i> Unduh Dokumen
                                 </a>
                             </div>

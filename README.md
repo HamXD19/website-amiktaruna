@@ -22,14 +22,20 @@ Sistem Informasi Profil Institusi Resmi dan Content Management System (CMS) **AM
 > 3. **Konfigurasi File `.env`**:
 >    - Buka **hPanel → File Manager** -> masuk ke folder `public_html/`.
 >    - Klik file `.env.example` -> ubah nama (*Rename*) menjadi `.env` (atau buat file baru `.env`).
->    - Sesuaikan `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD` dengan data database yang dibuat pada langkah 1.
->    - Pastikan `APP_KEY` terisi: `base64:LerE6P8PCElVrIb7q+QfwcqI+UwxXSdu4Tse/efiwOA=`
+>    - Pastikan `APP_KEY` digenerate baru via Terminal SSH: `php artisan key:generate` (atau gunakan kunci unik Anda sendiri demi keamanan).
 >    - Set `APP_URL` ke domain/subdomain Anda (misal `https://namadomain.com`).
+>    - Pastikan `APP_DEBUG=false` dan `APP_ENV=production`.
 > 4. **Pengaturan PHP**:
 >    - Masuk ke **hPanel → PHP Configuration**, pastikan versi PHP adalah **PHP 8.2** atau **PHP 8.3**.
 > 
 > *Selesai! Website langsung aktif dan dapat diakses.*
-> - **Login Admin**: Akses `/login` menggunakan email `humas.amiktarunaprobolinggo@gmail.com` atau `m.irhamauliaq@gmail.com`.
+> 
+> 💡 **Deploy Otomatis 1-Klik dari Komputer Lokal via SSH**:
+> Cukup jalankan perintah berikut di terminal komputer lokal Anda:
+> ```bash
+> bash deploy-ssh.sh "pesan commit update"
+> ```
+> Skrip ini otomatis meng-compile frontend, push ke GitHub, menghubungkan SSH ke server, menarik kode terbaru, serta membersihkan & mengoptimalkan cache server.
 
 ---
 
@@ -134,7 +140,7 @@ Anda dapat memilih salah satu dari 2 metode upload berikut:
 ```env
 APP_NAME="AMIK Taruna Probolinggo"
 APP_ENV=production
-APP_KEY=base64:LerE6P8PCElVrIb7q+QfwcqI+UwxXSdu4Tse/efiwOA=
+APP_KEY= # Generate otomatis via terminal: php artisan key:generate
 APP_DEBUG=false
 APP_URL=https://nama-domain-anda.ac.id
 

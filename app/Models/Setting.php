@@ -3,10 +3,28 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class Setting extends Model
 {
     protected $table = 'settings';
+
+    protected static function booted()
+    {
+        static::saved(function () {
+            Cache::forget('site_setting');
+        });
+        static::deleted(function () {
+            Cache::forget('site_setting');
+        });
+    }
+
+    public static function cached(): ?self
+    {
+        return Cache::remember('site_setting', 3600, function () {
+            return static::first();
+        });
+    }
 
     protected $fillable = [
 

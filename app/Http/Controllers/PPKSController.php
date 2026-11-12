@@ -10,6 +10,7 @@ use App\Services\ActivityLogger;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class PPKSController extends Controller
@@ -78,11 +79,18 @@ class PPKSController extends Controller
         $dokumenBukti = null;
         if ($request->hasFile('dokumen_bukti')) {
             $file = $request->file('dokumen_bukti');
-            $ext = $file->getClientOriginalExtension();
+            $ext = strtolower($file->getClientOriginalExtension());
+            $allowedExts = ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png'];
+            if (!in_array($ext, $allowedExts, true)) {
+                $ext = $file->extension() ?: 'bin';
+            }
             $cleanName = Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME));
-            $namaFile = 'ppks_' . time() . '_' . substr($cleanName, 0, 30) . '.' . $ext;
+            $cleanName = substr($cleanName, 0, 30) ?: 'bukti';
+            // Simpan dengan token acak 12 karakter agar tidak dapat ditebak
+            $namaFile = 'ppks_' . time() . '_' . Str::random(12) . '_' . $cleanName . '.' . $ext;
             
-            $file->move(public_path('uploads/ppks'), $namaFile);
+            // Simpan di private storage (storage/app/private/ppks)
+            $file->storeAs('ppks', $namaFile, 'local');
             $dokumenBukti = $namaFile;
         }
 
@@ -184,12 +192,61 @@ class PPKSController extends Controller
     {
         $laporan = PPKSLaporan::findOrFail($id);
         $kodeTiket = $laporan->kode_tiket;
+
+        if ($laporan->dokumen_bukti) {
+            $filename = basename($laporan->dokumen_bukti);
+            if (Storage::disk('local')->exists('ppks/' . $filename)) {
+                Storage::disk('local')->delete('ppks/' . $filename);
+            }
+            $legacyPath = public_path('uploads/ppks/' . $filename);
+            if (file_exists($legacyPath) && is_file($legacyPath)) {
+                @unlink($legacyPath);
+            }
+        }
+
         $laporan->delete();
 
         ActivityLogger::log('DELETE', 'Layanan PPKS', "Menghapus data laporan #{$kodeTiket}");
 
         return redirect()->route('admin.ppks.index')
             ->with('success', 'Laporan berhasil dihapus.');
+    }
+
+    /**
+     * Unduh atau tampilkan berkas bukti PPKS secara aman untuk Satgas / Admin
+     */
+    public function adminDownloadBukti(Request $request, $id)
+    {
+        $laporan = PPKSLaporan::findOrFail($id);
+
+        if (!$laporan->dokumen_bukti) {
+            abort(404, 'Berkas bukti tidak ditemukan pada laporan ini.');
+        }
+
+        $filename = basename($laporan->dokumen_bukti);
+
+        // 1. Cek di private storage (penyimpanan standar baru yang aman)
+        if (Storage::disk('local')->exists('ppks/' . $filename)) {
+            ActivityLogger::log('VIEW', 'Layanan PPKS', "Mengakses berkas bukti laporan #{$laporan->kode_tiket}");
+
+            if ($request->query('view') === '1') {
+                return Storage::disk('local')->response('ppks/' . $filename);
+            }
+            return Storage::disk('local')->download('ppks/' . $filename);
+        }
+
+        // 2. Fallback jika berkas lama tersimpan di public/uploads/ppks
+        $legacyPath = public_path('uploads/ppks/' . $filename);
+        if (file_exists($legacyPath) && is_file($legacyPath)) {
+            ActivityLogger::log('VIEW', 'Layanan PPKS', "Mengakses berkas bukti lama laporan #{$laporan->kode_tiket}");
+
+            if ($request->query('view') === '1') {
+                return response()->file($legacyPath);
+            }
+            return response()->download($legacyPath);
+        }
+
+        abort(404, 'File berkas bukti tidak ditemukan di server.');
     }
 
     /**
@@ -239,10 +296,20 @@ class PPKSController extends Controller
 
         $pdf = Pdf::loadView('admin.ppks.pdf_rekap', compact(
             'items', 'setting', 'logoBase64', 'periodeText', 'statusFilter'
-        ))->setPaper('a4', 'landscape');
+        ))->setPaper('a4', 'landscape')
+          ->setOptions([
+              'isHtml5ParserEnabled' => true,
+              'isRemoteEnabled' => true,
+              'defaultFont' => 'sans-serif',
+          ]);
 
         $filename = 'Rekap_Laporan_PPKS_' . date('Ymd_His') . '.pdf';
-        return $pdf->download($filename);
+
+        if ($request->query('download') === '1') {
+            return $pdf->download($filename);
+        }
+
+        return $pdf->stream($filename);
     }
 
     /**
@@ -258,10 +325,20 @@ class PPKSController extends Controller
 
         $pdf = Pdf::loadView('admin.ppks.pdf_detail', compact(
             'laporan', 'setting', 'logoBase64'
-        ))->setPaper('a4', 'portrait');
+        ))->setPaper('a4', 'portrait')
+          ->setOptions([
+              'isHtml5ParserEnabled' => true,
+              'isRemoteEnabled' => true,
+              'defaultFont' => 'sans-serif',
+          ]);
 
         $filename = 'Berita_Acara_PPKS_' . $laporan->kode_tiket . '.pdf';
-        return $pdf->download($filename);
+
+        if (request()->query('download') === '1') {
+            return $pdf->download($filename);
+        }
+
+        return $pdf->stream($filename);
     }
 
     /**
@@ -270,11 +347,26 @@ class PPKSController extends Controller
     private function getLogoBase64(): ?string
     {
         $setting = Setting::first();
-        if ($setting && $setting->logo && file_exists(public_path('uploads/' . $setting->logo))) {
-            $path = public_path('uploads/' . $setting->logo);
-            $type = pathinfo($path, PATHINFO_EXTENSION);
-            $data = file_get_contents($path);
-            return 'data:image/' . $type . ';base64,' . base64_encode($data);
+        if ($setting && $setting->logo) {
+            $possiblePaths = [
+                public_path('uploads/' . $setting->logo),
+                public_path($setting->logo),
+            ];
+            foreach ($possiblePaths as $path) {
+                if (file_exists($path) && is_file($path)) {
+                    $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+                    $mime = match ($ext) {
+                        'jpg', 'jpeg' => 'image/jpeg',
+                        'png' => 'image/png',
+                        'webp' => 'image/webp',
+                        'gif' => 'image/gif',
+                        'svg' => 'image/svg+xml',
+                        default => 'image/jpeg',
+                    };
+                    $data = file_get_contents($path);
+                    return 'data:' . $mime . ';base64,' . base64_encode($data);
+                }
+            }
         }
 
         if (file_exists(public_path('logo.png'))) {

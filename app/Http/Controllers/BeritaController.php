@@ -8,8 +8,9 @@ use App\Models\Dosen;
 use App\Models\Kategori;
 use App\Services\ActivityLogger;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 
 class BeritaController extends Controller
 {
@@ -348,33 +349,37 @@ if ($request->hasFile('file_pdf')) {
     */
     public function home()
     {
-$beritas = Berita::where('publish_at', '<=', now())
-    ->latest('publish_at')
-    ->get();  
+        // Optimasi: Ambil hanya 12 warta terbaru dan batasi kolom yang dibutuhkan
+        $beritas = Berita::where('publish_at', '<=', now())
+            ->select(['id', 'judul', 'slug', 'penulis', 'kategori', 'gambar', 'publish_at', 'isi', 'created_at'])
+            ->latest('publish_at')
+            ->take(12)
+            ->get();
 
-$pengumuman = Berita::where('kategori', 'pengumuman')
-    ->where('publish_at', '<=', now())
-    ->latest()
-    ->get();
+        // Pengumuman khusus untuk feed ringkas
+        $pengumuman = Berita::where('kategori', 'pengumuman')
+            ->where('publish_at', '<=', now())
+            ->select(['id', 'judul', 'slug', 'penulis', 'kategori', 'gambar', 'publish_at', 'isi', 'created_at'])
+            ->latest('publish_at')
+            ->take(4)
+            ->get();
 
-$pengabdian = Berita::where('kategori', 'pengabdian')
-    ->where('publish_at', '<=', now())
-    ->latest()
-    ->get();
+        // Gunakan cache untuk data institusi yang jarang berubah
+        $visimisi = Cache::remember('site_visimisi', 1800, function () {
+            return VisiMisi::first();
+        });
 
-$penelitian = Berita::where('kategori', 'penelitian')
-    ->where('publish_at', '<=', now())
-    ->latest()
-    ->get();
+        $dosen = Cache::remember('site_home_dosen', 1800, function () {
+            return Dosen::select(['id', 'nama', 'nidn', 'gelar_depan', 'gelar_belakang', 'jabatan', 'foto', 'level_organigram'])
+                ->orderBy('level_organigram')
+                ->orderBy('id')
+                ->get();
+        });
 
-$kegiatan = Berita::where('kategori', 'kegiatan_kampus')
-    ->where('publish_at', '<=', now())
-    ->latest()
-    ->get();
-
-        $visimisi = VisiMisi::first();
-
-        $dosen = Dosen::orderBy('level_organigram')->orderBy('id')->get();
+        // Kosongkan koleksi yang tidak dikonsumsi demi menghemat ukuran JSON data-props
+        $pengabdian = [];
+        $penelitian = [];
+        $kegiatan = [];
 
         return view('home', compact(
             'beritas',

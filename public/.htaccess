@@ -23,3 +23,85 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
+
+# ========================================================
+# SECURITY HEADERS
+# ========================================================
+<IfModule mod_headers.c>
+    # Mencegah Clickjacking
+    Header always set X-Frame-Options "SAMEORIGIN"
+    # Mencegah MIME Type Sniffing
+    Header always set X-Content-Type-Options "nosniff"
+    # Kebijakan Referrer Aman
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    # Batasi Akses Fitur Perangkat
+    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+    # Sembunyikan informasi header PHP
+    Header unset X-Powered-By
+</IfModule>
+
+# ========================================================
+# PERFORMANCE OPTIMIZATION: GZIP / BROTLI COMPRESSION
+# Mengurangi ukuran transfer aset teks, CSS, dan JS hingga 70%
+# ========================================================
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/xml
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE text/javascript
+    AddOutputFilterByType DEFLATE application/xml
+    AddOutputFilterByType DEFLATE application/xhtml+xml
+    AddOutputFilterByType DEFLATE application/rss+xml
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/x-javascript
+    AddOutputFilterByType DEFLATE application/json
+    AddOutputFilterByType DEFLATE image/svg+xml
+    AddOutputFilterByType DEFLATE font/ttf
+    AddOutputFilterByType DEFLATE font/otf
+    AddOutputFilterByType DEFLATE font/woff
+    AddOutputFilterByType DEFLATE font/woff2
+</IfModule>
+
+# ========================================================
+# PERFORMANCE OPTIMIZATION: BROWSER CACHING (LEVERAGE CACHE)
+# Aset statis disimpan di browser sehingga load berikutnya instan
+# ========================================================
+<IfModule mod_expires.c>
+    ExpiresActive On
+
+    # Gambar & Favicon (1 Bulan)
+    ExpiresByType image/jpeg "access plus 1 month"
+    ExpiresByType image/jpg "access plus 1 month"
+    ExpiresByType image/png "access plus 1 month"
+    ExpiresByType image/gif "access plus 1 month"
+    ExpiresByType image/webp "access plus 1 month"
+    ExpiresByType image/svg+xml "access plus 1 month"
+    ExpiresByType image/x-icon "access plus 1 year"
+
+    # Font Web (1 Tahun)
+    ExpiresByType font/ttf "access plus 1 year"
+    ExpiresByType font/otf "access plus 1 year"
+    ExpiresByType font/woff "access plus 1 year"
+    ExpiresByType font/woff2 "access plus 1 year"
+    ExpiresByType application/font-woff "access plus 1 year"
+    ExpiresByType application/font-woff2 "access plus 1 year"
+
+    # CSS & JavaScript Hasil Build (1 Bulan / Vite Ber-hash)
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType text/javascript "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+
+    # Dokumen PDF (1 Minggu)
+    ExpiresByType application/pdf "access plus 1 week"
+
+    # Default Caching
+    ExpiresDefault "access plus 2 days"
+</IfModule>
+
+<IfModule mod_headers.c>
+    # Pastikan browser memanfaatkan Cache-Control untuk aset statis
+    <FilesMatch "\.(ico|pdf|flv|jpg|jpeg|png|gif|webp|js|css|swf|woff|woff2|ttf|svg)$">
+        Header set Cache-Control "max-age=2592000, public"
+    </FilesMatch>
+</IfModule>
