@@ -370,10 +370,7 @@ if ($request->hasFile('file_pdf')) {
         });
 
         $dosen = Cache::remember('site_home_dosen', 1800, function () {
-            return Dosen::select(['id', 'nama', 'nidn', 'gelar_depan', 'gelar_belakang', 'jabatan', 'foto', 'level_organigram'])
-                ->orderBy('level_organigram')
-                ->orderBy('id')
-                ->get();
+            return Dosen::orderBy('level_organigram')->orderBy('id')->get();
         });
 
         // Kosongkan koleksi yang tidak dikonsumsi demi menghemat ukuran JSON data-props

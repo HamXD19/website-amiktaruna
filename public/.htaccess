@@ -94,9 +94,6 @@
 
     # Dokumen PDF (1 Minggu)
     ExpiresByType application/pdf "access plus 1 week"
-
-    # Default Caching
-    ExpiresDefault "access plus 2 days"
 </IfModule>
 
 <IfModule mod_headers.c>
