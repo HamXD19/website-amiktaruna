@@ -75,10 +75,15 @@
                             <td class="text-center">
                                 <div class="d-flex justify-content-center gap-1">
                                     <a href="{{ route('kritiksaran.export.single.pdf', $item->id) }}"
-                                       class="btn btn-outline-danger btn-sm rounded-pill px-2.5 py-1"
-                                       title="Cetak Lembar PDF"
+                                       class="btn btn-outline-danger btn-sm rounded-pill px-2 py-1"
+                                       title="Buka / Pratinjau Lembar PDF"
                                        target="_blank">
                                         <i class="fas fa-file-pdf"></i>
+                                    </a>
+                                    <a href="{{ route('kritiksaran.export.single.pdf', ['id' => $item->id, 'download' => 1]) }}"
+                                       class="btn btn-danger btn-sm rounded-pill px-2 py-1"
+                                       title="Unduh File PDF">
+                                        <i class="fas fa-download"></i>
                                     </a>
                                     <button type="button"
                                             class="btn btn-danger btn-sm rounded-pill px-2.5 py-1"
@@ -199,11 +204,16 @@
                             <i class="fas fa-info-circle text-success me-1"></i> Kosongkan tanggal jika ingin mencetak seluruh data tanpa batasan periode.
                         </div>
                     </div>
-                    <div class="modal-footer bg-light rounded-bottom-4">
+                    <div class="modal-footer bg-light rounded-bottom-4 d-flex justify-content-between">
                         <button type="button" class="btn btn-secondary rounded-pill px-3" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-success rounded-pill px-4 fw-semibold">
-                            <i class="fas fa-print me-1"></i> Unduh / Cetak PDF
-                        </button>
+                        <div class="d-flex gap-2">
+                            <button type="submit" name="download" value="0" class="btn btn-outline-success rounded-pill px-3 fw-semibold">
+                                <i class="fas fa-eye me-1"></i> Buka / Pratinjau
+                            </button>
+                            <button type="submit" name="download" value="1" class="btn btn-success rounded-pill px-4 fw-semibold shadow-sm">
+                                <i class="fas fa-download me-1"></i> Unduh File PDF
+                            </button>
+                        </div>
                     </div>
                 </form>
             </div>

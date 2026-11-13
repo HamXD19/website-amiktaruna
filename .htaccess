@@ -9,8 +9,8 @@
     # Matikan Directory Browsing / Indexing
     Options -Indexes
 
-    # Blokir akses langsung ke direktori sistem Laravel
-    RewriteRule ^(app|bootstrap|config|database|resources|routes|storage|vendor|tests)(/.*)?$ - [F,L,NC]
+    # Blokir akses langsung ke direktori sistem internal Laravel
+    RewriteRule ^(app|bootstrap|config|database|resources|routes|tests)(/.*)?$ - [F,L,NC]
 
     # Blokir akses langsung ke file sensitif dan arsip
     <FilesMatch "(^\.(env|git|json|lock|editorconfig)|(?i)\.(sh|sql|rar|zip|tar\.gz|bak|log|xml|md)|artisan|composer\.(json|lock)|package(-lock)?\.json)$">

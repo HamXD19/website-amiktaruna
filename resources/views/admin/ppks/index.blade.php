@@ -189,9 +189,14 @@
                             <!-- BUKTI DOKUMEN -->
                             <td>
                                 @if($item->dokumen_bukti)
-                                    <a href="{{ asset('uploads/ppks/' . $item->dokumen_bukti) }}" target="_blank" download class="btn btn-sm btn-outline-danger rounded-pill px-2.5 py-1" style="font-size: 11px;">
-                                        <i class="fas fa-file-pdf me-1"></i> Unduh Bukti
-                                    </a>
+                                    <div class="d-inline-flex align-items-center gap-1">
+                                        <a href="{{ route('admin.ppks.download_bukti', ['id' => $item->id, 'view' => 1]) }}" target="_blank" class="btn btn-sm btn-outline-primary rounded-pill px-2 py-0.5" style="font-size: 11px;" title="Lihat Berkas">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="{{ route('admin.ppks.download_bukti', ['id' => $item->id]) }}" class="btn btn-sm btn-outline-danger rounded-pill px-2 py-0.5" style="font-size: 11px;" title="Unduh Berkas Bukti">
+                                            <i class="fas fa-download me-1"></i> Unduh
+                                        </a>
+                                    </div>
                                 @else
                                     <span class="text-muted small">- Tidak ada -</span>
                                 @endif
@@ -213,8 +218,11 @@
                             <!-- AKSI -->
                             <td class="text-end pe-4">
                                 <div class="d-flex align-items-center justify-content-end gap-1.5">
-                                    <a href="{{ route('admin.ppks.export.detail.pdf', $item->id) }}" class="btn btn-sm btn-outline-danger rounded-3 px-2 py-1" title="Cetak Berita Acara PDF" target="_blank">
+                                    <a href="{{ route('admin.ppks.export.detail.pdf', $item->id) }}" class="btn btn-sm btn-outline-danger rounded-3 px-2 py-1" title="Buka / Pratinjau Berita Acara PDF" target="_blank">
                                         <i class="fas fa-file-pdf"></i>
+                                    </a>
+                                    <a href="{{ route('admin.ppks.export.detail.pdf', ['id' => $item->id, 'download' => 1]) }}" class="btn btn-sm btn-danger rounded-3 px-2 py-1" title="Unduh File Berita Acara PDF">
+                                        <i class="fas fa-download"></i>
                                     </a>
                                     <a href="{{ route('admin.ppks.show', $item->id) }}" class="btn btn-sm btn-outline-primary rounded-3 px-2.5" title="Lihat Detail & Tindak Lanjut">
                                         <i class="fas fa-eye me-1"></i> Detail
@@ -289,11 +297,16 @@
                             <i class="fas fa-lock me-1"></i> Dokumen berklasifikasi <strong>RAHASIA</strong>. Seluruh identitas pelapor anonim akan tetap dilindungi.
                         </div>
                     </div>
-                    <div class="modal-footer bg-light rounded-bottom-4">
+                    <div class="modal-footer bg-light rounded-bottom-4 d-flex justify-content-between">
                         <button type="button" class="btn btn-secondary rounded-pill px-3" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-danger rounded-pill px-4 fw-semibold">
-                            <i class="fas fa-print me-1"></i> Unduh / Cetak PDF
-                        </button>
+                        <div class="d-flex gap-2">
+                            <button type="submit" name="download" value="0" class="btn btn-outline-danger rounded-pill px-3 fw-semibold">
+                                <i class="fas fa-eye me-1"></i> Buka / Pratinjau
+                            </button>
+                            <button type="submit" name="download" value="1" class="btn btn-danger rounded-pill px-4 fw-semibold shadow-sm">
+                                <i class="fas fa-download me-1"></i> Unduh File PDF
+                            </button>
+                        </div>
                     </div>
                 </form>
             </div>

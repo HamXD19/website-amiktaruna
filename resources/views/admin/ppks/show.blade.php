@@ -31,9 +31,14 @@
             <span class="text-muted small me-2">
                 Masuk pada: {{ $laporan->created_at->translatedFormat('d F Y, H:i') }} WIB
             </span>
-            <a href="{{ route('admin.ppks.export.detail.pdf', $laporan->id) }}" target="_blank" class="btn btn-outline-danger rounded-3 shadow-sm px-3">
-                <i class="fas fa-file-pdf me-1"></i> Cetak Berita Acara / Laporan PDF
-            </a>
+            <div class="d-flex align-items-center gap-2">
+                <a href="{{ route('admin.ppks.export.detail.pdf', $laporan->id) }}" target="_blank" class="btn btn-outline-danger rounded-3 shadow-sm px-3">
+                    <i class="fas fa-file-pdf me-1"></i> Pratinjau PDF
+                </a>
+                <a href="{{ route('admin.ppks.export.detail.pdf', ['id' => $laporan->id, 'download' => 1]) }}" class="btn btn-danger rounded-3 shadow-sm px-3">
+                    <i class="fas fa-download me-1"></i> Unduh File PDF
+                </a>
+            </div>
         </div>
     </div>
 

@@ -225,25 +225,25 @@ class PPKSController extends Controller
 
         $filename = basename($laporan->dokumen_bukti);
 
-        // 1. Cek di private storage (penyimpanan standar baru yang aman)
-        if (Storage::disk('local')->exists('ppks/' . $filename)) {
-            ActivityLogger::log('VIEW', 'Layanan PPKS', "Mengakses berkas bukti laporan #{$laporan->kode_tiket}");
+        // Cari file di semua kemungkinan lokasi penyimpanan
+        $candidates = [
+            storage_path('app/private/ppks/' . $filename),
+            storage_path('app/ppks/' . $filename),
+            storage_path('app/public/ppks/' . $filename),
+            public_path('uploads/ppks/' . $filename),
+            public_path('storage/ppks/' . $filename),
+            storage_path('app/' . $filename),
+        ];
 
-            if ($request->query('view') === '1') {
-                return Storage::disk('local')->response('ppks/' . $filename);
+        foreach ($candidates as $filePath) {
+            if (file_exists($filePath) && is_file($filePath)) {
+                ActivityLogger::log('VIEW', 'Layanan PPKS', "Mengakses berkas bukti laporan #{$laporan->kode_tiket}");
+
+                if ($request->query('view') === '1') {
+                    return response()->file($filePath);
+                }
+                return response()->download($filePath, $filename);
             }
-            return Storage::disk('local')->download('ppks/' . $filename);
-        }
-
-        // 2. Fallback jika berkas lama tersimpan di public/uploads/ppks
-        $legacyPath = public_path('uploads/ppks/' . $filename);
-        if (file_exists($legacyPath) && is_file($legacyPath)) {
-            ActivityLogger::log('VIEW', 'Layanan PPKS', "Mengakses berkas bukti lama laporan #{$laporan->kode_tiket}");
-
-            if ($request->query('view') === '1') {
-                return response()->file($legacyPath);
-            }
-            return response()->download($legacyPath);
         }
 
         abort(404, 'File berkas bukti tidak ditemukan di server.');
@@ -294,22 +294,34 @@ class PPKSController extends Controller
 
         ActivityLogger::log('EXPORT', 'Layanan PPKS', "Mengekspor laporan rekapitulasi PPKS ke PDF ({$items->count()} data)");
 
-        $pdf = Pdf::loadView('admin.ppks.pdf_rekap', compact(
-            'items', 'setting', 'logoBase64', 'periodeText', 'statusFilter'
-        ))->setPaper('a4', 'landscape')
-          ->setOptions([
-              'isHtml5ParserEnabled' => true,
-              'isRemoteEnabled' => true,
-              'defaultFont' => 'sans-serif',
-          ]);
-
         $filename = 'Rekap_Laporan_PPKS_' . date('Ymd_His') . '.pdf';
 
-        if ($request->query('download') === '1') {
-            return $pdf->download($filename);
+        if (class_exists(\Barryvdh\DomPDF\Facade\Pdf::class)) {
+            try {
+                $pdf = Pdf::loadView('admin.ppks.pdf_rekap', compact(
+                    'items', 'setting', 'logoBase64', 'periodeText', 'statusFilter'
+                ))->setPaper('a4', 'landscape')
+                  ->setOptions([
+                      'isHtml5ParserEnabled' => true,
+                      'isRemoteEnabled' => true,
+                      'defaultFont' => 'sans-serif',
+                  ]);
+
+                if ($request->query('download') === '1') {
+                    return $pdf->download($filename);
+                }
+
+                return $pdf->stream($filename);
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('DomPDF render failed: ' . $e->getMessage());
+            }
         }
 
-        return $pdf->stream($filename);
+        // Fallback: Tampilkan halaman cetak ramah cetak (Print-friendly HTML)
+        $isHtmlFallback = true;
+        return response()->view('admin.ppks.pdf_rekap', compact(
+            'items', 'setting', 'logoBase64', 'periodeText', 'statusFilter', 'isHtmlFallback'
+        ));
     }
 
     /**
@@ -323,22 +335,34 @@ class PPKSController extends Controller
 
         ActivityLogger::log('EXPORT', 'Layanan PPKS', "Mengekspor berita acara laporan PPKS #{$laporan->kode_tiket} ke PDF");
 
-        $pdf = Pdf::loadView('admin.ppks.pdf_detail', compact(
-            'laporan', 'setting', 'logoBase64'
-        ))->setPaper('a4', 'portrait')
-          ->setOptions([
-              'isHtml5ParserEnabled' => true,
-              'isRemoteEnabled' => true,
-              'defaultFont' => 'sans-serif',
-          ]);
-
         $filename = 'Berita_Acara_PPKS_' . $laporan->kode_tiket . '.pdf';
 
-        if (request()->query('download') === '1') {
-            return $pdf->download($filename);
+        if (class_exists(\Barryvdh\DomPDF\Facade\Pdf::class)) {
+            try {
+                $pdf = Pdf::loadView('admin.ppks.pdf_detail', compact(
+                    'laporan', 'setting', 'logoBase64'
+                ))->setPaper('a4', 'portrait')
+                  ->setOptions([
+                      'isHtml5ParserEnabled' => true,
+                      'isRemoteEnabled' => true,
+                      'defaultFont' => 'sans-serif',
+                  ]);
+
+                if (request()->query('download') === '1') {
+                    return $pdf->download($filename);
+                }
+
+                return $pdf->stream($filename);
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('DomPDF detail render failed: ' . $e->getMessage());
+            }
         }
 
-        return $pdf->stream($filename);
+        // Fallback: Tampilkan halaman cetak berita acara langsung
+        $isHtmlFallback = true;
+        return response()->view('admin.ppks.pdf_detail', compact(
+            'laporan', 'setting', 'logoBase64', 'isHtmlFallback'
+        ));
     }
 
     /**

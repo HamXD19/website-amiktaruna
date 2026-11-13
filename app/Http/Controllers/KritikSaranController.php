@@ -107,11 +107,32 @@ class KritikSaranController extends Controller
 
         $filename = 'Laporan_Rekap_Kritik_Saran_' . date('Ymd_His') . '.pdf';
 
-        if ($request->query('download') === '1') {
-            return $pdf->download($filename);
+        if (class_exists(\Barryvdh\DomPDF\Facade\Pdf::class)) {
+            try {
+                $pdf = Pdf::loadView('admin.kritiksaran.pdf_rekap', compact(
+                    'items', 'setting', 'logoBase64', 'periodeText', 'statusFilter'
+                ))->setPaper('a4', 'landscape')
+                  ->setOptions([
+                      'isHtml5ParserEnabled' => true,
+                      'isRemoteEnabled' => true,
+                      'defaultFont' => 'sans-serif',
+                  ]);
+
+                if ($request->query('download') === '1') {
+                    return $pdf->download($filename);
+                }
+
+                return $pdf->stream($filename);
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('DomPDF kritik saran rekap failed: ' . $e->getMessage());
+            }
         }
 
-        return $pdf->stream($filename);
+        // Fallback: Tampilkan halaman cetak HTML ramah browser
+        $isHtmlFallback = true;
+        return response()->view('admin.kritiksaran.pdf_rekap', compact(
+            'items', 'setting', 'logoBase64', 'periodeText', 'statusFilter', 'isHtmlFallback'
+        ));
     }
 
     /**
@@ -129,22 +150,34 @@ class KritikSaranController extends Controller
 
         ActivityLogger::log('EXPORT', 'Kritik & Saran', "Mengekspor lembar pengaduan kritik & saran #{$item->id} ({$item->nama}) ke PDF");
 
-        $pdf = Pdf::loadView('admin.kritiksaran.pdf_detail', compact(
-            'item', 'setting', 'logoBase64'
-        ))->setPaper('a4', 'portrait')
-          ->setOptions([
-              'isHtml5ParserEnabled' => true,
-              'isRemoteEnabled' => true,
-              'defaultFont' => 'sans-serif',
-          ]);
-
         $filename = 'Lembar_Kritik_Saran_' . $item->id . '_' . date('Ymd') . '.pdf';
 
-        if (request()->query('download') === '1') {
-            return $pdf->download($filename);
+        if (class_exists(\Barryvdh\DomPDF\Facade\Pdf::class)) {
+            try {
+                $pdf = Pdf::loadView('admin.kritiksaran.pdf_detail', compact(
+                    'item', 'setting', 'logoBase64'
+                ))->setPaper('a4', 'portrait')
+                  ->setOptions([
+                      'isHtml5ParserEnabled' => true,
+                      'isRemoteEnabled' => true,
+                      'defaultFont' => 'sans-serif',
+                  ]);
+
+                if (request()->query('download') === '1') {
+                    return $pdf->download($filename);
+                }
+
+                return $pdf->stream($filename);
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('DomPDF kritik saran detail failed: ' . $e->getMessage());
+            }
         }
 
-        return $pdf->stream($filename);
+        // Fallback: Tampilkan lembar disposisi ramah cetak
+        $isHtmlFallback = true;
+        return response()->view('admin.kritiksaran.pdf_detail', compact(
+            'item', 'setting', 'logoBase64', 'isHtmlFallback'
+        ));
     }
 
     /**
