@@ -18,15 +18,19 @@ mkdir -p storage/app/private/ppks
 mkdir -p storage/framework/{sessions,views,cache}
 chmod -R 775 storage bootstrap/cache
 
-# 3. Jalankan migrasi database jika ada tabel baru
+# 3. Pasang dependensi Composer (misal package dompdf baru)
+echo "📦 Memperbarui package composer..."
+composer install --no-dev --optimize-autoloader
+
+# 4. Jalankan migrasi database jika ada tabel baru
 echo "🗄️ Menjalankan migrasi database..."
 php artisan migrate --force
 
-# 4. Pastikan symlink storage terpasang
+# 5. Pastikan symlink storage terpasang
 echo "🔗 Mengecek symbolic link storage..."
 php artisan storage:link 2>/dev/null
 
-# 5. Bersihkan dan optimalkan cache Laravel untuk performa maksimal
+# 6. Bersihkan dan optimalkan cache Laravel untuk performa maksimal
 echo "⚡ Mengoptimalkan cache sistem..."
 php artisan optimize:clear
 php artisan config:cache

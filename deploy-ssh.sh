@@ -144,13 +144,16 @@ mkdir -p storage/logs
 mkdir -p bootstrap/cache
 chmod -R 775 storage bootstrap/cache 2>/dev/null || true
 
-echo -e "${R_BLUE}🗄️  3. Menjalankan migrasi database (jika ada)...${R_NC}"
+echo -e "${R_BLUE}📦 3. Memasang dependensi Composer terbaru...${R_NC}"
+composer install --no-dev --optimize-autoloader
+
+echo -e "${R_BLUE}🗄️  4. Menjalankan migrasi database (jika ada)...${R_NC}"
 php artisan migrate --force
 
-echo -e "${R_BLUE}🔗 4. Memastikan symbolic link storage...${R_NC}"
+echo -e "${R_BLUE}🔗 5. Memastikan symbolic link storage...${R_NC}"
 php artisan storage:link 2>/dev/null || true
 
-echo -e "${R_BLUE}⚡ 5. Membersihkan dan mengoptimalkan cache Laravel...${R_NC}"
+echo -e "${R_BLUE}⚡ 6. Membersihkan dan mengoptimalkan cache Laravel...${R_NC}"
 php artisan optimize:clear
 php artisan config:cache
 php artisan route:cache
