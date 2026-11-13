@@ -96,15 +96,6 @@ class KritikSaranController extends Controller
 
         ActivityLogger::log('EXPORT', 'Kritik & Saran', "Mengekspor laporan rekapitulasi kritik & saran ke PDF ({$items->count()} data)");
 
-        $pdf = Pdf::loadView('admin.kritiksaran.pdf_rekap', compact(
-            'items', 'setting', 'logoBase64', 'periodeText', 'statusFilter'
-        ))->setPaper('a4', 'landscape')
-          ->setOptions([
-              'isHtml5ParserEnabled' => true,
-              'isRemoteEnabled' => true,
-              'defaultFont' => 'sans-serif',
-          ]);
-
         $filename = 'Laporan_Rekap_Kritik_Saran_' . date('Ymd_His') . '.pdf';
 
         if (class_exists(\Barryvdh\DomPDF\Facade\Pdf::class)) {
