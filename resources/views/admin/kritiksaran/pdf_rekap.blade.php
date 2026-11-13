@@ -15,29 +15,7 @@
         @media screen {
             body.has-fallback-bar { padding-top: 15px; }
         }
-    </style>
-</head>
-<body class="{{ !empty($isHtmlFallback) ? 'has-fallback-bar' : '' }}">
 
-    @if(!empty($isHtmlFallback))
-        <div class="no-print" style="background: #1e293b; color: white; padding: 12px 24px; font-family: sans-serif; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 9999; margin: -15px -15px 20px -15px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.15);">
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <span style="font-size: 16px;">📄</span>
-                <div>
-                    <strong style="font-size: 13px;">Pratinjau Cetak / Ekspor PDF</strong>
-                    <div style="font-size: 11px; color: #94a3b8;">Klik tombol cetak untuk menyimpan sebagai file PDF atau langsung mencetak dokumen.</div>
-                </div>
-            </div>
-            <div style="display: flex; gap: 8px;">
-                <button type="button" onclick="window.print()" style="background: #10b981; color: white; border: none; padding: 7px 16px; border-radius: 9999px; font-weight: bold; cursor: pointer; font-size: 12px; display: inline-flex; align-items: center; gap: 6px;">
-                    🖨️ Cetak / Simpan PDF (Ctrl + P)
-                </button>
-                <button type="button" onclick="window.close()" style="background: #475569; color: white; border: none; padding: 7px 14px; border-radius: 9999px; cursor: pointer; font-size: 12px;">
-                    Tutup Tab
-                </button>
-            </div>
-        </div>
-    @endif
         /* KOP SURAT */
         .kop-table {
             width: 100%;
@@ -202,7 +180,27 @@
         }
     </style>
 </head>
-<body>
+<body class="{{ !empty($isHtmlFallback) ? 'has-fallback-bar' : '' }}">
+
+    @if(!empty($isHtmlFallback))
+        <div class="no-print" style="background: #1e293b; color: white; padding: 12px 24px; font-family: sans-serif; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 9999; margin: -15px -15px 20px -15px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.15);">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 16px;">📄</span>
+                <div>
+                    <strong style="font-size: 13px;">Pratinjau Cetak / Ekspor PDF</strong>
+                    <div style="font-size: 11px; color: #94a3b8;">Klik tombol cetak untuk menyimpan sebagai file PDF atau langsung mencetak dokumen.</div>
+                </div>
+            </div>
+            <div style="display: flex; gap: 8px;">
+                <button type="button" onclick="window.print()" style="background: #10b981; color: white; border: none; padding: 7px 16px; border-radius: 9999px; font-weight: bold; cursor: pointer; font-size: 12px; display: inline-flex; align-items: center; gap: 6px;">
+                    🖨️ Cetak / Simpan PDF (Ctrl + P)
+                </button>
+                <button type="button" onclick="window.close()" style="background: #475569; color: white; border: none; padding: 7px 14px; border-radius: 9999px; cursor: pointer; font-size: 12px;">
+                    Tutup Tab
+                </button>
+            </div>
+        </div>
+    @endif
 
     <!-- KOP SURAT RESMI -->
     <table class="kop-table">
